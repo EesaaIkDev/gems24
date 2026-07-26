@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { base44 } from "@/api/base44Client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CreditCard } from "lucide-react";
@@ -15,8 +17,34 @@ const FEATURES = {
 };
 
 export default function Subscription() {
-  const { trader, loading } = useCurrentTrader();
+  const navigate = useNavigate();
+  const { user, trader, loading } = useCurrentTrader();
   const [selected, setSelected] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  const startCheckout = async () => {
+    setError("");
+    if (window.self !== window.top) {
+      setError("Checkout only works in the published app — open Gems24 in its own browser tab to subscribe.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { data } = await base44.functions.invoke("createSubscriptionCheckout", {
+        tier: selected,
+        traderId: trader.id,
+        email: trader.contact_email || user?.email,
+        successUrl: `${window.location.origin}/my-listings`,
+        cancelUrl: `${window.location.origin}/subscription`,
+      });
+      if (data?.url) window.location.href = data.url;
+      else setError("Could not start checkout. Please try again.");
+    } catch {
+      setError("Could not start checkout. Please try again.");
+    }
+    setBusy(false);
+  };
 
   if (loading) return <Spinner />;
 
@@ -43,7 +71,7 @@ export default function Subscription() {
       </div>
 
       <p className="mt-6 text-center text-xs text-muted-foreground">
-        Monthly recurring billing, cancel anytime. Prices shown are placeholders until your final pricing is confirmed.
+        Monthly recurring billing, cancel anytime. Secure payment by Stripe.
       </p>
 
       <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
@@ -61,13 +89,26 @@ export default function Subscription() {
                 </p>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Card payments aren't switched on yet. Once Stripe is connected and your final monthly prices are
-              confirmed, this button will take you straight to checkout and your plan will activate automatically.
-            </p>
-            <Button className="w-full h-12 font-semibold" onClick={() => setSelected(null)}>
-              Got it
-            </Button>
+            {!trader ? (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Create your trader profile first — your plan is linked to it.
+                </p>
+                <Button className="w-full h-12 font-semibold" onClick={() => navigate("/onboarding")}>
+                  Set up profile
+                </Button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  You'll be taken to Stripe to complete payment. Your plan activates as soon as the payment succeeds.
+                </p>
+                {error && <p className="text-sm text-destructive">{error}</p>}
+                <Button className="w-full h-12 font-semibold" disabled={busy} onClick={startCheckout}>
+                  {busy ? "Opening checkout…" : "Continue to checkout"}
+                </Button>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
