@@ -1,0 +1,89 @@
+{
+  "name": "Listing",
+  "type": "object",
+  "properties": {
+    "trader_id": {
+      "type": "string"
+    },
+    "trader_name": {
+      "type": "string"
+    },
+    "trader_country": {
+      "type": "string"
+    },
+    "trader_tier": {
+      "type": "string",
+      "enum": [
+        "none",
+        "bronze",
+        "silver",
+        "gold",
+        "platinum"
+      ],
+      "default": "none"
+    },
+    "trader_verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "photos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "gemstone_type": {
+      "type": "string",
+      "enum": [
+        "sapphire",
+        "ruby",
+        "emerald",
+        "spinel",
+        "garnet",
+        "other"
+      ]
+    },
+    "weight_carats": {
+      "type": "number"
+    },
+    "color": {
+      "type": "string"
+    },
+    "treatment": {
+      "type": "string",
+      "enum": [
+        "heated",
+        "unheated",
+        "other"
+      ]
+    },
+    "origin": {
+      "type": "string"
+    },
+    "certificate_lab": {
+      "type": "string"
+    },
+    "certificate_url": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "available",
+        "reserved",
+        "sold"
+      ],
+      "default": "available"
+    }
+  },
+  "required": [
+    "trader_id",
+    "gemstone_type",
+    "weight_carats",
+    "treatment"
+  ]
+}

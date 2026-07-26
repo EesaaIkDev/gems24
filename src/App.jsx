@@ -7,6 +7,19 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 // Add page imports here
+import AppLayout from '@/components/layout/AppLayout';
+import Home from '@/pages/Home';
+import Directory from '@/pages/Directory';
+import ListingDetail from '@/pages/ListingDetail';
+import TraderProfile from '@/pages/TraderProfile';
+import Enquiries from '@/pages/Enquiries';
+import MyListings from '@/pages/MyListings';
+import ListingEditor from '@/pages/ListingEditor';
+import Connections from '@/pages/Connections';
+import Subscription from '@/pages/Subscription';
+import Settings from '@/pages/Settings';
+import Profile from '@/pages/Profile';
+import Onboarding from '@/pages/Onboarding';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -34,7 +47,21 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/directory" element={<Directory />} />
+        <Route path="/listing/:id" element={<ListingDetail />} />
+        <Route path="/trader/:id" element={<TraderProfile />} />
+        <Route path="/enquiries" element={<Enquiries />} />
+        <Route path="/my-listings" element={<MyListings />} />
+        <Route path="/my-listings/new" element={<ListingEditor />} />
+        <Route path="/my-listings/:id/edit" element={<ListingEditor />} />
+        <Route path="/connections" element={<Connections />} />
+        <Route path="/subscription" element={<Subscription />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/onboarding" element={<Onboarding />} />
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

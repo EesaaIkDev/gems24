@@ -1,0 +1,78 @@
+{
+  "name": "Trader",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the owning app user"
+    },
+    "account_type": {
+      "type": "string",
+      "enum": [
+        "trader",
+        "buyer"
+      ],
+      "default": "trader"
+    },
+    "full_name": {
+      "type": "string"
+    },
+    "business_name": {
+      "type": "string"
+    },
+    "profile_photo": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "years_experience": {
+      "type": "number"
+    },
+    "specialties": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "sapphire",
+          "ruby",
+          "emerald",
+          "spinel",
+          "garnet",
+          "other"
+        ]
+      },
+      "default": []
+    },
+    "bio": {
+      "type": "string"
+    },
+    "subscription_tier": {
+      "type": "string",
+      "enum": [
+        "none",
+        "bronze",
+        "silver",
+        "gold",
+        "platinum"
+      ],
+      "default": "none"
+    },
+    "verified": {
+      "type": "boolean",
+      "default": false
+    },
+    "phone": {
+      "type": "string"
+    },
+    "contact_email": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "full_name"
+  ]
+}
