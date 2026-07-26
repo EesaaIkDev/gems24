@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import { ImagePlus, X, Loader2 } from "lucide-react";
+import { ImagePlus, Camera, X, Loader2 } from "lucide-react";
+import { haptic } from "@/lib/despia";
 
 export default function PhotoUploader({ photos = [], onChange }) {
   const [uploading, setUploading] = useState(false);
@@ -17,6 +18,7 @@ export default function PhotoUploader({ photos = [], onChange }) {
     }
     onChange([...photos, ...urls]);
     setUploading(false);
+    haptic("success");
   };
 
   return (
@@ -43,6 +45,18 @@ export default function PhotoUploader({ photos = [], onChange }) {
           </>
         )}
         <input type="file" accept="image/*" multiple className="hidden" onChange={handleFiles} disabled={uploading} />
+      </label>
+      <label className="aspect-square rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary/50 transition-colors">
+        <Camera className="w-5 h-5 text-muted-foreground" />
+        <span className="text-[10px] text-muted-foreground">Camera</span>
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={handleFiles}
+          disabled={uploading}
+        />
       </label>
     </div>
   );

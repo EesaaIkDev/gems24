@@ -5,7 +5,10 @@ import { LOGO_URL } from "@/lib/gems";
 
 export default function AppHeader() {
   return (
-    <header className="sticky top-0 z-40 bg-background/85 backdrop-blur-xl border-b border-border">
+    <header
+      className="sticky top-0 z-40 bg-background/85 backdrop-blur-xl border-b border-border"
+      style={{ paddingTop: "var(--safe-area-top, env(safe-area-inset-top))" }}
+    >
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <img src={LOGO_URL} alt="Gems24" className="w-9 h-9" />

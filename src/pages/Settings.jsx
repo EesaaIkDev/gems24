@@ -8,6 +8,7 @@ import TraderForm from "@/components/traders/TraderForm";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import TierBadge from "@/components/common/TierBadge";
+import NativeSettings from "@/components/settings/NativeSettings";
 import useTheme from "@/hooks/useTheme";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { TIERS } from "@/lib/gems";
@@ -43,6 +44,8 @@ export default function Settings() {
         </div>
         <Switch checked={dark} onCheckedChange={setDark} />
       </div>
+
+      <NativeSettings />
 
       {!user ? (
         <SignInPrompt title="Sign in to manage your account" />
