@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CreditCard } from "lucide-react";
+import { Smartphone, Settings2 } from "lucide-react";
 import TierCard from "@/components/subscription/TierCard";
 import Spinner from "@/components/common/Spinner";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
+import useEntitlements from "@/hooks/useEntitlements";
+import { isNative, haptic } from "@/lib/despia";
+import { launchPaywall, openCustomerCenter } from "@/lib/revenuecat";
 import { LOGO_URL, TIERS, TIER_ORDER } from "@/lib/gems";
 
 const FEATURES = {
@@ -18,32 +20,14 @@ const FEATURES = {
 
 export default function Subscription() {
   const navigate = useNavigate();
-  const { user, trader, loading } = useCurrentTrader();
+  const { user, trader, loading, reload } = useCurrentTrader();
+  useEntitlements(trader, reload);
   const [selected, setSelected] = useState(null);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
 
-  const startCheckout = async () => {
-    setError("");
-    if (window.self !== window.top) {
-      setError("Checkout only works in the published app — open Gems24 in its own browser tab to subscribe.");
-      return;
-    }
-    setBusy(true);
-    try {
-      const { data } = await base44.functions.invoke("createSubscriptionCheckout", {
-        tier: selected,
-        traderId: trader.id,
-        email: trader.contact_email || user?.email,
-        successUrl: `${window.location.origin}/my-listings`,
-        cancelUrl: `${window.location.origin}/subscription`,
-      });
-      if (data?.url) window.location.href = data.url;
-      else setError("Could not start checkout. Please try again.");
-    } catch {
-      setError("Could not start checkout. Please try again.");
-    }
-    setBusy(false);
+  const subscribe = () => {
+    haptic("light");
+    launchPaywall(selected, trader.id);
+    setSelected(null);
   };
 
   if (loading) return <Spinner />;
@@ -70,8 +54,18 @@ export default function Subscription() {
         ))}
       </div>
 
+      {isNative && trader?.subscription_tier !== "none" && (
+        <Button
+          variant="outline"
+          className="mt-6 w-full max-w-sm mx-auto flex h-12"
+          onClick={() => openCustomerCenter(trader.id)}
+        >
+          <Settings2 className="w-4 h-4 mr-2" /> Manage subscription
+        </Button>
+      )}
+
       <p className="mt-6 text-center text-xs text-muted-foreground">
-        Monthly recurring billing, cancel anytime. Secure payment by Stripe.
+        Billed through your {isNative ? "app store" : "App Store or Google Play"} account. Cancel anytime.
       </p>
 
       <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
@@ -81,11 +75,11 @@ export default function Subscription() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="flex items-center gap-3 rounded-xl bg-secondary/70 p-4">
-              <CreditCard className="w-5 h-5 text-primary" />
+              <Smartphone className="w-5 h-5 text-primary" />
               <div>
-                <p className="text-sm font-semibold">Secure card payment</p>
+                <p className="text-sm font-semibold">In-app purchase</p>
                 <p className="text-xs text-muted-foreground">
-                  ${selected ? TIERS[selected].price : 0} per month, billed automatically.
+                  Monthly, yearly or lifetime — choose on the next screen.
                 </p>
               </div>
             </div>
@@ -98,14 +92,18 @@ export default function Subscription() {
                   Set up profile
                 </Button>
               </>
+            ) : !isNative ? (
+              <p className="text-sm text-muted-foreground">
+                Subscriptions are purchased inside the Gems24 mobile app. Install Gems24 on iOS or Android and
+                open this page again to subscribe.
+              </p>
             ) : (
               <>
                 <p className="text-sm text-muted-foreground">
-                  You'll be taken to Stripe to complete payment. Your plan activates as soon as the payment succeeds.
+                  Your plan activates the moment the store confirms the purchase.
                 </p>
-                {error && <p className="text-sm text-destructive">{error}</p>}
-                <Button className="w-full h-12 font-semibold" disabled={busy} onClick={startCheckout}>
-                  {busy ? "Opening checkout…" : "Continue to checkout"}
+                <Button className="w-full h-12 font-semibold" onClick={subscribe}>
+                  Continue
                 </Button>
               </>
             )}
