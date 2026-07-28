@@ -15,11 +15,8 @@ export default function AppHeader() {
       }}
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4" style={{ height: "var(--header-h)" }}>
-        <Link to="/" className="tap-scale flex items-center gap-2" onClick={() => haptic("light")}>
-          <img src={LOGO_URL} alt="" aria-hidden="true" className="h-8 w-8" />
-          <span className="text-xl font-bold tracking-tight">
-            Gems<span className="text-primary">24</span>
-          </span>
+        <Link to="/" className="tap-scale flex items-center" onClick={() => haptic("light")} aria-label="Gems24 home">
+          <img src={LOGO_URL} alt="Gems24" className="h-8 w-8" />
         </Link>
         <Link
           to="/settings"
