@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import BottomSheet from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Smartphone, Settings2 } from "lucide-react";
 import TierCard from "@/components/subscription/TierCard";
@@ -68,48 +68,15 @@ export default function Subscription() {
         Billed through your {isNative ? "app store" : "App Store or Google Play"} account. Cancel anytime.
       </p>
 
-      <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
-        <DialogContent className="sm:max-w-md rounded-2xl">
-          <DialogHeader>
-            <DialogTitle>{selected ? `${TIERS[selected].label} plan` : ""}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 rounded-xl bg-secondary/70 p-4">
-              <Smartphone className="w-5 h-5 text-primary" />
-              <div>
-                <p className="text-sm font-semibold">In-app purchase</p>
-                <p className="text-xs text-muted-foreground">
-                  Monthly, yearly or lifetime — choose on the next screen.
-                </p>
-              </div>
-            </div>
-            {!trader ? (
-              <>
-                <p className="text-sm text-muted-foreground">
-                  Create your trader profile first — your plan is linked to it.
-                </p>
-                <Button className="w-full h-12 font-semibold" onClick={() => navigate("/onboarding")}>
-                  Set up profile
-                </Button>
-              </>
-            ) : !isNative ? (
-              <p className="text-sm text-muted-foreground">
-                Subscriptions are purchased inside the Gems24 mobile app. Install Gems24 on iOS or Android and
-                open this page again to subscribe.
-              </p>
-            ) : (
-              <>
-                <p className="text-sm text-muted-foreground">
-                  Your plan activates the moment the store confirms the purchase.
-                </p>
-                <Button className="w-full h-12 font-semibold" onClick={subscribe}>
-                  Continue
-                </Button>
-              </>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <BottomSheet
+        open={!!selected}
+        onOpenChange={(o) => !o && setSelected(null)}
+        title={selected ? `${TIERS[selected].label} plan` : ""}
+      >
+        <div className="mx-auto max-w-md space-y-4">
+...
+        </div>
+      </BottomSheet>
     </div>
   );
 }
