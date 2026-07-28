@@ -135,7 +135,6 @@ export default function TraderProfile() {
               <NetworkButton
                 viewerId={viewer.id}
                 otherId={trader.id}
-                label={`Network with ${trader.full_name?.split(" ")[0] || "trader"}`}
                 context={{ label: `${trader.full_name}'s profile`, path: `/trader/${trader.id}` }}
                 className="w-full h-12"
               />

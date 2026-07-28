@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
 import { findOrCreateConversation } from "@/lib/chat";
 import { haptic } from "@/lib/despia";
+import NetworkLoader from "./NetworkLoader";
 
 /** Opens (or starts) the one-to-one chat with another trader. */
 export default function NetworkButton({ viewerId, otherId, context, className = "", label = "Network" }) {
@@ -15,14 +16,20 @@ export default function NetworkButton({ viewerId, otherId, context, className = 
   const open = async () => {
     setBusy(true);
     haptic("light");
-    const conversation = await findOrCreateConversation(viewerId, otherId, context);
+    const [conversation] = await Promise.all([
+      findOrCreateConversation(viewerId, otherId, context),
+      new Promise((r) => setTimeout(r, 4000)),
+    ]);
     navigate(`/messages/${conversation.id}`);
   };
 
   return (
-    <Button className={`font-semibold ${className}`} onClick={open} disabled={busy}>
-      <MessageCircle className="w-4 h-4 mr-2" />
-      {busy ? "Opening…" : label}
-    </Button>
+    <>
+      {busy && <NetworkLoader />}
+      <Button className={`font-semibold ${className}`} onClick={open} disabled={busy}>
+        <MessageCircle className="w-4 h-4 mr-2" />
+        {label}
+      </Button>
+    </>
   );
 }

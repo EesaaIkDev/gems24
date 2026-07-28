@@ -153,7 +153,6 @@ export default function ListingDetail() {
             <NetworkButton
               viewerId={viewer.id}
               otherId={owner.id}
-              label={`Network with ${owner.full_name?.split(" ")[0] || "trader"}`}
               context={{
                 label: `${listing.weight_carats} ct ${cap(listing.gemstone_type)}`,
                 path: `/listing/${listing.id}`,
