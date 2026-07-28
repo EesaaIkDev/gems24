@@ -5,7 +5,7 @@ import { Home, Users, MessageSquare, Gem, User } from "lucide-react";
 const TABS = [
   { to: "/", label: "Home", icon: Home },
   { to: "/directory", label: "Directory", icon: Users },
-  { to: "/enquiries", label: "Enquiries", icon: MessageSquare },
+  { to: "/messages", label: "Messages", icon: MessageSquare },
   { to: "/my-listings", label: "Listings", icon: Gem },
   { to: "/profile", label: "Profile", icon: User },
 ];
@@ -28,7 +28,7 @@ export default function BottomNav({ badge = 0 }) {
                 <Icon
                   className={`w-[22px] h-[22px] transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
                 />
-                {label === "Enquiries" && badge > 0 && (
+                {label === "Messages" && badge > 0 && (
                   <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-[10px] font-bold text-white flex items-center justify-center">
                     {badge > 9 ? "9+" : badge}
                   </span>

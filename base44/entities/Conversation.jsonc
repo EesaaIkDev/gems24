@@ -1,0 +1,44 @@
+{
+  "name": "Conversation",
+  "type": "object",
+  "properties": {
+    "participant_a_id": {
+      "type": "string",
+      "description": "Trader id, lexicographically smaller of the pair"
+    },
+    "participant_b_id": {
+      "type": "string",
+      "description": "Trader id, lexicographically larger of the pair"
+    },
+    "context_label": {
+      "type": "string",
+      "description": "Where the chat was started from, e.g. '5.2 ct Sapphire'"
+    },
+    "context_path": {
+      "type": "string",
+      "description": "App path back to the listing or profile"
+    },
+    "last_message": {
+      "type": "string"
+    },
+    "last_message_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_sender_id": {
+      "type": "string"
+    },
+    "unread_a": {
+      "type": "number",
+      "default": 0
+    },
+    "unread_b": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "participant_a_id",
+    "participant_b_id"
+  ]
+}

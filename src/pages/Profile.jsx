@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Crown, Settings as SettingsIcon, Users, User } from "lucide-react";
+import { ChevronRight, Crown, MessageCircle, Settings as SettingsIcon, Users, User } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import TierBadge from "@/components/common/TierBadge";
@@ -20,6 +20,7 @@ export default function Profile() {
 
   const links = [
     { to: `/trader/${trader.id}`, icon: User, label: "View public profile" },
+    { to: "/messages", icon: MessageCircle, label: "Messages" },
     { to: "/connections", icon: Users, label: "My connections" },
     { to: "/subscription", icon: Crown, label: "Subscription & upgrade" },
     { to: "/settings", icon: SettingsIcon, label: "Settings" },

@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileCheck2, Gem, MapPin, User } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
-import EnquiryDialog from "@/components/enquiries/EnquiryDialog";
+import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { cap } from "@/lib/gems";
 
@@ -27,7 +26,6 @@ export default function ListingDetail() {
   const [listing, setListing] = useState(null);
   const [owner, setOwner] = useState(null);
   const [active, setActive] = useState(0);
-  const [enquiring, setEnquiring] = useState(false);
 
   useEffect(() => {
     base44.entities.Listing.get(id).then(async (l) => {
@@ -149,26 +147,21 @@ export default function ListingDetail() {
         )}
       </div>
 
-      <div className="fixed bottom-16 inset-x-0 z-30 px-4 pb-3 pt-3 bg-gradient-to-t from-background via-background to-transparent">
-        <div className="max-w-6xl mx-auto">
-          <Button
-            className="w-full h-13 py-3.5 text-base font-semibold rounded-xl"
-            onClick={() => setEnquiring(true)}
-            disabled={listing.status === "sold"}
-          >
-            {listing.status === "sold" ? "Sold" : "Enquire about this stone"}
-          </Button>
+      {viewer && owner && viewer.id !== owner.id && (
+        <div className="fixed bottom-16 inset-x-0 z-30 px-4 pb-3 pt-3 bg-gradient-to-t from-background via-background to-transparent">
+          <div className="max-w-6xl mx-auto">
+            <NetworkButton
+              viewerId={viewer.id}
+              otherId={owner.id}
+              label={`Network with ${owner.full_name?.split(" ")[0] || "trader"}`}
+              context={{
+                label: `${listing.weight_carats} ct ${cap(listing.gemstone_type)}`,
+                path: `/listing/${listing.id}`,
+              }}
+              className="w-full h-13 py-3.5 text-base rounded-xl"
+            />
+          </div>
         </div>
-      </div>
-
-      {enquiring && (
-        <EnquiryDialog
-          open={enquiring}
-          onOpenChange={setEnquiring}
-          listing={listing}
-          trader={owner}
-          viewer={viewer}
-        />
       )}
     </div>
   );

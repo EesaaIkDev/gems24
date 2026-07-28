@@ -1,24 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
 import AppHeader from "./AppHeader";
 import BottomNav from "./BottomNav";
 import useTheme from "@/hooks/useTheme";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
+import useMessageNotifications from "@/hooks/useMessageNotifications";
 import AppLockGate from "@/components/native/AppLockGate";
 import { registerPush } from "@/lib/despia";
 
 export default function AppLayout() {
   useTheme();
   const { user, trader } = useCurrentTrader();
-  const [newEnquiries, setNewEnquiries] = useState(0);
-
-  useEffect(() => {
-    if (!trader?.id) return setNewEnquiries(0);
-    base44.entities.Enquiry.filter({ owner_trader_id: trader.id, status: "new" }).then((rows) =>
-      setNewEnquiries(rows.length)
-    );
-  }, [trader?.id]);
+  const unreadMessages = useMessageNotifications(trader?.id);
 
   useEffect(() => {
     registerPush(user?.id);
@@ -31,7 +24,7 @@ export default function AppLayout() {
         <main className="max-w-6xl mx-auto pb-24">
           <Outlet />
         </main>
-        <BottomNav badge={newEnquiries} />
+        <BottomNav badge={unreadMessages} />
       </div>
     </AppLockGate>
   );

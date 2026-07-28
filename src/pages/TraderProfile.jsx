@@ -8,6 +8,7 @@ import Spinner from "@/components/common/Spinner";
 import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import ListingCard from "@/components/listings/ListingCard";
+import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { cap } from "@/lib/gems";
 
@@ -130,7 +131,14 @@ export default function TraderProfile() {
           </div>
 
           {!isSelf && !viewerLoading && viewer && (
-            <div className="mt-4">
+            <div className="mt-4 space-y-2.5">
+              <NetworkButton
+                viewerId={viewer.id}
+                otherId={trader.id}
+                label={`Network with ${trader.full_name?.split(" ")[0] || "trader"}`}
+                context={{ label: `${trader.full_name}'s profile`, path: `/trader/${trader.id}` }}
+                className="w-full h-12"
+              />
               {connected ? (
                 <Button variant="outline" className="w-full h-12" disabled>
                   <Check className="w-4 h-4 mr-2" /> Connected

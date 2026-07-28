@@ -50,7 +50,7 @@ export default function Home() {
       <div>
         <h1 className="text-[26px] font-bold leading-tight">Discover gemstones</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Browse stones from verified traders worldwide. Enquire directly — no prices shown publicly.
+          Browse stones from verified traders worldwide. Network directly — no prices shown publicly.
         </p>
       </div>
 
