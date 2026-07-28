@@ -47,7 +47,7 @@ export default function Messages() {
 
   return (
     <div className="pt-5">
-      <h1 className="px-4 text-[26px] font-bold leading-tight">Messages</h1>
+      <h1 className="px-4 text-[1.625rem] font-bold leading-tight">Messages</h1>
       {rows.length === 0 ? (
         <div className="px-4 mt-6">
           <EmptyState

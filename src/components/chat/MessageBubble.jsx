@@ -11,8 +11,8 @@ export default function MessageBubble({ message, mine }) {
             : "bg-secondary text-foreground rounded-bl-md"
         }`}
       >
-        <p className="text-[15px] leading-snug whitespace-pre-wrap break-words">{message.text}</p>
-        <p className={`mt-1 text-[10px] ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+        <p className="text-[0.9375rem] leading-snug whitespace-pre-wrap break-words">{message.text}</p>
+        <p className={`mt-1 text-[0.625rem] ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
           {format(new Date(message.created_date), "HH:mm")}
         </p>
       </div>

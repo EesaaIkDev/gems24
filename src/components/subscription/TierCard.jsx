@@ -14,12 +14,12 @@ export default function TierCard({ tier, features, current, onSelect }) {
       }`}
     >
       {highlight && (
-        <span className="absolute -top-2.5 left-5 rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
+        <span           className="absolute -top-2.5 left-5 rounded-full bg-primary px-2.5 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-primary-foreground">
           Most popular
         </span>
       )}
       <div className="flex items-center gap-2">
-        <span className={`rounded-full border px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider ${TIER_STYLES[tier]}`}>
+        <span className={`rounded-full border px-2.5 py-1 text-[0.6875rem] font-bold uppercase tracking-wider ${TIER_STYLES[tier]}`}>
           {t.label}
         </span>
         {current && <Crown className="w-4 h-4 text-primary" />}

@@ -103,10 +103,10 @@ export default function TraderProfile() {
             </div>
           )}
 
-          {trader.bio && <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">{trader.bio}</p>}
+          {trader.bio && <p className="mt-4 text-[0.9375rem] leading-relaxed text-foreground/85">{trader.bio}</p>}
 
           <div className="mt-5 rounded-2xl bg-secondary/70 p-4">
-            <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">Contact details</p>
+            <p className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground font-semibold">Contact details</p>
             {showContact ? (
               <div className="mt-2 space-y-1.5">
                 {trader.contact_email && (

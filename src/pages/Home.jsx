@@ -48,7 +48,7 @@ export default function Home() {
   return (
     <div className="px-4 pt-5 space-y-5">
       <div>
-        <h1 className="text-[26px] font-bold leading-tight">Discover gemstones</h1>
+        <h1 className="text-[1.625rem] font-bold leading-tight">Discover gemstones</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Browse stones from verified traders worldwide. Network directly — no prices shown publicly.
         </p>

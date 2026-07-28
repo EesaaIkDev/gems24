@@ -41,14 +41,14 @@ export default function PhotoUploader({ photos = [], onChange }) {
         ) : (
           <>
             <ImagePlus className="w-5 h-5 text-muted-foreground" />
-            <span className="text-[10px] text-muted-foreground">Add photo</span>
+            <span className="text-[0.625rem] text-muted-foreground">Add photo</span>
           </>
         )}
         <input type="file" accept="image/*" multiple className="hidden" onChange={handleFiles} disabled={uploading} />
       </label>
       <label className="aspect-square rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary/50 transition-colors">
         <Camera className="w-5 h-5 text-muted-foreground" />
-        <span className="text-[10px] text-muted-foreground">Camera</span>
+        <span className="text-[0.625rem] text-muted-foreground">Camera</span>
         <input
           type="file"
           accept="image/*"

@@ -26,15 +26,15 @@ export default function BottomNav({ badge = 0 }) {
             >
               <div className="relative">
                 <Icon
-                  className={`w-[22px] h-[22px] transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
+                  className={`w-[1.375rem] h-[1.375rem] transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
                 />
                 {label === "Messages" && badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-[10px] font-bold text-white flex items-center justify-center">
+                  <span className="absolute -top-1.5 -right-2 min-w-[1rem] h-4 px-1 rounded-full bg-destructive text-[0.625rem] font-bold text-white flex items-center justify-center">
                     {badge > 9 ? "9+" : badge}
                   </span>
                 )}
               </div>
-              <span className={`text-[10px] font-medium ${active ? "text-primary" : "text-muted-foreground"}`}>
+              <span className={`text-[0.625rem] font-medium ${active ? "text-primary" : "text-muted-foreground"}`}>
                 {label}
               </span>
             </Link>

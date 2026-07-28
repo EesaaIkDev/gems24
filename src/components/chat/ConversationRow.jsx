@@ -22,7 +22,7 @@ export default function ConversationRow({ conversation, other, unread }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <p className="font-semibold truncate">{other?.full_name || "Trader"}</p>
-          <span className="ml-auto text-[11px] text-muted-foreground shrink-0">
+          <span className="ml-auto text-[0.6875rem] text-muted-foreground shrink-0">
             {stamp ? formatDistanceToNowStrict(new Date(stamp)) : ""}
           </span>
         </div>
@@ -31,7 +31,7 @@ export default function ConversationRow({ conversation, other, unread }) {
             {conversation.last_message || "Say hello 👋"}
           </p>
           {unread > 0 && (
-            <span className="ml-auto min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-[11px] font-bold text-primary-foreground flex items-center justify-center shrink-0">
+            <span className="ml-auto min-w-[1.25rem] h-5 px-1.5 rounded-full bg-primary text-[0.6875rem] font-bold text-primary-foreground flex items-center justify-center shrink-0">
               {unread > 9 ? "9+" : unread}
             </span>
           )}

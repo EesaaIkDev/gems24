@@ -36,7 +36,7 @@ export default function Subscription() {
     <div className="px-4 pt-5 pb-10">
       <div className="text-center max-w-lg mx-auto">
         <img src={LOGO_URL} alt="Gems24" className="w-14 h-14 mx-auto" />
-        <h1 className="mt-4 text-[26px] font-bold leading-tight">Choose your plan</h1>
+        <h1 className="mt-4 text-[1.625rem] font-bold leading-tight">Choose your plan</h1>
         <p className="mt-1.5 text-sm text-muted-foreground">
           Publishing listings requires a paid plan. Higher tiers get badges and better placement.
         </p>

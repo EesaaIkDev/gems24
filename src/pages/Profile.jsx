@@ -61,7 +61,7 @@ export default function Profile() {
       <div className="rounded-2xl bg-card border border-border overflow-hidden divide-y divide-border">
         {links.map(({ to, icon: Icon, label }) => (
           <Link key={to} to={to} className="flex items-center gap-3 px-4 h-14 hover:bg-secondary/60 transition-colors">
-            <Icon className="w-[18px] h-[18px] text-primary" />
+            <Icon className="w-[1.125rem] h-[1.125rem] text-primary" />
             <span className="text-sm font-medium">{label}</span>
             <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
           </Link>

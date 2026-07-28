@@ -14,7 +14,7 @@ function Spec({ label, value }) {
   if (!value) return null;
   return (
     <div className="rounded-xl bg-secondary/70 p-3">
-      <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground">{label}</p>
       <p className="mt-0.5 text-sm font-semibold">{value}</p>
     </div>
   );
@@ -108,7 +108,7 @@ export default function ListingDetail() {
         {listing.description && (
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Description</h2>
-            <p className="mt-2 text-[15px] leading-relaxed text-foreground/85 whitespace-pre-line">
+            <p className="mt-2 text-[0.9375rem] leading-relaxed text-foreground/85 whitespace-pre-line">
               {listing.description}
             </p>
           </div>

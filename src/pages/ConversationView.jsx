@@ -77,7 +77,7 @@ export default function ConversationView() {
                 <VerifiedBadge verified={other?.verified} />
               </div>
               {other?.business_name && (
-                <p className="text-[11px] text-muted-foreground truncate">{other.business_name}</p>
+                <p className="text-[0.6875rem] text-muted-foreground truncate">{other.business_name}</p>
               )}
             </div>
           </Link>
@@ -85,7 +85,7 @@ export default function ConversationView() {
         {conversation.context_label && (
           <Link
             to={conversation.context_path || "#"}
-            className="mt-2.5 block rounded-lg bg-accent px-3 py-1.5 text-[11px] font-medium text-accent-foreground truncate"
+            className="mt-2.5 block rounded-lg bg-accent px-3 py-1.5 text-[0.6875rem] font-medium text-accent-foreground truncate"
           >
             Chat started from: {conversation.context_label}
           </Link>
