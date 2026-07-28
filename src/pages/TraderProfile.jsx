@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Lock, Mail, MapPin, Phone, User, UserPlus, Check, Clock } from "lucide-react";
+import { ArrowLeft, Lock, Mail, MapPin, Phone, User } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
@@ -18,7 +17,6 @@ export default function TraderProfile() {
   const [trader, setTrader] = useState(null);
   const [listings, setListings] = useState([]);
   const [connection, setConnection] = useState(null);
-  const [busy, setBusy] = useState(false);
 
   const isSelf = viewer?.id === id;
 
@@ -41,13 +39,6 @@ export default function TraderProfile() {
   useEffect(() => {
     if (viewer?.id && !isSelf) loadConnection(viewer.id);
   }, [viewer?.id, id]);
-
-  const connect = async () => {
-    setBusy(true);
-    await base44.entities.Connection.create({ requester_id: viewer.id, recipient_id: id, status: "pending" });
-    await loadConnection(viewer.id);
-    setBusy(false);
-  };
 
   if (!trader) return <Spinner />;
 
@@ -131,26 +122,13 @@ export default function TraderProfile() {
           </div>
 
           {!isSelf && !viewerLoading && viewer && (
-            <div className="mt-4 space-y-2.5">
+            <div className="mt-4">
               <NetworkButton
                 viewerId={viewer.id}
                 otherId={trader.id}
                 context={{ label: `${trader.full_name}'s profile`, path: `/trader/${trader.id}` }}
                 className="w-full h-12"
               />
-              {connected ? (
-                <Button variant="outline" className="w-full h-12" disabled>
-                  <Check className="w-4 h-4 mr-2" /> Connected
-                </Button>
-              ) : connection?.status === "pending" ? (
-                <Button variant="outline" className="w-full h-12" disabled>
-                  <Clock className="w-4 h-4 mr-2" /> Request pending
-                </Button>
-              ) : (
-                <Button className="w-full h-12 font-semibold" onClick={connect} disabled={busy}>
-                  <UserPlus className="w-4 h-4 mr-2" /> Connect
-                </Button>
-              )}
             </div>
           )}
         </div>
