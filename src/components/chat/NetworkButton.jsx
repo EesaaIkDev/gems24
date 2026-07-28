@@ -23,13 +23,20 @@ export default function NetworkButton({ viewerId, otherId, context, className = 
     navigate(`/messages/${conversation.id}`);
   };
 
+  if (busy) {
+    return (
+      <div
+        className={`flex items-center justify-center rounded-md border-2 border-primary bg-transparent ${className}`}
+      >
+        <NetworkLoader size={26} />
+      </div>
+    );
+  }
+
   return (
-    <>
-      {busy && <NetworkLoader />}
-      <Button className={`font-semibold ${className}`} onClick={open} disabled={busy}>
-        <MessageCircle className="w-4 h-4 mr-2" />
-        {label}
-      </Button>
-    </>
+    <Button className={`font-semibold ${className}`} onClick={open}>
+      <MessageCircle className="w-4 h-4 mr-2" />
+      {label}
+    </Button>
   );
 }

@@ -1,7 +1,6 @@
 import React from "react";
 
 const CSS = `
-.g24-anim { width: 140px; height: 140px; }
 .g24-anim svg { width: 100%; height: 100%; overflow: visible; }
 .g24-anim .loading-group { animation: g24-fadeOut 0.4s ease forwards; animation-delay: 2.35s; }
 .g24-anim .gem-shake-wrap { transform-box: view-box; transform-origin: 50px 48px; animation: g24-shake 1.95s ease-in-out infinite; }
@@ -38,12 +37,12 @@ const CSS = `
 @keyframes g24-twinkle { 0%, 100% { opacity: 0; transform: scale(0.4); } 50% { opacity: 1; transform: scale(1); } }
 `;
 
-/** Full-screen gem magnifier → success checkmark animation. */
-export default function NetworkLoader() {
+/** Gem magnifier → success checkmark animation. */
+export default function NetworkLoader({ size = 140 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
+    <>
       <style>{CSS}</style>
-      <div className="g24-anim">
+      <div className="g24-anim" style={{ width: size, height: size }}>
         <svg viewBox="0 0 100 100">
           <g className="loading-group">
             <g className="gem-shake-wrap">
@@ -71,6 +70,6 @@ export default function NetworkLoader() {
           <path className="checkmark" d="M36,50 L46,60 L66,36" />
         </svg>
       </div>
-    </div>
+    </>
   );
 }
