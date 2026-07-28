@@ -55,7 +55,7 @@ export default function ConversationView() {
 
   return (
     <div className="pb-32">
-      <div className="sticky top-16 z-20 bg-background/95 backdrop-blur-xl border-b border-border px-4 py-3">
+      <div className="sticky top-0 z-20 glass-chrome border-b border-border px-4 py-3">
         <div className="flex items-center gap-3">
           <Link to="/messages" className="text-muted-foreground hover:text-primary">
             <ArrowLeft className="w-5 h-5" />

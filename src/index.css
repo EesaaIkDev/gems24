@@ -80,16 +80,83 @@
 }
 
 @layer base {
+  :root {
+    /* Despia injects --safe-area-* natively; env() covers mobile browsers. */
+    --safe-top: var(--safe-area-top, env(safe-area-inset-top, 0px));
+    --safe-bottom: var(--safe-area-bottom, env(safe-area-inset-bottom, 0px));
+    --safe-left: var(--safe-area-left, env(safe-area-inset-left, 0px));
+    --safe-right: var(--safe-area-right, env(safe-area-inset-right, 0px));
+    --header-h: 3.5rem;
+    --tabbar-h: 3.75rem;
+  }
+
   * {
     @apply border-border outline-ring/50;
+  }
+
+  /* App shell: the document never scrolls — only dedicated containers do. */
+  html, body, #root {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
   }
 
   body {
     @apply bg-background text-foreground font-body antialiased;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   h1, h2, h3 {
     @apply font-heading tracking-tight;
+  }
+
+  /* Visible keyboard focus for VoiceOver / TalkBack / keyboard users. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer components {
+  .app-scroll {
+    @apply flex-1 overflow-y-auto overflow-x-hidden;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .app-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Frosted floating chrome (header + tab bar). */
+  .glass-chrome {
+    background-color: hsl(var(--background) / 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  /* GPU-only press feedback — transform/opacity, never layout. */
+  .tap-scale {
+    transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 140ms ease;
+    will-change: transform;
+  }
+
+  .tap-scale:active {
+    transform: scale(0.94);
+    opacity: 0.75;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .tap-scale:active {
+    transform: none;
   }
 }
