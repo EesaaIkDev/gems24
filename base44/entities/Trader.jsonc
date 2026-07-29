@@ -70,6 +70,11 @@
     },
     "contact_email": {
       "type": "string"
+    },
+    "require_message_approval": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, other traders must be accepted before they can message this trader"
     }
   },
   "required": [

@@ -152,7 +152,7 @@ export default function ListingDetail() {
           <div className="max-w-6xl mx-auto">
             <NetworkButton
               viewerId={viewer.id}
-              otherId={owner.id}
+              other={owner}
               context={{
                 label: `${listing.weight_carats} ct ${cap(listing.gemstone_type)}`,
                 path: `/listing/${listing.id}`,

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Crown, LogOut, Moon } from "lucide-react";
+import { ArrowLeft, Crown, LogOut, Moon, ShieldCheck } from "lucide-react";
 import TraderForm from "@/components/traders/TraderForm";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
@@ -67,6 +67,20 @@ export default function Settings() {
             <Button asChild variant="outline" className="mt-3 w-full h-11">
               <Link to="/subscription">{trader.subscription_tier === "none" ? "View plans" : "Change plan"}</Link>
             </Button>
+          </div>
+
+          <div className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3">
+            <ShieldCheck className="w-[18px] h-[18px] text-primary" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">Require approval before messaging</p>
+              <p className="text-xs text-muted-foreground">
+                Traders can still follow you, but must be accepted before they can chat.
+              </p>
+            </div>
+            <Switch
+              checked={!!trader.require_message_approval}
+              onCheckedChange={(v) => save({ require_message_approval: v })}
+            />
           </div>
 
           <div className="rounded-2xl bg-card border border-border p-5">

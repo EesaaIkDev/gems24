@@ -66,7 +66,7 @@ export default function Onboarding() {
         key: "trader",
         icon: Gem,
         title: "I'm a Trader",
-        desc: "Publish gemstone listings, appear in the directory and connect with traders worldwide.",
+        desc: "Publish gemstone listings, appear in Gemstones search and connect with traders worldwide.",
       },
       {
         key: "buyer",

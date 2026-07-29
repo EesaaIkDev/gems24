@@ -68,7 +68,7 @@ export default function Connections() {
           {!ready ? (
             <Spinner />
           ) : data.accepted.length === 0 ? (
-            <EmptyState icon={Users} title="No connections yet" description="Find traders in the directory and send a connection request." />
+            <EmptyState icon={Users} title="No connections yet" description="Find traders under Gemstones and tap Network to connect." />
           ) : (
             data.accepted.map(({ t }) => <TraderCard key={t.id} trader={t} />)
           )}

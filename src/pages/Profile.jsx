@@ -1,17 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Crown, MessageCircle, Settings as SettingsIcon, Users, User } from "lucide-react";
+import { ChevronRight, Crown, Gem, MessageCircle, Plus, Settings as SettingsIcon, Users, User } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
+import EmptyState from "@/components/common/EmptyState";
+import OwnListingsGrid from "@/components/listings/OwnListingsGrid";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
-import { TIERS, cap } from "@/lib/gems";
+import { TIERS, cap, tierLimit } from "@/lib/gems";
 
 export default function Profile() {
   const { user, trader, loading } = useCurrentTrader();
+  const [listings, setListings] = useState(null);
+
+  useEffect(() => {
+    if (!trader?.id) return;
+    base44.entities.Listing.filter({ trader_id: trader.id }, "-created_date", 200).then(setListings);
+  }, [trader?.id]);
 
   if (loading) return <Spinner />;
   if (!user) return <SignInPrompt title="Sign in to Gems24" />;
@@ -20,52 +29,88 @@ export default function Profile() {
 
   const links = [
     { to: `/trader/${trader.id}`, icon: User, label: "View public profile" },
-    { to: "/messages", icon: MessageCircle, label: "Messages" },
-    { to: "/connections", icon: Users, label: "My connections" },
+    { to: "/messages", icon: MessageCircle, label: "Chats" },
+    { to: "/connections", icon: Users, label: "My network" },
     { to: "/subscription", icon: Crown, label: "Subscription & upgrade" },
     { to: "/settings", icon: SettingsIcon, label: "Settings" },
   ];
 
+  const active = (listings || []).filter((l) => l.status !== "sold");
+  const limit = tierLimit(trader.subscription_tier);
+
   return (
-    <div className="px-4 pt-5 space-y-5 max-w-lg mx-auto">
-      <div className="rounded-3xl bg-card border border-border p-5">
-        <div className="flex items-center gap-4">
-          <div className="w-20 h-20 rounded-2xl overflow-hidden bg-secondary flex items-center justify-center shrink-0">
-            {trader.profile_photo ? (
-              <Image src={trader.profile_photo} alt={trader.full_name} className="w-full h-full" />
-            ) : (
-              <User className="w-8 h-8 text-muted-foreground/50" />
-            )}
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              <h1 className="text-xl font-bold truncate">{trader.full_name}</h1>
-              <VerifiedBadge verified={trader.verified} />
+    <div className="pt-5 pb-6 max-w-lg mx-auto">
+      <div className="px-4 space-y-5">
+        <div className="rounded-3xl bg-card border border-border p-5">
+          <div className="flex items-center gap-4">
+            <div className="w-20 h-20 rounded-2xl overflow-hidden bg-secondary flex items-center justify-center shrink-0">
+              {trader.profile_photo ? (
+                <Image src={trader.profile_photo} alt={trader.full_name} className="w-full h-full" />
+              ) : (
+                <User className="w-8 h-8 text-muted-foreground/50" />
+              )}
             </div>
-            <p className="text-sm text-muted-foreground truncate">
-              {trader.business_name || cap(trader.account_type)}
-            </p>
-            <div className="mt-1.5 flex items-center gap-2">
-              <TierBadge tier={trader.subscription_tier} />
-              <span className="text-xs text-muted-foreground">
-                {trader.subscription_tier === "none" ? "No active plan" : `${TIERS[trader.subscription_tier].label} plan`}
-              </span>
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <h1 className="text-xl font-bold truncate">{trader.full_name}</h1>
+                <VerifiedBadge verified={trader.verified} />
+              </div>
+              <p className="text-sm text-muted-foreground truncate">
+                {trader.business_name || cap(trader.account_type)}
+              </p>
+              <div className="mt-1.5 flex items-center gap-2">
+                <TierBadge tier={trader.subscription_tier} />
+                <span className="text-xs text-muted-foreground">
+                  {trader.subscription_tier === "none" ? "No active plan" : `${TIERS[trader.subscription_tier].label} plan`}
+                </span>
+              </div>
             </div>
           </div>
+          <Button asChild variant="outline" className="mt-4 w-full h-11">
+            <Link to="/settings">Edit profile</Link>
+          </Button>
         </div>
-        <Button asChild variant="outline" className="mt-4 w-full h-11">
-          <Link to="/settings">Edit profile</Link>
-        </Button>
+
+        <div className="rounded-2xl bg-card border border-border overflow-hidden divide-y divide-border">
+          {links.map(({ to, icon: Icon, label }) => (
+            <Link key={to} to={to} className="flex items-center gap-3 px-4 h-14 hover:bg-secondary/60 transition-colors">
+              <Icon className="w-[1.125rem] h-[1.125rem] text-primary" />
+              <span className="text-sm font-medium">{label}</span>
+              <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            My listings ({active.length}
+            {limit === Infinity ? "" : `/${limit}`})
+          </h2>
+          <Button asChild size="sm" variant="outline" className="h-9">
+            <Link to="/add">
+              <Plus className="w-4 h-4 mr-1.5" /> Add
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      <div className="rounded-2xl bg-card border border-border overflow-hidden divide-y divide-border">
-        {links.map(({ to, icon: Icon, label }) => (
-          <Link key={to} to={to} className="flex items-center gap-3 px-4 h-14 hover:bg-secondary/60 transition-colors">
-            <Icon className="w-[1.125rem] h-[1.125rem] text-primary" />
-            <span className="text-sm font-medium">{label}</span>
-            <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto" />
-          </Link>
-        ))}
+      <div className="mt-3">
+        {listings === null ? (
+          <Spinner />
+        ) : listings.length === 0 ? (
+          <EmptyState
+            icon={Gem}
+            title="No listings yet"
+            description="Publish your first gemstone to appear in traders' feeds."
+            action={
+              <Button asChild className="h-11 px-6 font-semibold">
+                <Link to="/add">Add a listing</Link>
+              </Button>
+            }
+          />
+        ) : (
+          <OwnListingsGrid listings={listings} />
+        )}
       </div>
     </div>
   );

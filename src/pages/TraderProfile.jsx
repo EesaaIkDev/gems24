@@ -10,25 +10,20 @@ import ListingCard from "@/components/listings/ListingCard";
 import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { cap } from "@/lib/gems";
+import { findConnection, listMyConnections } from "@/lib/network";
 
 export default function TraderProfile() {
   const { id } = useParams();
   const { trader: viewer, loading: viewerLoading } = useCurrentTrader();
   const [trader, setTrader] = useState(null);
   const [listings, setListings] = useState([]);
-  const [connection, setConnection] = useState(null);
+  const [connection, setConnection] = useState(undefined);
 
   const isSelf = viewer?.id === id;
 
   const loadConnection = async (viewerId) => {
-    const all = await base44.entities.Connection.list("-created_date", 200);
-    setConnection(
-      all.find(
-        (c) =>
-          (c.requester_id === viewerId && c.recipient_id === id) ||
-          (c.recipient_id === viewerId && c.requester_id === id)
-      ) || null
-    );
+    const rows = await listMyConnections(viewerId);
+    setConnection(findConnection(rows, viewerId, id));
   };
 
   useEffect(() => {
@@ -49,8 +44,8 @@ export default function TraderProfile() {
   return (
     <div className="pb-6">
       <div className="px-4 pt-4">
-        <Link to="/directory" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary">
-          <ArrowLeft className="w-4 h-4" /> Directory
+        <Link to="/gemstones" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary">
+          <ArrowLeft className="w-4 h-4" /> Gemstones
         </Link>
       </div>
 
@@ -121,11 +116,12 @@ export default function TraderProfile() {
             )}
           </div>
 
-          {!isSelf && !viewerLoading && viewer && (
+          {!isSelf && !viewerLoading && viewer && connection !== undefined && (
             <div className="mt-4">
               <NetworkButton
                 viewerId={viewer.id}
-                otherId={trader.id}
+                other={trader}
+                connection={connection}
                 context={{ label: `${trader.full_name}'s profile`, path: `/trader/${trader.id}` }}
                 className="w-full h-12"
               />

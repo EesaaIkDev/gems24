@@ -9,12 +9,12 @@ import ScrollToTop from './components/ScrollToTop';
 // Add page imports here
 import AppLayout from '@/components/layout/AppLayout';
 import Home from '@/pages/Home';
-import Directory from '@/pages/Directory';
+import Gemstones from '@/pages/Gemstones';
+import AddListing from '@/pages/AddListing';
 import ListingDetail from '@/pages/ListingDetail';
 import TraderProfile from '@/pages/TraderProfile';
 import Messages from '@/pages/Messages';
 import ConversationView from '@/pages/ConversationView';
-import MyListings from '@/pages/MyListings';
 import ListingEditor from '@/pages/ListingEditor';
 import Connections from '@/pages/Connections';
 import Subscription from '@/pages/Subscription';
@@ -50,13 +50,12 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/directory" element={<Directory />} />
+        <Route path="/gemstones" element={<Gemstones />} />
+        <Route path="/add" element={<AddListing />} />
         <Route path="/listing/:id" element={<ListingDetail />} />
         <Route path="/trader/:id" element={<TraderProfile />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/messages/:id" element={<ConversationView />} />
-        <Route path="/my-listings" element={<MyListings />} />
-        <Route path="/my-listings/new" element={<ListingEditor />} />
         <Route path="/my-listings/:id/edit" element={<ListingEditor />} />
         <Route path="/connections" element={<Connections />} />
         <Route path="/subscription" element={<Subscription />} />
