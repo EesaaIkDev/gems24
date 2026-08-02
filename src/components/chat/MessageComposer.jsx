@@ -27,9 +27,9 @@ export default function MessageComposer({ onSend }) {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Write a message…"
-          className="h-11 rounded-full"
+          className="h-11"
         />
-        <Button type="submit" size="icon" className="h-11 w-11 rounded-full shrink-0" disabled={!text.trim()}>
+        <Button type="submit" size="icon" className="h-11 w-11 shrink-0" disabled={!text.trim()}>
           <Send className="w-4 h-4" />
         </Button>
       </div>
