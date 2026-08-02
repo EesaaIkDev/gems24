@@ -40,7 +40,7 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
         <TierBadge tier={listing.trader_tier} />
       </div>
 
-      <Link to={`/listing/${listing.id}`} className="block bg-secondary">
+      <Link to={`/listing/${listing.id}`} className="block gem-corners gem-card bg-secondary">
         <div className="aspect-square w-full flex items-center justify-center">
           {photo ? (
             <Image src={photo} alt={`${listing.weight_carats} ct ${listing.gemstone_type}`} className="w-full h-full" />

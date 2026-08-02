@@ -11,11 +11,11 @@ export default function TraderCard({ trader }) {
   return (
     <Link
       to={`/trader/${trader.id}`}
-      className={`flex gap-3.5 p-3.5 rounded-2xl bg-card border transition-all hover:shadow-md ${
+      className={`flex gap-3.5 p-3.5 gem-corners gem-card bg-card border transition-all hover:shadow-md ${
         highlight ? "border-primary/40 ring-1 ring-primary/10" : "border-border hover:border-primary/30"
       }`}
     >
-      <div className="w-16 h-16 shrink-0 rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
+      <div className="w-16 h-16 shrink-0 gem-corners gem-tile overflow-hidden bg-secondary flex items-center justify-center">
         {trader.profile_photo ? (
           <Image src={trader.profile_photo} alt={trader.full_name} className="w-full h-full" />
         ) : (

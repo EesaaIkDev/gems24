@@ -17,7 +17,7 @@ export default function ListingCard({ listing }) {
   return (
     <Link
       to={`/listing/${listing.id}`}
-      className="group block rounded-2xl overflow-hidden bg-card border border-border hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+      className="group block gem-corners gem-card overflow-hidden bg-card border border-border hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
     >
       <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
         {photo ? (

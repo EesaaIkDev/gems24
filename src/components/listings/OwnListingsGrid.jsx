@@ -12,7 +12,7 @@ export default function OwnListingsGrid({ listings }) {
         <Link
           key={l.id}
           to={`/my-listings/${l.id}/edit`}
-          className="relative aspect-square bg-secondary flex items-center justify-center overflow-hidden"
+          className="relative aspect-square gem-corners gem-tile bg-secondary flex items-center justify-center overflow-hidden"
         >
           {l.photos?.[0] ? (
             <Image src={l.photos[0]} alt={`${l.weight_carats} ct ${l.gemstone_type}`} className="w-full h-full" />

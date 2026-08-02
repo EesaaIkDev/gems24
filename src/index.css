@@ -152,6 +152,15 @@
     );
   }
 
+  /* Larger chamfer for cards, smaller for grid tiles. */
+  .gem-card {
+    --gem-cut: 1rem;
+  }
+
+  .gem-tile {
+    --gem-cut: 0.5rem;
+  }
+
   /* Smaller chamfer for compact filter chips. */
   .gem-chip {
     --gem-cut: 0.45rem;
