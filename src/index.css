@@ -152,6 +152,11 @@
     );
   }
 
+  /* Smaller chamfer for compact filter chips. */
+  .gem-chip {
+    --gem-cut: 0.45rem;
+  }
+
   /* Faceted button: glare beam + spring press. */
   .gem-btn {
     position: relative;

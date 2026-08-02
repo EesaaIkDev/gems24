@@ -2,13 +2,10 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
+import { chipClass as chip } from "@/components/common/filterChip";
 
 export default function ListingFilters({ filters, setFilters, countries }) {
   const set = (k, v) => setFilters({ ...filters, [k]: v });
-  const chip = (active) =>
-    `shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors ${
-      active ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border text-muted-foreground hover:border-primary/40"
-    }`;
 
   const hasFilters = filters.type || filters.treatment || filters.country || filters.minCt || filters.maxCt;
 
@@ -24,7 +21,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
         />
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto pb-2.5 -mx-4 px-4 scrollbar-none">
         <button className={chip(!filters.type)} onClick={() => set("type", "")}>All stones</button>
         {GEM_TYPES.map((t) => (
           <button key={t} className={chip(filters.type === t)} onClick={() => set("type", t)}>
@@ -33,7 +30,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
         ))}
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto pb-2.5 -mx-4 px-4 scrollbar-none">
         {TREATMENTS.map((t) => (
           <button
             key={t}
@@ -73,7 +70,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
         {hasFilters && (
           <button
             onClick={() => setFilters({ q: filters.q, type: "", treatment: "", country: "", minCt: "", maxCt: "" })}
-            className="shrink-0 h-10 px-3 rounded-xl border border-border text-xs text-muted-foreground flex items-center gap-1"
+            className="gem-corners gem-btn gem-chip shrink-0 h-10 px-3 border border-border text-xs font-semibold text-muted-foreground flex items-center gap-1 bg-card"
           >
             <X className="w-3.5 h-3.5" /> Clear
           </button>
