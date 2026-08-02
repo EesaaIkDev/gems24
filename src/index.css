@@ -152,13 +152,21 @@
     );
   }
 
-  /* Larger chamfer for cards, smaller for grid tiles. */
+  /* Larger chamfer for cards. */
   .gem-card {
     --gem-cut: 1rem;
   }
 
-  .gem-tile {
-    --gem-cut: 0.5rem;
+  /* Border for chamfered shapes: clip-path cuts real borders away on the
+     facets, so the frame is a clipped outer layer of border colour with the
+     content clipped 1px inside it. */
+  .gem-frame {
+    background-color: hsl(var(--border));
+    padding: 1px;
+  }
+
+  .gem-frame-primary {
+    background-color: hsl(var(--primary) / 0.4);
   }
 
   /* Smaller chamfer for compact filter chips. */

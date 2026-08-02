@@ -17,8 +17,9 @@ export default function ListingCard({ listing }) {
   return (
     <Link
       to={`/listing/${listing.id}`}
-      className="group block gem-corners gem-card overflow-hidden bg-card border border-border hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+      className="group block gem-corners gem-card gem-frame hover:gem-frame-primary transition-colors"
     >
+      <div className="gem-corners gem-card overflow-hidden bg-card">
       <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
         {photo ? (
           <Image
@@ -65,6 +66,7 @@ export default function ListingCard({ listing }) {
               <MapPin className="w-3 h-3" /> {listing.trader_country}
             </span>
           )}
+        </div>
         </div>
       </div>
     </Link>

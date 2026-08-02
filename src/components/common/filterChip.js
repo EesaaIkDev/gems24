@@ -1,7 +1,9 @@
-/** Shared emerald-cut chip styling for filter rows. */
+/** Shared emerald-cut chip styling for filter rows.
+ *  Inactive chips are filled rather than outlined — clip-path would cut a
+ *  border away on the facets and leave the edges looking torn. */
 export const chipClass = (active) =>
-  `gem-corners gem-btn gem-chip shrink-0 border px-3.5 py-1.5 text-xs font-semibold ${
+  `gem-corners gem-btn gem-chip shrink-0 px-3.5 py-1.5 text-xs font-semibold ${
     active
-      ? "gem-btn-raised bg-primary text-primary-foreground border-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]"
-      : "bg-card border-border text-muted-foreground hover:border-primary/40"
+      ? "gem-btn-raised bg-primary text-primary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]"
+      : "bg-secondary text-muted-foreground"
   }`;
