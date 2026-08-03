@@ -17,9 +17,9 @@ export default function ListingCard({ listing }) {
   return (
     <Link
       to={`/listing/${listing.id}`}
-      className="group block gem-corners gem-card gem-frame hover:gem-frame-primary transition-colors"
+      className="group flex h-full gem-corners gem-card gem-frame hover:gem-frame-primary transition-colors"
     >
-      <div className="gem-corners gem-card overflow-hidden bg-card">
+      <div className="flex flex-col w-full gem-corners gem-card overflow-hidden bg-card">
       <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
         {photo ? (
           <Image
@@ -44,7 +44,7 @@ export default function ListingCard({ listing }) {
         )}
       </div>
 
-      <div className="p-3.5">
+      <div className="flex-1 flex flex-col p-3.5">
         <div className="flex items-baseline justify-between gap-2">
           <h3 className="font-semibold text-[15px] leading-tight">{cap(listing.gemstone_type)}</h3>
           <span className="text-sm font-bold text-primary whitespace-nowrap">{listing.weight_carats} ct</span>
@@ -58,7 +58,7 @@ export default function ListingCard({ listing }) {
             <span className="rounded-md bg-secondary px-2 py-0.5 text-[11px] text-muted-foreground">{listing.origin}</span>
           )}
         </div>
-        <div className="mt-3 pt-3 border-t border-border flex items-center gap-1.5 text-xs text-muted-foreground">
+        <div className="mt-auto pt-3 border-t border-border flex items-center gap-1.5 text-xs text-muted-foreground">
           <span className="truncate font-medium text-foreground">{listing.trader_name}</span>
           <VerifiedBadge verified={listing.trader_verified} />
           {listing.trader_country && (
