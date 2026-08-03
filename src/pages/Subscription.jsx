@@ -1,26 +1,32 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
-import { Smartphone, Settings2 } from "lucide-react";
-import TierCard from "@/components/subscription/TierCard";
+import { Settings2 } from "lucide-react";
+import TierRow from "@/components/subscription/TierRow";
 import Spinner from "@/components/common/Spinner";
+import TierBadge from "@/components/common/TierBadge";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useEntitlements from "@/hooks/useEntitlements";
 import { isNative, haptic } from "@/lib/despia";
 import { launchPaywall, openCustomerCenter } from "@/lib/revenuecat";
 import { LOGO_URL, TIERS, TIER_ORDER } from "@/lib/gems";
 
-const FEATURES = {
-  bronze: ["3 active listings", "Public trader profile", "Receive unlimited enquiries", "Trader networking"],
-  silver: ["10 active listings", "Highlighted in directory", "Silver badge on profile", "Trader networking"],
-  gold: ["30 active listings", "Gold badge on profile & listings", "Higher placement in search", "Priority in directory"],
-  platinum: ["Unlimited listings", "Platinum badge", "Top placement everywhere", "Featured spot on home page"],
+const CAPACITY = {
+  bronze: "3 stones on the market at once",
+  silver: "10 stones on the market at once",
+  gold: "30 stones on the market at once",
+  platinum: "Unlimited stones on the market",
+};
+
+const PLACEMENT = {
+  bronze: "A public trader profile with your parcels, open to enquiries from the whole network.",
+  silver: "Your Silver badge travels with every stone and lifts you above unranked traders in search.",
+  gold: "Gold badge on profile and stones, with priority placement in search and the trader directory.",
+  platinum: "Top placement everywhere plus a featured spot on the home feed — the grade buyers look for first.",
 };
 
 export default function Subscription() {
-  const navigate = useNavigate();
-  const { user, trader, loading, reload } = useCurrentTrader();
+  const { trader, loading, reload } = useCurrentTrader();
   useEntitlements(trader, reload);
   const [selected, setSelected] = useState(null);
 
@@ -32,49 +38,78 @@ export default function Subscription() {
 
   if (loading) return <Spinner />;
 
+  const tier = trader?.subscription_tier || "none";
+
   return (
-    <div className="px-4 pt-5 pb-10">
-      <div className="text-center max-w-lg mx-auto">
-        <img src={LOGO_URL} alt="Gems24" className="w-14 h-14 mx-auto" />
-        <h1 className="mt-4 text-[1.625rem] font-bold leading-tight">Choose your plan</h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          Publishing listings requires a paid plan. Higher tiers get badges and better placement.
+    <div className="px-4 pb-14 pt-8">
+      <div className="mx-auto max-w-lg text-center">
+        <img src={LOGO_URL} alt="Gems24" className="mx-auto h-16 w-16" />
+        <h1 className="mt-5 font-heading text-[1.75rem] font-bold leading-tight">Your trading grade</h1>
+        <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
+          Gems24 grades traders the way the trade grades stones. The higher your grade, the more parcels
+          you can list and the earlier buyers see them.
         </p>
+        <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5">
+          <span className="text-xs text-muted-foreground">Current grade</span>
+          {tier === "none" ? (
+            <span className="text-xs font-semibold">Ungraded</span>
+          ) : (
+            <TierBadge tier={tier} />
+          )}
+        </div>
       </div>
 
-      <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="mx-auto mt-9 grid max-w-lg grid-cols-1 gap-4 sm:max-w-3xl sm:grid-cols-2">
         {TIER_ORDER.map((t) => (
-          <TierCard
+          <TierRow
             key={t}
             tier={t}
-            features={FEATURES[t]}
-            current={trader?.subscription_tier === t}
+            capacity={CAPACITY[t]}
+            placement={PLACEMENT[t]}
+            current={tier === t}
+            recommended={t === "gold"}
             onSelect={setSelected}
           />
         ))}
       </div>
 
-      {isNative && trader?.subscription_tier !== "none" && (
+      {isNative && tier !== "none" && (
         <Button
           variant="outline"
-          className="mt-6 w-full max-w-sm mx-auto flex h-12"
+          className="mx-auto mt-8 flex w-full max-w-sm"
           onClick={() => openCustomerCenter(trader.id)}
         >
-          <Settings2 className="w-4 h-4 mr-2" /> Manage subscription
+          <Settings2 className="h-4 w-4" /> Manage subscription
         </Button>
       )}
 
-      <p className="mt-6 text-center text-xs text-muted-foreground">
+      <p className="mx-auto mt-8 max-w-sm text-center text-xs leading-relaxed text-muted-foreground">
         Billed through your {isNative ? "app store" : "App Store or Google Play"} account. Cancel anytime.
       </p>
 
       <BottomSheet
         open={!!selected}
         onOpenChange={(o) => !o && setSelected(null)}
-        title={selected ? `${TIERS[selected].label} plan` : ""}
+        title={selected ? `${TIERS[selected].label} grade` : ""}
       >
-        <div className="mx-auto max-w-md space-y-4">
-...
+        <div className="mx-auto max-w-md space-y-5 pb-2">
+          {selected && (
+            <>
+              <div className="flex items-baseline justify-between">
+                <TierBadge tier={selected} />
+                <p className="font-heading text-xl font-bold">
+                  ${TIERS[selected].price}
+                  <span className="ml-1 text-xs font-medium text-muted-foreground">/ month</span>
+                </p>
+              </div>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {CAPACITY[selected]}. {PLACEMENT[selected]}
+              </p>
+              <Button className="w-full" onClick={subscribe}>
+                Continue to payment
+              </Button>
+            </>
+          )}
         </div>
       </BottomSheet>
     </div>

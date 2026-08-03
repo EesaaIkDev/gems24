@@ -28,7 +28,7 @@ export default function ConversationRow({ conversation, other, unread }) {
         </div>
         <div className="flex items-center gap-2">
           <p className={`text-sm truncate ${unread ? "text-foreground font-medium" : "text-muted-foreground"}`}>
-            {conversation.last_message || "Say hello 👋"}
+            {conversation.last_message || "No messages yet"}
           </p>
           {unread > 0 && (
             <span className="ml-auto min-w-[1.25rem] h-5 px-1.5 rounded-full bg-primary text-[0.6875rem] font-bold text-primary-foreground flex items-center justify-center shrink-0">

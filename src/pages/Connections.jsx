@@ -16,7 +16,7 @@ export default function Connections() {
 
   const load = useCallback(async () => {
     if (!trader?.id) return;
-    const all = await base44.entities.Connection.list("-created_date", 300);
+    const all = await base44.entities.Connection.list("-created_date", 300).catch(() => []);
     const mine = all.filter((c) => c.requester_id === trader.id || c.recipient_id === trader.id);
     const ids = [...new Set(mine.flatMap((c) => [c.requester_id, c.recipient_id]))].filter((i) => i !== trader.id);
     const traders = await Promise.all(ids.map((i) => base44.entities.Trader.get(i).catch(() => null)));
@@ -52,7 +52,7 @@ export default function Connections() {
 
   return (
     <div className="px-4 pt-5">
-      <h1 className="text-[26px] font-bold leading-tight">My connections</h1>
+      <h1 className="text-[1.625rem] font-bold leading-tight">My network</h1>
       <p className="text-sm text-muted-foreground mt-1">
         Once a connection is accepted, you can both see each other's contact details.
       </p>

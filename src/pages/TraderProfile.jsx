@@ -4,6 +4,8 @@ import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import { ArrowLeft, Lock, Mail, MapPin, Phone, User } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
+import LoadError from "@/components/common/LoadError";
+import useLoader from "@/hooks/useLoader";
 import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import ListingCard from "@/components/listings/ListingCard";
@@ -15,8 +17,6 @@ import { findConnection, listMyConnections } from "@/lib/network";
 export default function TraderProfile() {
   const { id } = useParams();
   const { trader: viewer, loading: viewerLoading } = useCurrentTrader();
-  const [trader, setTrader] = useState(null);
-  const [listings, setListings] = useState([]);
   const [connection, setConnection] = useState(undefined);
 
   const isSelf = viewer?.id === id;
@@ -26,17 +26,23 @@ export default function TraderProfile() {
     setConnection(findConnection(rows, viewerId, id));
   };
 
-  useEffect(() => {
-    base44.entities.Trader.get(id).then(setTrader);
-    base44.entities.Listing.filter({ trader_id: id }, "-created_date", 100).then(setListings);
+  const { data, loading, error, reload } = useLoader(async () => {
+    const [t, rows] = await Promise.all([
+      base44.entities.Trader.get(id),
+      base44.entities.Listing.filter({ trader_id: id }, "-created_date", 100),
+    ]);
+    return { trader: t, listings: rows };
   }, [id]);
 
   useEffect(() => {
     if (viewer?.id && !isSelf) loadConnection(viewer.id);
   }, [viewer?.id, id]);
 
-  if (!trader) return <Spinner />;
+  if (loading) return <Spinner />;
+  if (error || !data?.trader)
+    return <LoadError title="Profile unavailable" description="This trader may no longer be listed." onRetry={reload} />;
 
+  const { trader, listings } = data;
   const connected = connection?.status === "accepted";
   const showContact = isSelf || connected;
   const active = listings.filter((l) => l.status !== "sold");
@@ -50,7 +56,7 @@ export default function TraderProfile() {
       </div>
 
       <div className="px-4 mt-4">
-        <div className="rounded-3xl bg-card border border-border p-5">
+        <div className="rounded-2xl bg-card border border-border p-5">
           <div className="flex items-start gap-4">
             <div className="w-20 h-20 rounded-2xl overflow-hidden bg-secondary flex items-center justify-center shrink-0">
               {trader.profile_photo ? (
@@ -123,7 +129,7 @@ export default function TraderProfile() {
                 other={trader}
                 connection={connection}
                 context={{ label: `${trader.full_name}'s profile`, path: `/trader/${trader.id}` }}
-                className="w-full h-12"
+                className="w-full"
               />
             </div>
           )}

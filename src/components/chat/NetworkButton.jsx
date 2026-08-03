@@ -11,7 +11,7 @@ import { haptic } from "@/lib/despia";
  * chat — unless that trader requires approval before messaging, in which case
  * the request stays pending.
  */
-export default function NetworkButton({ viewerId, other, connection, context, className = "" }) {
+export default function NetworkButton({ viewerId, other, connection, context, className = "", size }) {
   const navigate = useNavigate();
   const [conn, setConn] = useState(connection ?? null);
   const [busy, setBusy] = useState(false);
@@ -41,7 +41,7 @@ export default function NetworkButton({ viewerId, other, connection, context, cl
   const pending = conn?.status === "pending";
   const connected = canMessage(conn);
   const Icon = pending ? Clock : connected ? MessageCircle : UserPlus;
-  const label = pending ? "Requested" : connected ? "Message" : "Network";
+  const label = pending ? "Requested" : "Network";
 
   return (
     <Button
@@ -49,6 +49,7 @@ export default function NetworkButton({ viewerId, other, connection, context, cl
       onClick={onClick}
       disabled={busy || pending}
       variant={pending ? "secondary" : "default"}
+      size={size}
       className={className}
     >
       <Icon className="w-4 h-4" />

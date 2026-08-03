@@ -10,14 +10,14 @@ export default function SignInPrompt({ title, description, cta = "Sign in", to }
       <img src={LOGO_URL} alt="Gems24" className="w-16 h-16" />
       <h2 className="mt-5 text-xl font-bold">{title}</h2>
       <p className="mt-2 text-sm text-muted-foreground max-w-xs">
-        {description || "Join Gems24 to manage listings, enquiries and your trader network."}
+        {description || "Join Gems24 to publish listings, chat with buyers and grow your trader network."}
       </p>
       {to ? (
-        <Button asChild className="mt-6 h-12 px-8 font-semibold">
+        <Button asChild size="lg" className="mt-6">
           <Link to={to}>{cta}</Link>
         </Button>
       ) : (
-        <Button className="mt-6 h-12 px-8 font-semibold" onClick={() => base44.auth.redirectToLogin()}>
+        <Button size="lg" className="mt-6" onClick={() => base44.auth.redirectToLogin()}>
           {cta}
         </Button>
       )}

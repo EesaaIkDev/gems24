@@ -30,7 +30,7 @@ export default function Messages() {
     if (!trader?.id) return;
     let cancelled = false;
     const load = async () => {
-      const conversations = await listConversations(trader.id);
+      const conversations = await listConversations(trader.id).catch(() => []);
       if (cancelled) return;
       setRows(conversations);
       const ids = [...new Set(conversations.map((c) => otherIdOf(c, trader.id)))];

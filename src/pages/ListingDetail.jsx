@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import { ArrowLeft, FileCheck2, Gem, MapPin, User } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
+import LoadError from "@/components/common/LoadError";
+import useLoader from "@/hooks/useLoader";
 import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import NetworkButton from "@/components/chat/NetworkButton";
@@ -23,18 +25,19 @@ function Spec({ label, value }) {
 export default function ListingDetail() {
   const { id } = useParams();
   const { trader: viewer } = useCurrentTrader();
-  const [listing, setListing] = useState(null);
-  const [owner, setOwner] = useState(null);
   const [active, setActive] = useState(0);
 
-  useEffect(() => {
-    base44.entities.Listing.get(id).then(async (l) => {
-      setListing(l);
-      if (l?.trader_id) setOwner(await base44.entities.Trader.get(l.trader_id).catch(() => null));
-    });
+  const { data, loading, error, reload } = useLoader(async () => {
+    const l = await base44.entities.Listing.get(id);
+    const o = l?.trader_id ? await base44.entities.Trader.get(l.trader_id).catch(() => null) : null;
+    return { listing: l, owner: o };
   }, [id]);
 
-  if (!listing) return <Spinner />;
+  if (loading) return <Spinner />;
+  if (error || !data?.listing)
+    return <LoadError title="Listing unavailable" description="This stone may have been removed." onRetry={reload} />;
+
+  const { listing, owner } = data;
 
   const photos = listing.photos?.length ? listing.photos : [];
 
@@ -157,7 +160,8 @@ export default function ListingDetail() {
                 label: `${listing.weight_carats} ct ${cap(listing.gemstone_type)}`,
                 path: `/listing/${listing.id}`,
               }}
-              className="w-full h-13 py-3.5 text-base rounded-xl"
+              className="w-full"
+              size="lg"
             />
           </div>
         </div>

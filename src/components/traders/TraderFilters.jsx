@@ -7,7 +7,7 @@ export default function TraderFilters({ filters, setFilters, countries }) {
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-2.5 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto -mx-3.5 px-3.5 pb-2 scrollbar-none">
         <button className={chip(!filters.specialty)} onClick={() => setFilters((f) => ({ ...f, specialty: "" }))}>
           All specialties
         </button>
@@ -17,7 +17,7 @@ export default function TraderFilters({ filters, setFilters, countries }) {
           </button>
         ))}
       </div>
-      <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-2.5 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto -mx-3.5 px-3.5 pb-2 scrollbar-none">
         {TIER_ORDER.map((t) => (
           <button key={t} className={chip(filters.tier === t)} onClick={() => set("tier", t)}>
             {TIERS[t].label}

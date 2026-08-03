@@ -63,7 +63,7 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
             other={trader}
             connection={connection}
             context={{ label: `${listing.weight_carats} ct ${cap(listing.gemstone_type)}`, path: `/listing/${listing.id}` }}
-            className="mt-3 w-full h-11"
+            className="mt-3 w-full"
           />
         )}
       </div>

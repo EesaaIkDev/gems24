@@ -19,7 +19,9 @@ export default function Profile() {
 
   useEffect(() => {
     if (!trader?.id) return;
-    base44.entities.Listing.filter({ trader_id: trader.id }, "-created_date", 200).then(setListings);
+    base44.entities.Listing.filter({ trader_id: trader.id }, "-created_date", 200)
+      .then(setListings)
+      .catch(() => setListings([]));
   }, [trader?.id]);
 
   if (loading) return <Spinner />;
@@ -41,7 +43,7 @@ export default function Profile() {
   return (
     <div className="pt-5 pb-6 max-w-lg mx-auto">
       <div className="px-4 space-y-5">
-        <div className="rounded-3xl bg-card border border-border p-5">
+        <div className="rounded-2xl bg-card border border-border p-5">
           <div className="flex items-center gap-4">
             <div className="w-20 h-20 rounded-2xl overflow-hidden bg-secondary flex items-center justify-center shrink-0">
               {trader.profile_photo ? (

@@ -34,7 +34,7 @@ export default function Settings() {
       <Link to="/profile" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary">
         <ArrowLeft className="w-4 h-4" /> Profile
       </Link>
-      <h1 className="text-[26px] font-bold leading-tight">Settings</h1>
+      <h1 className="text-[1.625rem] font-bold leading-tight">Settings</h1>
 
       <div className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3">
         <Moon className="w-[18px] h-[18px] text-primary" />

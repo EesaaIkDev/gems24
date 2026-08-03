@@ -19,8 +19,12 @@ export default function Gemstones() {
   const [q, setQ] = useState("");
 
   useEffect(() => {
-    base44.entities.Listing.list("-created_date", 200).then(setListings);
-    base44.entities.Trader.filter({ account_type: "trader" }, "-created_date", 200).then(setTraders);
+    base44.entities.Listing.list("-created_date", 200)
+      .then(setListings)
+      .catch(() => setListings([]));
+    base44.entities.Trader.filter({ account_type: "trader" }, "-created_date", 200)
+      .then(setTraders)
+      .catch(() => setTraders([]));
   }, []);
 
   const stoneCountries = useMemo(
@@ -66,8 +70,8 @@ export default function Gemstones() {
   }, [traders, traderFilters, q]);
 
   return (
-    <div className="px-4 pt-5 space-y-4">
-      <h1 className="text-[1.625rem] font-bold leading-tight">Gemstones</h1>
+    <div className="px-3.5 pt-4 space-y-3">
+      <h1 className="text-[1.375rem] font-bold leading-tight">Gemstones</h1>
 
       <div className="relative">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -75,24 +79,24 @@ export default function Gemstones() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search stones, traders, origins…"
-          className="pl-10 h-12 rounded-xl bg-card"
+          className="pl-10 h-11 rounded-xl bg-card"
         />
       </div>
 
       <Tabs defaultValue="stones">
-        <TabsList className="grid grid-cols-2 w-full h-11 rounded-xl">
+        <TabsList className="grid grid-cols-2 w-full h-10 rounded-xl">
           <TabsTrigger value="stones" className="rounded-lg">Stones</TabsTrigger>
           <TabsTrigger value="traders" className="rounded-lg">Traders</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="stones" className="mt-4 space-y-4">
+        <TabsContent value="stones" className="mt-3 space-y-3">
           <ListingFilters filters={stoneFilters} setFilters={setStoneFilters} countries={stoneCountries} />
           {listings === null ? (
             <Spinner />
           ) : filteredStones.length === 0 ? (
             <EmptyState icon={Gem} title="No stones match" description="Try clearing a filter or widening the carat range." />
           ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5">
               {filteredStones.map((l) => (
                 <ListingCard key={l.id} listing={l} />
               ))}
@@ -100,14 +104,14 @@ export default function Gemstones() {
           )}
         </TabsContent>
 
-        <TabsContent value="traders" className="mt-4 space-y-4">
+        <TabsContent value="traders" className="mt-3 space-y-3">
           <TraderFilters filters={traderFilters} setFilters={setTraderFilters} countries={traderCountries} />
           {traders === null ? (
             <Spinner />
           ) : filteredTraders.length === 0 ? (
             <EmptyState icon={Users} title="No traders found" description="Try a different search or clear your filters." />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
               {filteredTraders.map((t) => (
                 <TraderCard key={t.id} trader={t} />
               ))}

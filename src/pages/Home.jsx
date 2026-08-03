@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import Spinner from "@/components/common/Spinner";
+import LoadError from "@/components/common/LoadError";
+import useLoader from "@/hooks/useLoader";
 import EmptyState from "@/components/common/EmptyState";
 import FeedPost from "@/components/feed/FeedPost";
 import ActivityStrip from "@/components/feed/ActivityStrip";
@@ -12,22 +14,21 @@ import { Gem } from "lucide-react";
 
 export default function Home() {
   const { trader: viewer, loading } = useCurrentTrader();
-  const [listings, setListings] = useState(null);
-  const [traders, setTraders] = useState([]);
   const [connections, setConnections] = useState([]);
 
-  useEffect(() => {
-    Promise.all([
+  const { data, loading: feedLoading, error, reload } = useLoader(async () => {
+    const [l, t] = await Promise.all([
       base44.entities.Listing.list("-created_date", 200),
       base44.entities.Trader.filter({ account_type: "trader" }, "-created_date", 200),
-    ]).then(([l, t]) => {
-      setListings(l);
-      setTraders(t);
-    });
+    ]);
+    return { listings: l, traders: t };
   }, []);
 
+  const listings = data?.listings || null;
+  const traders = data?.traders || [];
+
   useEffect(() => {
-    if (viewer?.id) listMyConnections(viewer.id).then(setConnections);
+    if (viewer?.id) listMyConnections(viewer.id).then(setConnections).catch(() => setConnections([]));
   }, [viewer?.id]);
 
   const tradersById = useMemo(() => Object.fromEntries(traders.map((t) => [t.id, t])), [traders]);
@@ -67,7 +68,8 @@ export default function Home() {
     [traders, networkIds, viewer?.id]
   );
 
-  if (loading || listings === null) return <Spinner />;
+  if (loading || feedLoading) return <Spinner />;
+  if (error) return <LoadError title="Couldn't load your feed" onRetry={reload} />;
 
   return (
     <div className="pb-4">

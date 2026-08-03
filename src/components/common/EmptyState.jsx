@@ -2,13 +2,13 @@ import React from "react";
 
 export default function EmptyState({ icon: Icon, title, description, action }) {
   return (
-    <div className="flex flex-col items-center justify-center text-center py-16 px-6">
+    <div className="flex flex-col items-center justify-center text-center py-20 px-8">
       {Icon && (
-        <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
+        <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-5">
           <Icon className="w-7 h-7 text-primary" />
         </div>
       )}
-      <h3 className="text-base font-semibold text-foreground">{title}</h3>
+      <h3 className="font-heading text-base font-semibold text-foreground">{title}</h3>
       {description && <p className="mt-1.5 text-sm text-muted-foreground max-w-xs">{description}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
