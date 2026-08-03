@@ -33,7 +33,7 @@ export default function ListingCard({ listing }) {
           </div>
         )}
         <div className="absolute top-2.5 left-2.5 flex gap-1.5">
-          <span className={`neu-raised-sm rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide bg-background ${STATUS[listing.status] || ""}`}>
+          <span className={`neu-raised-xs rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide bg-background ${STATUS[listing.status] || ""}`}>
             {cap(listing.status)}
           </span>
         </div>

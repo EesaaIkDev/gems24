@@ -170,6 +170,12 @@
     box-shadow: -3px -3px 7px hsl(var(--neu-light)), 3px 3px 7px hsl(var(--neu-dark));
   }
 
+  /* Tightest raise — for small overlay chips/badges, so they read as lifted
+     labels rather than glowing pills. */
+  .neu-raised-xs {
+    box-shadow: -1px -1px 3px hsl(var(--neu-light)), 2px 2px 4px hsl(var(--neu-dark));
+  }
+
   .neu-inset {
     box-shadow: inset -4px -4px 9px hsl(var(--neu-light)), inset 4px 4px 9px hsl(var(--neu-dark));
   }

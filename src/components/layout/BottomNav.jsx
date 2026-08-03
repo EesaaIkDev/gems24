@@ -39,7 +39,7 @@ export default function BottomNav({ badge = 0 }) {
                 className="tap-scale flex flex-col items-center justify-center"
                 style={{ height: "var(--tabbar-h)" }}
               >
-                <span className="-mt-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary shadow-lg shadow-primary/30 ring-4 ring-background">
+                <span className="neu-raised -mt-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary ring-4 ring-background">
                   <Plus className="h-6 w-6 text-primary-foreground" aria-hidden="true" />
                 </span>
                 <span className="mt-1 text-[0.625rem] font-medium text-muted-foreground">Add</span>
