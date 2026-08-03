@@ -8,7 +8,7 @@ import { TIERS, TIER_STYLES } from "@/lib/gems";
  * traders see across the app, its listing capacity as a filled carat meter, and
  * the placement it buys — no generic feature checklist.
  */
-export default function TierRow({ tier, capacity, placement, current, recommended, onSelect }) {
+export default function TierRow({ tier, capacity, placement, anchor, current, recommended, onSelect }) {
   const t = TIERS[tier];
   const filled = t.limit === Infinity ? 5 : Math.max(1, Math.round((t.limit / 30) * 4));
 
@@ -40,6 +40,7 @@ export default function TierRow({ tier, capacity, placement, current, recommende
               <span className="ml-1 text-xs font-medium text-muted-foreground">/ month</span>
             </p>
             <p className="mt-1.5 text-[0.8125rem] text-muted-foreground">{capacity}</p>
+            {anchor && <p className="mt-1 text-[0.75rem] leading-snug text-primary">{anchor}</p>}
           </div>
           <div className="flex items-end gap-1 pb-1" aria-hidden="true">
             {[0, 1, 2, 3, 4].map((i) => (

@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Camera, Loader2, User } from "lucide-react";
 import { GEM_TYPES, cap } from "@/lib/gems";
+import { detectCountry } from "@/lib/locale";
 
 export default function TraderForm({ initial = {}, onSave, saving, submitLabel = "Save profile" }) {
   const [form, setForm] = useState({
     full_name: initial.full_name || "",
     business_name: initial.business_name || "",
     profile_photo: initial.profile_photo || "",
-    country: initial.country || "",
+    country: initial.country || detectCountry(),
     city: initial.city || "",
     years_experience: initial.years_experience ?? "",
     specialties: initial.specialties || [],

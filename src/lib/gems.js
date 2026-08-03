@@ -8,7 +8,9 @@ export const TIERS = {
   platinum: { key: "platinum", label: "Platinum", limit: Infinity, rank: 4, price: 199 },
 };
 
-export const TIER_ORDER = ["bronze", "silver", "gold", "platinum"];
+// Highest grade first: Platinum anchors the price scale so Gold reads as the
+// reasonable choice rather than the expensive end of a build-up from Bronze.
+export const TIER_ORDER = ["platinum", "gold", "silver", "bronze"];
 
 // Soft UI: badges share the surface colour, so tiers read through text colour.
 export const TIER_STYLES = {

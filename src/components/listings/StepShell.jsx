@@ -2,8 +2,16 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-/** One screen of the guided create-a-listing flow. */
+/**
+ * One screen of the guided create-a-listing flow.
+ * The meter never opens at zero: opening the flow already counts as progress,
+ * and the current step fills as soon as its required fields are in — so the bar
+ * visibly advances on the very first screen.
+ */
 export default function StepShell({ step, total, title, hint, onBack, onNext, nextLabel = "Next", nextDisabled, children }) {
+  const stepsDone = step + (nextDisabled ? 0 : 1);
+  const percent = Math.round(15 + (85 * stepsDone) / total);
+
   return (
     <div className="flex flex-col min-h-full px-4 pt-4 pb-8 max-w-lg mx-auto">
       <div className="flex items-center gap-3">
@@ -15,17 +23,13 @@ export default function StepShell({ step, total, title, hint, onBack, onNext, ne
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
-        <div className="flex-1 flex gap-1.5">
-          {Array.from({ length: total }).map((_, i) => (
-            <span
-              key={i}
-              className={`h-1 flex-1 rounded-full ${i <= step ? "bg-primary" : "bg-secondary"}`}
-            />
-          ))}
+        <div className="neu-inset-sm h-1.5 flex-1 overflow-hidden rounded-full bg-background">
+          <div
+            className="h-full rounded-full bg-primary transition-all duration-500"
+            style={{ width: `${percent}%` }}
+          />
         </div>
-        <span className="text-xs text-muted-foreground tabular-nums">
-          {step + 1}/{total}
-        </span>
+        <span className="text-xs text-muted-foreground tabular-nums">{percent}%</span>
       </div>
 
       <h1 className="mt-5 text-[1.5rem] font-bold leading-tight">{title}</h1>

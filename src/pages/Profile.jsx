@@ -10,6 +10,7 @@ import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import EmptyState from "@/components/common/EmptyState";
 import OwnListingsGrid from "@/components/listings/OwnListingsGrid";
+import ProfileProgress from "@/components/profile/ProfileProgress";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { TIERS, cap, tierLimit } from "@/lib/gems";
 
@@ -72,6 +73,8 @@ export default function Profile() {
             <Link to="/settings">Edit profile</Link>
           </Button>
         </div>
+
+        <ProfileProgress trader={trader} />
 
         <div className="rounded-2xl bg-card border border-border overflow-hidden divide-y divide-border">
           {links.map(({ to, icon: Icon, label }) => (

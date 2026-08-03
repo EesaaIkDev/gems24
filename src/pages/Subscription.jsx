@@ -25,6 +25,15 @@ const PLACEMENT = {
   platinum: "Top placement everywhere plus a featured spot on the home feed — the grade buyers look for first.",
 };
 
+// Price anchored against a reference a trader actually deals in — the margin on
+// a single stone — rather than presented as an isolated monthly number.
+const ANCHOR = {
+  platinum: "Less than the commission on one fine 5 ct stone.",
+  gold: "About the margin on one 2 ct sapphire a month.",
+  silver: "Less than a single small stone's margin.",
+  bronze: "About the cost of one courier run.",
+};
+
 export default function Subscription() {
   const { trader, loading, reload } = useCurrentTrader();
   useEntitlements(trader, reload);
@@ -66,6 +75,7 @@ export default function Subscription() {
             tier={t}
             capacity={CAPACITY[t]}
             placement={PLACEMENT[t]}
+            anchor={ANCHOR[t]}
             current={tier === t}
             recommended={t === "gold"}
             onSelect={setSelected}

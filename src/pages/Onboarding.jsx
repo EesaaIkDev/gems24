@@ -1,16 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Button } from "@/components/ui/button";
 import { Gem, Search, ArrowLeft } from "lucide-react";
 import TraderForm from "@/components/traders/TraderForm";
 import Spinner from "@/components/common/Spinner";
 import { LOGO_URL } from "@/lib/gems";
 
+const DRAFT_KEY = "gems24_profile_draft";
+
+const readDraft = () => {
+  try {
+    return JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+  } catch {
+    return null;
+  }
+};
+
 export default function Onboarding() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [checking, setChecking] = useState(true);
+  const [draft, setDraft] = useState(null);
   const [accountType, setAccountType] = useState(null);
   const [saving, setSaving] = useState(false);
 
@@ -23,16 +33,31 @@ export default function Onboarding() {
         me = null;
       }
       setUser(me);
+      const saved = readDraft();
+      if (saved) {
+        setDraft(saved);
+        setAccountType(saved.account_type || null);
+      }
       if (me) {
         const rows = await base44.entities.Trader.filter({ user_email: me.email });
-        if (rows[0]) return navigate("/profile", { replace: true });
+        if (rows[0]) {
+          localStorage.removeItem(DRAFT_KEY);
+          return navigate("/profile", { replace: true });
+        }
       }
       setChecking(false);
     })();
   }, [navigate]);
 
+  // Profile choices are made first and kept locally; the account is only
+  // created at the very end, so nobody signs up before building something.
   const save = async (data) => {
     setSaving(true);
+    if (!user) {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...data, account_type: accountType }));
+      base44.auth.redirectToLogin(window.location.href);
+      return;
+    }
     await base44.entities.Trader.create({
       ...data,
       account_type: accountType,
@@ -40,25 +65,11 @@ export default function Onboarding() {
       subscription_tier: "none",
       verified: false,
     });
+    localStorage.removeItem(DRAFT_KEY);
     navigate("/profile", { replace: true });
   };
 
   if (checking) return <Spinner />;
-
-  if (!user) {
-    return (
-      <div className="px-6 py-20 text-center">
-        <img src={LOGO_URL} alt="Gems24" className="w-20 h-20 mx-auto" />
-        <h1 className="mt-5 text-2xl font-bold">Join Gems24</h1>
-        <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto">
-          Create your account to list gemstones, send enquiries and build your trading network.
-        </p>
-        <Button className="mt-7 h-12 px-8 font-semibold" onClick={() => base44.auth.redirectToLogin()}>
-          Sign up / Sign in
-        </Button>
-      </div>
-    );
-  }
 
   if (!accountType) {
     const options = [
@@ -72,7 +83,7 @@ export default function Onboarding() {
         key: "buyer",
         icon: Search,
         title: "I'm a Buyer",
-        desc: "Browse stones from verified traders and send enquiries directly.",
+        desc: "Browse stones from verified traders and message them directly.",
       },
     ];
     return (
@@ -85,9 +96,9 @@ export default function Onboarding() {
             <button
               key={key}
               onClick={() => setAccountType(key)}
-              className="w-full text-left rounded-2xl bg-card border border-border p-5 hover:border-primary hover:shadow-md transition-all"
+              className="w-full text-left rounded-2xl bg-card p-5 transition-all"
             >
-              <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center">
+              <div className="neu-inset-sm w-11 h-11 rounded-xl bg-background flex items-center justify-center">
                 <Icon className="w-5 h-5 text-primary" />
               </div>
               <h3 className="mt-3.5 font-semibold text-lg">{title}</h3>
@@ -108,15 +119,22 @@ export default function Onboarding() {
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
       <h1 className="mt-4 text-[26px] font-bold leading-tight">
-        {accountType === "trader" ? "Create your trader profile" : "Set up your buyer profile"}
+        {accountType === "trader" ? "Build your trader profile" : "Set up your buyer profile"}
       </h1>
       <p className="mt-1.5 text-sm text-muted-foreground">
-        {accountType === "trader"
-          ? "This is what other traders and buyers will see."
-          : "So traders know who they're speaking with."}
+        {user
+          ? accountType === "trader"
+            ? "This is what other traders and buyers will see."
+            : "So traders know who they're speaking with."
+          : "Set it up first — we'll only ask for an email at the end to save it."}
       </p>
       <div className="mt-6">
-        <TraderForm onSave={save} saving={saving} submitLabel="Create profile" />
+        <TraderForm
+          initial={draft || {}}
+          onSave={save}
+          saving={saving}
+          submitLabel={user ? "Create my profile" : "Continue"}
+        />
       </div>
     </div>
   );

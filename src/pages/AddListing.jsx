@@ -11,6 +11,8 @@ import StepShell from "@/components/listings/StepShell";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
+import usePopularDefaults from "@/hooks/usePopularDefaults";
+import LimitWarning from "@/components/subscription/LimitWarning";
 import { GEM_TYPES, TREATMENTS, cap, tierLimit } from "@/lib/gems";
 
 const EMPTY = {
@@ -18,7 +20,7 @@ const EMPTY = {
   gemstone_type: "sapphire",
   weight_carats: "",
   color: "",
-  treatment: "",
+  treatment: "heated",
   origin: "",
   certificate_lab: "",
   certificate_url: "",
@@ -31,21 +33,27 @@ const TOTAL = 3;
 export default function AddListing() {
   const navigate = useNavigate();
   const { user, trader, loading } = useCurrentTrader();
+  const popular = usePopularDefaults();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
   const [uploadingCert, setUploadingCert] = useState(false);
-  const [blocked, setBlocked] = useState(false);
+  const [activeCount, setActiveCount] = useState(null);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
+  // Smart defaults: open on the type and treatment traders list most often.
+  useEffect(() => {
+    if (!popular) return;
+    setForm((f) => ({ ...f, gemstone_type: popular.gemstone_type, treatment: popular.treatment }));
+  }, [popular]);
+
   useEffect(() => {
     if (!trader?.id) return;
-    base44.entities.Listing.filter({ trader_id: trader.id }).then((rows) => {
-      const active = rows.filter((l) => l.status !== "sold").length;
-      setBlocked(active >= tierLimit(trader.subscription_tier));
-    });
-  }, [trader?.id, trader?.subscription_tier]);
+    base44.entities.Listing.filter({ trader_id: trader.id }).then((rows) =>
+      setActiveCount(rows.filter((l) => l.status !== "sold").length)
+    );
+  }, [trader?.id]);
 
   const uploadCert = async (e) => {
     const file = e.target.files?.[0];
@@ -75,15 +83,9 @@ export default function AddListing() {
   if (loading) return <Spinner />;
   if (!user) return <SignInPrompt title="Sign in to add a listing" />;
   if (!trader) return <SignInPrompt title="Create your trader profile first" cta="Get started" to="/onboarding" />;
-  if (blocked)
-    return (
-      <SignInPrompt
-        title="Upgrade to add more listings"
-        description="You've reached the active listing limit for your current plan."
-        cta="View plans"
-        to="/subscription"
-      />
-    );
+  const limit = tierLimit(trader.subscription_tier);
+  if (activeCount !== null && activeCount >= limit)
+    return <LimitWarning tier={trader.subscription_tier} active={activeCount} limit={limit} />;
 
   if (step === 0)
     return (

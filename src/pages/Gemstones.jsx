@@ -9,6 +9,7 @@ import TraderCard from "@/components/traders/TraderCard";
 import TraderFilters from "@/components/traders/TraderFilters";
 import Spinner from "@/components/common/Spinner";
 import EmptyState from "@/components/common/EmptyState";
+import usePopularDefaults from "@/hooks/usePopularDefaults";
 import { tierRank } from "@/lib/gems";
 
 export default function Gemstones() {
@@ -17,6 +18,13 @@ export default function Gemstones() {
   const [stoneFilters, setStoneFilters] = useState({ q: "", type: "", treatment: "", country: "", minCt: "", maxCt: "" });
   const [traderFilters, setTraderFilters] = useState({ specialty: "", tier: "", country: "" });
   const [q, setQ] = useState("");
+  const popular = usePopularDefaults();
+
+  // Smart defaults: land on the most-searched stone type instead of a blank grid.
+  useEffect(() => {
+    if (!popular) return;
+    setStoneFilters((f) => (f.type ? f : { ...f, type: popular.gemstone_type }));
+  }, [popular]);
 
   useEffect(() => {
     base44.entities.Listing.list("-created_date", 200)
