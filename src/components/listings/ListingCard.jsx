@@ -7,9 +7,9 @@ import VerifiedBadge from "@/components/common/VerifiedBadge";
 import { cap } from "@/lib/gems";
 
 const STATUS = {
-  available: "bg-primary/10 text-primary",
-  reserved: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
-  sold: "bg-muted text-muted-foreground",
+  available: "text-primary",
+  reserved: "text-amber-600 dark:text-amber-400",
+  sold: "text-muted-foreground",
 };
 
 export default function ListingCard({ listing }) {
@@ -17,9 +17,9 @@ export default function ListingCard({ listing }) {
   return (
     <Link
       to={`/listing/${listing.id}`}
-      className="group flex h-full gem-corners gem-card gem-frame hover:gem-frame-primary transition-colors"
+      className="group neu-raised flex h-full gem-corners gem-card bg-background"
     >
-      <div className="flex flex-col w-full gem-corners gem-card overflow-hidden bg-card">
+      <div className="flex flex-col w-full gem-corners gem-card overflow-hidden bg-background">
       <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
         {photo ? (
           <Image
@@ -33,13 +33,13 @@ export default function ListingCard({ listing }) {
           </div>
         )}
         <div className="absolute top-2.5 left-2.5 flex gap-1.5">
-          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide backdrop-blur bg-background/90 ${STATUS[listing.status] || ""}`}>
+          <span className={`neu-raised-sm rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide bg-background ${STATUS[listing.status] || ""}`}>
             {cap(listing.status)}
           </span>
         </div>
         {listing.trader_tier && listing.trader_tier !== "none" && (
           <div className="absolute top-2.5 right-2.5">
-            <TierBadge tier={listing.trader_tier} className="backdrop-blur bg-background/90" />
+            <TierBadge tier={listing.trader_tier} />
           </div>
         )}
       </div>
@@ -51,11 +51,11 @@ export default function ListingCard({ listing }) {
         </div>
         <div className="mt-2 flex flex-wrap gap-1.5">
           {listing.color && (
-            <span className="rounded-md bg-secondary px-2 py-0.5 text-[11px] text-muted-foreground">{listing.color}</span>
+            <span className="neu-inset-sm rounded-full bg-background px-2.5 py-1 text-[11px] font-medium text-foreground">{listing.color}</span>
           )}
-          <span className="rounded-md bg-secondary px-2 py-0.5 text-[11px] text-muted-foreground">{cap(listing.treatment)}</span>
+          <span className="neu-inset-sm rounded-full bg-background px-2.5 py-1 text-[11px] font-medium text-foreground">{cap(listing.treatment)}</span>
           {listing.origin && (
-            <span className="rounded-md bg-secondary px-2 py-0.5 text-[11px] text-muted-foreground">{listing.origin}</span>
+            <span className="neu-inset-sm rounded-full bg-background px-2.5 py-1 text-[11px] font-medium text-foreground">{listing.origin}</span>
           )}
         </div>
         <div className="mt-auto pt-3 border-t border-border flex items-center gap-1.5 text-xs text-muted-foreground">

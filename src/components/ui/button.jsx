@@ -9,16 +9,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "gem-btn-raised bg-primary/95 text-primary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] hover:bg-primary",
-        destructive:
-          "gem-btn-raised-destructive bg-destructive/95 text-destructive-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] hover:bg-destructive",
-        outline:
-          "gem-btn-raised-outline bg-secondary/90 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "gem-btn-raised-outline bg-secondary/90 text-secondary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] hover:bg-secondary",
-        ghost: "[&::after]:hidden [&::before]:hidden hover:bg-accent hover:text-accent-foreground",
-        link: "[&::after]:hidden [&::before]:hidden text-primary underline-offset-4 hover:underline",
+        default: "bg-primary text-primary-foreground",
+        destructive: "bg-destructive text-destructive-foreground",
+        outline: "bg-background text-foreground",
+        secondary: "bg-background text-foreground",
+        ghost: "!shadow-none hover:text-primary",
+        link: "!shadow-none text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-11 px-5",

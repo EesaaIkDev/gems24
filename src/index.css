@@ -4,25 +4,30 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    /* Neomorphism: one single surface colour for page, cards, buttons,
+       inputs — all separation comes from the soft dual shadows below. */
+    --background: 214 22% 93%;
     --foreground: 240 27% 14%;
-    --card: 0 0% 100%;
+    --card: 214 22% 93%;
     --card-foreground: 240 27% 14%;
-    --popover: 0 0% 100%;
+    --popover: 214 22% 93%;
     --popover-foreground: 240 27% 14%;
-    --primary: 150 100% 39%;
+    --primary: 150 90% 33%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 25% 97%;
+    --secondary: 214 22% 93%;
     --secondary-foreground: 240 27% 14%;
-    --muted: 210 25% 97%;
-    --muted-foreground: 215 14% 46%;
-    --accent: 137 55% 94%;
+    --muted: 214 22% 93%;
+    --muted-foreground: 215 16% 40%;
+    --accent: 214 22% 93%;
     --accent-foreground: 152 68% 22%;
-    --destructive: 0 72% 51%;
+    --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 20% 91%;
-    --input: 214 20% 91%;
-    --ring: 150 100% 39%;
+    --border: 214 22% 93%;
+    --input: 214 22% 93%;
+    --ring: 150 90% 33%;
+    /* Soft light (top-left) and dark (bottom-right) shadow colours. */
+    --neu-light: 0 0% 100% / 0.9;
+    --neu-dark: 215 25% 68% / 0.55;
     --chart-1: 150 100% 39%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -46,25 +51,27 @@
   }
 
   .dark {
-    --background: 213 25% 8%;
-    --foreground: 206 32% 91%;
-    --card: 215 21% 12%;
-    --card-foreground: 206 32% 91%;
-    --popover: 215 21% 12%;
-    --popover-foreground: 206 32% 91%;
-    --primary: 150 100% 41%;
-    --primary-foreground: 213 25% 8%;
-    --secondary: 215 18% 16%;
-    --secondary-foreground: 206 32% 91%;
-    --muted: 215 18% 16%;
-    --muted-foreground: 215 14% 62%;
-    --accent: 152 40% 16%;
+    --background: 215 18% 14%;
+    --foreground: 206 32% 93%;
+    --card: 215 18% 14%;
+    --card-foreground: 206 32% 93%;
+    --popover: 215 18% 14%;
+    --popover-foreground: 206 32% 93%;
+    --primary: 150 100% 45%;
+    --primary-foreground: 215 18% 10%;
+    --secondary: 215 18% 14%;
+    --secondary-foreground: 206 32% 93%;
+    --muted: 215 18% 14%;
+    --muted-foreground: 214 15% 68%;
+    --accent: 215 18% 14%;
     --accent-foreground: 150 80% 75%;
-    --destructive: 0 62% 45%;
+    --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 213 12% 22%;
-    --input: 213 12% 22%;
-    --ring: 150 100% 41%;
+    --border: 215 18% 14%;
+    --input: 215 18% 14%;
+    --ring: 150 100% 45%;
+    --neu-light: 215 18% 22% / 0.9;
+    --neu-dark: 215 30% 5% / 0.75;
     --chart-1: 150 100% 41%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -140,110 +147,78 @@
     -webkit-backdrop-filter: saturate(180%) blur(20px);
   }
 
-  /* Emerald-cut chamfered corners for standalone action buttons. */
+  /* System-wide mapping so every existing surface inherits soft depth.
+     Declared before the neu-* utilities so explicit classes win. */
+  .bg-card {
+    box-shadow: -6px -6px 14px hsl(var(--neu-light)), 6px 6px 14px hsl(var(--neu-dark));
+  }
+
+  .bg-secondary,
+  .bg-muted {
+    box-shadow: inset -2px -2px 5px hsl(var(--neu-light)), inset 2px 2px 5px hsl(var(--neu-dark));
+  }
+
+  /* --- Neomorphic (soft UI) system ---------------------------------
+     Everything shares the page's surface colour; depth comes only from a
+     soft light shadow (top-left) plus a soft dark shadow (bottom-right).
+     Raised = shadows outside. Inset = the same pair flipped inside. */
+  .neu-raised {
+    box-shadow: -6px -6px 14px hsl(var(--neu-light)), 6px 6px 14px hsl(var(--neu-dark));
+  }
+
+  .neu-raised-sm {
+    box-shadow: -3px -3px 7px hsl(var(--neu-light)), 3px 3px 7px hsl(var(--neu-dark));
+  }
+
+  .neu-inset {
+    box-shadow: inset -4px -4px 9px hsl(var(--neu-light)), inset 4px 4px 9px hsl(var(--neu-dark));
+  }
+
+  .neu-inset-sm {
+    box-shadow: inset -2px -2px 5px hsl(var(--neu-light)), inset 2px 2px 5px hsl(var(--neu-dark));
+  }
+
+  /* Legacy gem-* hooks are kept as names so the whole app inherits the new
+     soft language: rounded corners, no clip-paths, no borders. */
   .gem-corners {
-    --gem-cut: 0.6rem;
-    clip-path: polygon(
-      var(--gem-cut) 0,
-      calc(100% - var(--gem-cut)) 0,
-      100% var(--gem-cut),
-      100% calc(100% - var(--gem-cut)),
-      calc(100% - var(--gem-cut)) 100%,
-      var(--gem-cut) 100%,
-      0 calc(100% - var(--gem-cut)),
-      0 var(--gem-cut)
-    );
+    border-radius: 1.25rem;
+    clip-path: none;
   }
 
-  /* Larger chamfer for cards. */
   .gem-card {
-    --gem-cut: 1rem;
+    border-radius: 1.5rem;
   }
 
-  /* Border for chamfered shapes: clip-path cuts real borders away on the
-     facets, so the frame is a clipped outer layer of border colour with the
-     content clipped 1px inside it. */
-  .gem-frame {
-    background-color: hsl(var(--border));
-    padding: 1px;
-  }
-
-  .gem-frame-primary {
-    background-color: hsl(var(--primary) / 0.4);
-  }
-
-  /* Smaller chamfer for compact filter chips. */
   .gem-chip {
-    --gem-cut: 0.45rem;
+    border-radius: 9999px;
   }
 
-  /* Faceted button: glassy surface, glare beam, spring press. */
+  .gem-frame,
+  .gem-frame-primary {
+    background-color: transparent;
+    padding: 0;
+  }
+
+  /* Raised soft button that presses into the surface while tapped. */
   .gem-btn {
     position: relative;
-    overflow: hidden;
-    backdrop-filter: saturate(140%) blur(6px);
-    -webkit-backdrop-filter: saturate(140%) blur(6px);
-    transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
-      filter 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
-    will-change: transform;
+    box-shadow: -6px -6px 14px hsl(var(--neu-light)), 6px 6px 14px hsl(var(--neu-dark));
+    transition: box-shadow 0.16s ease, transform 0.16s ease;
   }
 
-  /* Top-edge glare highlight across the facet. */
+  .gem-btn::before,
   .gem-btn::after {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 45%;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0));
-    pointer-events: none;
-  }
-
-  /* Narrow moving glare beam, swept on press. */
-  .gem-btn::before {
-    content: "";
-    position: absolute;
-    top: -40%;
-    left: 18%;
-    width: 10%;
-    height: 180%;
-    background: rgba(255, 255, 255, 0.18);
-    transform: skewX(-20deg) translateX(0);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    pointer-events: none;
-  }
-
-  .gem-btn:active::before {
-    transform: skewX(-20deg) translateX(140%);
+    content: none;
   }
 
   .gem-btn:active {
-    transform: translateY(4px);
+    box-shadow: inset -4px -4px 9px hsl(var(--neu-light)), inset 4px 4px 9px hsl(var(--neu-dark));
   }
 
-  /* Solid offset base that follows the chamfered silhouette (clip-path
-     would cut a real box-shadow away, so this uses drop-shadow). */
-  .gem-btn-raised {
-    filter: drop-shadow(0 5px 0 hsl(var(--primary-shadow)));
-  }
-
-  .gem-btn-raised:active {
-    filter: drop-shadow(0 1px 0 hsl(var(--primary-shadow)));
-  }
-
-  .gem-btn-raised-outline {
-    filter: drop-shadow(0 5px 0 hsl(var(--border)));
-  }
-
-  .gem-btn-raised-outline:active {
-    filter: drop-shadow(0 1px 0 hsl(var(--border)));
-  }
-
+  .gem-btn-raised,
+  .gem-btn-raised-outline,
   .gem-btn-raised-destructive {
-    filter: drop-shadow(0 5px 0 hsl(0 62% 32%));
-  }
-
-  .gem-btn-raised-destructive:active {
-    filter: drop-shadow(0 1px 0 hsl(0 62% 32%));
+    filter: none;
   }
 
   /* GPU-only press feedback — transform/opacity, never layout. */

@@ -79,14 +79,14 @@ export default function Gemstones() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search stones, traders, origins…"
-          className="pl-10 h-11 rounded-xl bg-card"
+          className="pl-10 h-12 rounded-full"
         />
       </div>
 
       <Tabs defaultValue="stones">
-        <TabsList className="grid grid-cols-2 w-full h-10 rounded-xl">
-          <TabsTrigger value="stones" className="rounded-lg">Stones</TabsTrigger>
-          <TabsTrigger value="traders" className="rounded-lg">Traders</TabsTrigger>
+        <TabsList className="grid grid-cols-2 w-full h-11 rounded-full">
+          <TabsTrigger value="stones">Stones</TabsTrigger>
+          <TabsTrigger value="traders">Traders</TabsTrigger>
         </TabsList>
 
         <TabsContent value="stones" className="mt-3 space-y-3">
@@ -96,7 +96,7 @@ export default function Gemstones() {
           ) : filteredStones.length === 0 ? (
             <EmptyState icon={Gem} title="No stones match" description="Try clearing a filter or widening the carat range." />
           ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredStones.map((l) => (
                 <ListingCard key={l.id} listing={l} />
               ))}
@@ -111,7 +111,7 @@ export default function Gemstones() {
           ) : filteredTraders.length === 0 ? (
             <EmptyState icon={Users} title="No traders found" description="Try a different search or clear your filters." />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {filteredTraders.map((t) => (
                 <TraderCard key={t.id} trader={t} />
               ))}

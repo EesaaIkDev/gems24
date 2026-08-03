@@ -10,11 +10,12 @@ export const TIERS = {
 
 export const TIER_ORDER = ["bronze", "silver", "gold", "platinum"];
 
+// Soft UI: badges share the surface colour, so tiers read through text colour.
 export const TIER_STYLES = {
-  bronze: "bg-[#CD7F32]/15 text-[#8a4f16] dark:text-[#e0a56d] border-[#CD7F32]/40",
-  silver: "bg-[#C0C0C0]/20 text-slate-600 dark:text-slate-300 border-[#C0C0C0]/50",
-  gold: "bg-[#FFD700]/20 text-[#8a6d00] dark:text-[#f0d264] border-[#FFD700]/50",
-  platinum: "bg-[#E5E4E2]/30 text-slate-700 dark:text-slate-200 border-[#E5E4E2]/60",
+  bronze: "text-[#9c5a1c] dark:text-[#e0a56d]",
+  silver: "text-slate-500 dark:text-slate-300",
+  gold: "text-[#9a7900] dark:text-[#f0d264]",
+  platinum: "text-slate-600 dark:text-slate-200",
 };
 
 export const GEM_TYPES = ["sapphire", "ruby", "emerald", "spinel", "garnet", "other"];
