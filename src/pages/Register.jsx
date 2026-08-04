@@ -17,13 +17,13 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [consent, setConsent] = useState({ terms: false, privacy: false, age: false });
+  const [consent, setConsent] = useState({ terms: false, privacy: false });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
 
-  const consented = consent.terms && consent.privacy && consent.age;
+  const consented = consent.terms && consent.privacy;
   const canSubmit =
     fullName.trim() && businessName.trim() && email.trim() && password.length >= MIN_PASSWORD_LENGTH && consented;
 

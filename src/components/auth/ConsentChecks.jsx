@@ -29,9 +29,10 @@ export default function ConsentChecks({ value, onChange }) {
         </Link>
         .
       </Row>
-      <Row id="consent-age" checked={value.age} onChange={set("age")}>
-        I confirm I am 18 or older. You must be 18 or older to use Gems24.
-      </Row>
+      <p className="text-[0.8125rem] leading-snug text-muted-foreground">
+        By creating an account you confirm you are 18 or older — you must be 18 or older to use
+        Gems24.
+      </p>
     </div>
   );
 }
