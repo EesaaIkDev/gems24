@@ -29,9 +29,8 @@ export default function ConsentChecks({ value, onChange }) {
         </Link>
         .
       </Row>
-      <p className="text-[0.8125rem] leading-snug text-muted-foreground">
-        By creating an account you confirm you are 18 or older — you must be 18 or older to use
-        Gems24.
+      <p className="text-xs leading-snug text-muted-foreground">
+        By creating an account on Gems24 you confirm to be of a mature age.
       </p>
     </div>
   );

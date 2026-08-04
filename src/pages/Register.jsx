@@ -137,8 +137,8 @@ export default function Register() {
         <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">{error}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="space-y-1.5">
           <Label htmlFor="fullName">Full name</Label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
@@ -149,12 +149,12 @@ export default function Register() {
               placeholder="Jane Perera"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-10 h-11"
               required
             />
           </div>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label htmlFor="businessName">Business name</Label>
           <div className="relative">
             <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
@@ -164,12 +164,12 @@ export default function Register() {
               placeholder="Perera Gems"
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-10 h-11"
               required
             />
           </div>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
@@ -180,12 +180,12 @@ export default function Register() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-10 h-11"
               required
             />
           </div>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label htmlFor="password">Password</Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
@@ -196,13 +196,13 @@ export default function Register() {
               placeholder={`At least ${MIN_PASSWORD_LENGTH} characters`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-10 h-11"
               required
             />
           </div>
           <PasswordStrength value={password} />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label htmlFor="confirm">Confirm password</Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
@@ -213,15 +213,17 @@ export default function Register() {
               placeholder="••••••••"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-10 h-11"
               required
             />
           </div>
         </div>
 
-        <ConsentChecks value={consent} onChange={setConsent} />
+        <div className="pt-1">
+          <ConsentChecks value={consent} onChange={setConsent} />
+        </div>
 
-        <Button type="submit" className="w-full h-12 font-medium" disabled={loading || !canSubmit}>
+        <Button type="submit" className="w-full h-11 font-medium" disabled={loading || !canSubmit}>
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

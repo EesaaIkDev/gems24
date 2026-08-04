@@ -2,20 +2,20 @@ import React from "react";
 
 export default function AuthLayout({ icon: Icon, title, subtitle, footer, children }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary mb-4">
-            <Icon className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
+    <div className="h-full overflow-y-auto bg-background px-4 py-6 sm:flex sm:items-center sm:justify-center">
+      <div className="mx-auto w-full max-w-md">
+        <div className="mb-5 text-center sm:mb-8">
+          <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary sm:h-14 sm:w-14">
+            <Icon className="h-6 w-6 text-primary-foreground sm:h-7 sm:w-7" aria-hidden="true" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
-          {subtitle && <p className="text-muted-foreground mt-2">{subtitle}</p>}
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">{title}</h1>
+          {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}
         </div>
-        <div className="bg-card rounded-2xl shadow-sm border border-border p-8">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-8">
           {children}
         </div>
         {footer && (
-          <p className="text-center text-sm text-muted-foreground mt-6">{footer}</p>
+          <p className="mt-5 text-center text-sm text-muted-foreground">{footer}</p>
         )}
       </div>
     </div>
