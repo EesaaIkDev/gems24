@@ -63,7 +63,7 @@ export default function Onboarding() {
       account_type: accountType,
       user_email: user.email,
       subscription_tier: "none",
-      verified: false,
+      verified: false
     });
     localStorage.removeItem(DRAFT_KEY);
     navigate("/profile", { replace: true });
@@ -73,69 +73,69 @@ export default function Onboarding() {
 
   if (!accountType) {
     const options = [
-      {
-        key: "trader",
-        icon: Gem,
-        title: "I'm a Trader",
-        desc: "Publish gemstone listings, appear in Gemstones search and connect with traders worldwide.",
-      },
-      {
-        key: "buyer",
-        icon: Search,
-        title: "I'm a Buyer",
-        desc: "Browse stones from verified traders and message them directly.",
-      },
-    ];
+    {
+      key: "trader",
+      icon: Gem,
+      title: "I'm a Trader",
+      desc: "Publish gemstone listings, appear in Gemstones search and connect with traders worldwide."
+    },
+    {
+      key: "buyer",
+      icon: Search,
+      title: "I'm a Buyer",
+      desc: "Browse stones from verified traders and message them directly."
+    }];
+
     return (
       <div className="px-4 pt-8 pb-10 max-w-lg mx-auto">
         <img src={LOGO_URL} alt="Gems24" className="w-14 h-14" />
         <h1 className="mt-4 text-[26px] font-bold leading-tight">Welcome to Gems24</h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">How will you be using Gems24?</p>
+        <p className="mt-1.5 text-sm text-muted-foreground">How would you describe yourself?</p>
         <div className="mt-6 space-y-3">
-          {options.map(({ key, icon: Icon, title, desc }) => (
-            <button
-              key={key}
-              onClick={() => setAccountType(key)}
-              className="w-full text-left rounded-2xl bg-card p-5 transition-all"
-            >
+          {options.map(({ key, icon: Icon, title, desc }) =>
+          <button
+            key={key}
+            onClick={() => setAccountType(key)}
+            className="w-full text-left rounded-2xl bg-card p-5 transition-all">
+            
               <div className="neu-inset-sm w-11 h-11 rounded-xl bg-background flex items-center justify-center">
                 <Icon className="w-5 h-5 text-primary" />
               </div>
               <h3 className="mt-3.5 font-semibold text-lg">{title}</h3>
               <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
             </button>
-          ))}
+          )}
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
     <div className="px-4 pt-6 pb-10 max-w-lg mx-auto">
       <button
         onClick={() => setAccountType(null)}
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary"
-      >
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary">
+        
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
       <h1 className="mt-4 text-[26px] font-bold leading-tight">
         {accountType === "trader" ? "Build your trader profile" : "Set up your buyer profile"}
       </h1>
       <p className="mt-1.5 text-sm text-muted-foreground">
-        {user
-          ? accountType === "trader"
-            ? "This is what other traders and buyers will see."
-            : "So traders know who they're speaking with."
-          : "Set it up first — we'll only ask for an email at the end to save it."}
+        {user ?
+        accountType === "trader" ?
+        "This is what other traders and buyers will see." :
+        "So traders know who they're speaking with." :
+        "Set it up first — we'll only ask for an email at the end to save it."}
       </p>
       <div className="mt-6">
         <TraderForm
           initial={draft || {}}
           onSave={save}
           saving={saving}
-          submitLabel={user ? "Create my profile" : "Continue"}
-        />
+          submitLabel={user ? "Create my profile" : "Continue"} />
+        
       </div>
-    </div>
-  );
+    </div>);
+
 }
