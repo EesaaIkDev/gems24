@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Crown, LogOut, Moon, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Crown, FileText, LogOut, Moon, ShieldCheck } from "lucide-react";
+import DeleteAccount from "@/components/settings/DeleteAccount";
 import TraderForm from "@/components/traders/TraderForm";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
@@ -47,6 +48,17 @@ export default function Settings() {
 
       <NativeSettings />
 
+      <div className="rounded-2xl bg-card border border-border p-4">
+        <div className="flex items-center gap-2">
+          <FileText className="w-[18px] h-[18px] text-primary" />
+          <p className="text-sm font-medium">Legal</p>
+        </div>
+        <div className="mt-2 flex gap-4 text-sm">
+          <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>
+          <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+        </div>
+      </div>
+
       {!user ? (
         <SignInPrompt title="Sign in to manage your account" />
       ) : !trader ? (
@@ -85,6 +97,9 @@ export default function Settings() {
 
           <div className="rounded-2xl bg-card border border-border p-5">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Edit profile</h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Everything we store about you is shown here and can be changed at any time.
+            </p>
             <div className="mt-4">
               <TraderForm initial={trader} onSave={save} saving={saving} submitLabel="Save changes" />
             </div>
@@ -94,6 +109,8 @@ export default function Settings() {
           <Button variant="outline" className="w-full h-12" onClick={() => base44.auth.logout("/")}>
             <LogOut className="w-4 h-4 mr-2" /> Log out
           </Button>
+
+          <DeleteAccount trader={trader} />
         </>
       )}
     </div>

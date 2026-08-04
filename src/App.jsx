@@ -21,6 +21,8 @@ import Subscription from '@/pages/Subscription';
 import Settings from '@/pages/Settings';
 import Profile from '@/pages/Profile';
 import Onboarding from '@/pages/Onboarding';
+import Terms from '@/pages/Terms';
+import Privacy from '@/pages/Privacy';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -70,6 +72,8 @@ const AuthenticatedApp = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
