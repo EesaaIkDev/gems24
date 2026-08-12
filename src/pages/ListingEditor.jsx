@@ -12,6 +12,8 @@ import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { GEM_TYPES, TREATMENTS, cap, tierLimit } from "@/lib/gems";
+import { createRecord, updateRecord } from "@/lib/offlineSync";
+import useOnline from "@/hooks/useOnline";
 
 const EMPTY = {
   photos: [],
@@ -30,6 +32,7 @@ export default function ListingEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, trader, loading } = useCurrentTrader();
+  const online = useOnline();
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -84,8 +87,9 @@ export default function ListingEditor() {
       trader_tier: trader.subscription_tier || "none",
       trader_verified: !!trader.verified,
     };
-    if (id) await base44.entities.Listing.update(id, payload);
-    else await base44.entities.Listing.create(payload);
+    // Optimistic write — queued in the outbox when the network is unavailable.
+    if (id) await updateRecord("Listing", id, payload);
+    else await createRecord("Listing", payload);
     navigate("/profile", { replace: true });
   };
 
@@ -173,9 +177,18 @@ export default function ListingEditor() {
           <label className="flex items-center gap-2 rounded-xl border border-dashed border-border h-12 px-4 text-sm cursor-pointer hover:border-primary/50">
             {uploadingCert ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4 text-primary" />}
             <span className="truncate text-muted-foreground">
-              {form.certificate_url ? "Certificate uploaded — replace" : "Upload certificate"}
+              {!online
+                ? "Certificate upload needs a connection"
+                : form.certificate_url
+                  ? "Certificate uploaded — replace"
+                  : "Upload certificate"}
             </span>
-            <input type="file" className="hidden" onChange={uploadCert} disabled={uploadingCert} />
+            <input
+              type="file"
+              className="hidden"
+              onChange={uploadCert}
+              disabled={uploadingCert || !online}
+            />
           </label>
         </div>
 

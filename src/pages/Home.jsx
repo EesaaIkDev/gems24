@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import Spinner from "@/components/common/Spinner";
 import LoadError from "@/components/common/LoadError";
-import useLoader from "@/hooks/useLoader";
+import useOfflineEntity from "@/hooks/useOfflineEntity";
 import EmptyState from "@/components/common/EmptyState";
 import FeedPost from "@/components/feed/FeedPost";
 import ActivityStrip from "@/components/feed/ActivityStrip";
@@ -18,16 +18,23 @@ export default function Home() {
   const [connections, setConnections] = useState([]);
   const [q, setQ] = useState("");
 
-  const { data, loading: feedLoading, error, reload } = useLoader(async () => {
-    const [l, t] = await Promise.all([
-      base44.entities.Listing.list("-created_date", 200),
-      base44.entities.Trader.filter({ account_type: "trader" }, "-created_date", 200),
-    ]);
-    return { listings: l, traders: t };
-  }, []);
+  // Local-first: the IndexedDB mirror paints instantly, the network refreshes it.
+  const listingsQuery = useOfflineEntity(
+    "Listing",
+    () => base44.entities.Listing.list("-created_date", 200),
+    []
+  );
+  const tradersQuery = useOfflineEntity(
+    "Trader",
+    () => base44.entities.Trader.filter({ account_type: "trader" }, "-created_date", 200),
+    []
+  );
 
-  const listings = data?.listings || null;
-  const traders = data?.traders || [];
+  const listings = listingsQuery.rows;
+  const traders = tradersQuery.rows || [];
+  const feedLoading = listings === null && listingsQuery.syncing;
+  const error = listings === null && listingsQuery.stale;
+  const reload = listingsQuery.refresh;
 
   useEffect(() => {
     if (viewer?.id) listMyConnections(viewer.id).then(setConnections).catch(() => setConnections([]));
@@ -77,7 +84,7 @@ export default function Home() {
     [traders, networkIds, viewer?.id]
   );
 
-  if (loading || feedLoading) return <Spinner />;
+  if (listings === null && (loading || feedLoading)) return <Spinner />;
   if (error) return <LoadError title="Couldn't load your feed" onRetry={reload} />;
 
   return (

@@ -14,6 +14,8 @@ import useCurrentTrader from "@/hooks/useCurrentTrader";
 import usePopularDefaults from "@/hooks/usePopularDefaults";
 import LimitWarning from "@/components/subscription/LimitWarning";
 import { GEM_TYPES, TREATMENTS, cap, tierLimit } from "@/lib/gems";
+import { createRecord } from "@/lib/offlineSync";
+import useOnline from "@/hooks/useOnline";
 
 const EMPTY = {
   photos: [],
@@ -34,6 +36,7 @@ export default function AddListing() {
   const navigate = useNavigate();
   const { user, trader, loading } = useCurrentTrader();
   const popular = usePopularDefaults();
+  const online = useOnline();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
@@ -66,7 +69,8 @@ export default function AddListing() {
 
   const publish = async () => {
     setSaving(true);
-    const listing = await base44.entities.Listing.create({
+    // Optimistic: saved locally now, pushed to Base44 by the outbox.
+    const listing = await createRecord("Listing", {
       ...form,
       weight_carats: Number(form.weight_carats),
       trader_id: trader.id,
@@ -75,7 +79,10 @@ export default function AddListing() {
       trader_tier: trader.subscription_tier || "none",
       trader_verified: !!trader.verified,
     });
-    navigate(`/listing/${listing.id}`, { replace: true });
+    // A row created offline has no server id yet — send them to their listings.
+    navigate(String(listing.id).startsWith("local-") ? "/profile" : `/listing/${listing.id}`, {
+      replace: true,
+    });
   };
 
   const back = () => (step === 0 ? navigate(-1) : setStep(step - 1));
@@ -188,9 +195,18 @@ export default function AddListing() {
         <label className="flex items-center gap-2 rounded-xl border border-dashed border-border h-12 px-4 text-sm cursor-pointer hover:border-primary/50">
           {uploadingCert ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4 text-primary" />}
           <span className="truncate text-muted-foreground">
-            {form.certificate_url ? "Certificate uploaded — replace" : "Upload certificate"}
+            {!online
+              ? "Certificate upload needs a connection"
+              : form.certificate_url
+                ? "Certificate uploaded — replace"
+                : "Upload certificate"}
           </span>
-          <input type="file" className="hidden" onChange={uploadCert} disabled={uploadingCert} />
+          <input
+            type="file"
+            className="hidden"
+            onChange={uploadCert}
+            disabled={uploadingCert || !online}
+          />
         </label>
       </div>
       <div className="space-y-1.5">

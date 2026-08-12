@@ -10,6 +10,9 @@ import useMessageNotifications from "@/hooks/useMessageNotifications";
 import useSwipeBack from "@/hooks/useSwipeBack";
 import AppLockGate from "@/components/native/AppLockGate";
 import { registerPush } from "@/lib/despia";
+import OfflineBanner from "@/components/common/OfflineBanner";
+import { setSyncErrorHandler } from "@/lib/offlineSync";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function AppLayout() {
   useTheme();
@@ -21,6 +24,18 @@ export default function AppLayout() {
   const scrollRef = useRef(null);
 
   useSwipeBack(scrollRef);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setSyncErrorHandler(() =>
+      toast({
+        title: "A change couldn't be saved",
+        description: "It was undone — please try again.",
+        variant: "destructive",
+      })
+    );
+    return () => setSyncErrorHandler(null);
+  }, [toast]);
 
   useEffect(() => {
     registerPush(user?.id);
@@ -30,6 +45,10 @@ export default function AppLayout() {
     <AppLockGate>
       <div className="relative flex h-full flex-col overflow-hidden bg-background">
         <AppHeader />
+
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-40">
+          <OfflineBanner />
+        </div>
 
         <div
           id="app-scroll"

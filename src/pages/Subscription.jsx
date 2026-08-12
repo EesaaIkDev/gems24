@@ -7,6 +7,7 @@ import Spinner from "@/components/common/Spinner";
 import TierBadge from "@/components/common/TierBadge";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useEntitlements from "@/hooks/useEntitlements";
+import useOnline from "@/hooks/useOnline";
 import { isNative, haptic } from "@/lib/despia";
 import { launchPaywall, openCustomerCenter } from "@/lib/revenuecat";
 import { LOGO_URL, TIERS, TIER_ORDER } from "@/lib/gems";
@@ -37,6 +38,7 @@ const ANCHOR = {
 export default function Subscription() {
   const { trader, loading, reload } = useCurrentTrader();
   useEntitlements(trader, reload);
+  const online = useOnline();
   const [selected, setSelected] = useState(null);
 
   const subscribe = () => {
@@ -115,9 +117,14 @@ export default function Subscription() {
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {CAPACITY[selected]}. {PLACEMENT[selected]}
               </p>
-              <Button className="w-full" onClick={subscribe}>
-                Continue to payment
+              <Button className="w-full" onClick={subscribe} disabled={!online}>
+                {online ? "Continue to payment" : "Unavailable offline"}
               </Button>
+              {!online && (
+                <p className="text-center text-xs text-muted-foreground">
+                  Payments need a connection — reconnect to upgrade your grade.
+                </p>
+              )}
             </>
           )}
         </div>

@@ -10,11 +10,22 @@ import TraderFilters from "@/components/traders/TraderFilters";
 import Spinner from "@/components/common/Spinner";
 import EmptyState from "@/components/common/EmptyState";
 import usePopularDefaults from "@/hooks/usePopularDefaults";
+import useOfflineEntity from "@/hooks/useOfflineEntity";
 import { tierRank } from "@/lib/gems";
 
 export default function Gemstones() {
-  const [listings, setListings] = useState(null);
-  const [traders, setTraders] = useState(null);
+  const listingsQuery = useOfflineEntity(
+    "Listing",
+    () => base44.entities.Listing.list("-created_date", 200),
+    []
+  );
+  const tradersQuery = useOfflineEntity(
+    "Trader",
+    () => base44.entities.Trader.filter({ account_type: "trader" }, "-created_date", 200),
+    []
+  );
+  const listings = listingsQuery.rows;
+  const traders = tradersQuery.rows;
   const [stoneFilters, setStoneFilters] = useState({ q: "", type: "", treatment: "", country: "", minCt: "", maxCt: "" });
   const [traderFilters, setTraderFilters] = useState({ specialty: "", tier: "", country: "" });
   const [q, setQ] = useState("");
@@ -25,15 +36,6 @@ export default function Gemstones() {
     if (!popular) return;
     setStoneFilters((f) => (f.type ? f : { ...f, type: popular.gemstone_type }));
   }, [popular]);
-
-  useEffect(() => {
-    base44.entities.Listing.list("-created_date", 200)
-      .then(setListings)
-      .catch(() => setListings([]));
-    base44.entities.Trader.filter({ account_type: "trader" }, "-created_date", 200)
-      .then(setTraders)
-      .catch(() => setTraders([]));
-  }, []);
 
   const stoneCountries = useMemo(
     () => [...new Set((listings || []).map((l) => l.trader_country).filter(Boolean))].sort().slice(0, 8),
