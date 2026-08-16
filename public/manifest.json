@@ -9,23 +9,23 @@
   "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#eaedf2",
-  "theme_color": "#00C77A",
+  "theme_color": "#DB2777",
   "categories": ["business", "shopping"],
   "icons": [
     {
-      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/318d9d346_generated_image.png",
+      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/01189fb69_Gems24-logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/318d9d346_generated_image.png",
+      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/01189fb69_Gems24-logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/318d9d346_generated_image.png",
+      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/01189fb69_Gems24-logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
