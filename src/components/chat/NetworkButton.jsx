@@ -41,14 +41,14 @@ export default function NetworkButton({ viewerId, other, connection, context, cl
   const pending = conn?.status === "pending";
   const connected = canMessage(conn);
   const Icon = pending ? Clock : connected ? MessageCircle : UserPlus;
-  const label = pending ? "Requested" : "Network";
+  const label = pending ? "Requested" : connected ? "Networked" : "Network";
 
   return (
     <Button
       type="button"
       onClick={onClick}
       disabled={busy || pending}
-      variant={pending ? "secondary" : "default"}
+      variant={pending || connected ? "secondary" : "default"}
       size={size}
       className={className}
     >

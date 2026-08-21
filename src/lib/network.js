@@ -19,9 +19,9 @@ export async function listMyConnections(viewerId) {
 export const findConnection = (rows, viewerId, otherId) =>
   rows.find((c) => involves(c, viewerId) && involves(c, otherId)) || null;
 
-/** Trader ids whose activity should appear in the viewer's feed. */
+/** Trader ids whose listings get boosted in the viewer's feed — established networks only. */
 export const feedTraderIds = (rows, viewerId) => [
-  ...new Set(rows.filter((c) => c.status !== "declined").map((c) => otherSide(c, viewerId))),
+  ...new Set(rows.filter((c) => c.status === "accepted").map((c) => otherSide(c, viewerId))),
 ];
 
 export const canMessage = (connection) => connection?.status === "accepted";
@@ -42,8 +42,14 @@ export async function networkWith(viewerId, otherTrader) {
   });
 }
 
+/**
+ * Accepting establishes the network in both directions at once (a single
+ * symmetric row). Declining removes the row, so the request simply disappears
+ * from the requester's side with no negative signal.
+ */
 export async function respondToRequest(connectionId, status) {
-  return base44.entities.Connection.update(connectionId, { status });
+  if (status === "declined") return base44.entities.Connection.delete(connectionId);
+  return base44.entities.Connection.update(connectionId, { status: "accepted" });
 }
 
 export async function listIncomingRequests(viewerId) {

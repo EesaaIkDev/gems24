@@ -84,9 +84,9 @@ export default function Settings() {
           <div className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3">
             <ShieldCheck className="w-[18px] h-[18px] text-primary" />
             <div className="flex-1">
-              <p className="text-sm font-medium">Require approval before messaging</p>
+              <p className="text-sm font-medium">Restricted Messaging</p>
               <p className="text-xs text-muted-foreground">
-                Traders can still follow you, but must be accepted before they can chat.
+                When on, other traders must send a request and be accepted before they can message you.
               </p>
             </div>
             <Switch

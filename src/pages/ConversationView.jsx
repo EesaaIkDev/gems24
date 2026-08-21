@@ -9,6 +9,7 @@ import MessageBubble from "@/components/chat/MessageBubble";
 import MessageComposer from "@/components/chat/MessageComposer";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { markRead, otherIdOf, sendMessage } from "@/lib/chat";
+import { canMessage, getConnection } from "@/lib/network";
 
 export default function ConversationView() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function ConversationView() {
   const [conversation, setConversation] = useState(null);
   const [other, setOther] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [networked, setNetworked] = useState(true);
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -26,7 +28,10 @@ export default function ConversationView() {
       if (cancelled) return;
       setConversation(c);
       markRead(c, trader.id);
-      setOther(await base44.entities.Trader.get(otherIdOf(c, trader.id)).catch(() => null));
+      const otherId = otherIdOf(c, trader.id);
+      setOther(await base44.entities.Trader.get(otherId).catch(() => null));
+      const connection = await getConnection(trader.id, otherId).catch(() => null);
+      if (!cancelled) setNetworked(canMessage(connection));
     };
     load();
     return () => {
@@ -104,7 +109,13 @@ export default function ConversationView() {
         <div ref={bottomRef} />
       </div>
 
-      <MessageComposer onSend={send} />
+      {networked ? (
+        <MessageComposer onSend={send} />
+      ) : (
+        <p className="px-4 text-center text-sm text-muted-foreground">
+          Messaging unlocks once {other?.full_name || "this trader"} accepts your network request.
+        </p>
+      )}
     </div>
   );
 }
