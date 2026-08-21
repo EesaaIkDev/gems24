@@ -7,6 +7,7 @@ import Spinner from "@/components/common/Spinner";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import MessageBubble from "@/components/chat/MessageBubble";
 import MessageComposer from "@/components/chat/MessageComposer";
+import ChatBackdrop from "@/components/chat/ChatBackdrop";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { markRead, otherIdOf, sendMessage } from "@/lib/chat";
 
@@ -54,7 +55,8 @@ export default function ConversationView() {
   };
 
   return (
-    <div className="pb-32 dark:bg-[url('https://media.base44.com/images/public/6a661583e07cf311ecceee39/85d370d63_Gems24-chat-bg-dark.png')] dark:bg-repeat dark:bg-[length:320px_320px]">
+    <div className="relative min-h-full pb-32">
+      <ChatBackdrop />
       <div className="sticky top-0 z-20 glass-chrome border-b border-border px-4 py-3">
         <div className="flex items-center gap-3">
           <Link to="/messages" className="text-muted-foreground hover:text-primary">
