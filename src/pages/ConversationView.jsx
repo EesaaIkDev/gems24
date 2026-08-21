@@ -54,7 +54,7 @@ export default function ConversationView() {
   };
 
   return (
-    <div className="pb-32">
+    <div className="pb-32 dark:bg-[url('https://media.base44.com/images/public/6a661583e07cf311ecceee39/85d370d63_Gems24-chat-bg-dark.png')] dark:bg-repeat dark:bg-[length:320px_320px]">
       <div className="sticky top-0 z-20 glass-chrome border-b border-border px-4 py-3">
         <div className="flex items-center gap-3">
           <Link to="/messages" className="text-muted-foreground hover:text-primary">
