@@ -1,31 +1,27 @@
 {
-  "id": "/",
   "name": "Gems24 — Gemstone Trader Network",
   "short_name": "Gems24",
   "description": "Global networking and listings platform for gemstone traders.",
-  "start_url": "/?source=pwa",
   "scope": "/",
+  "start_url": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
-  "background_color": "#eaedf2",
+  "background_color": "#F2F4F6",
   "theme_color": "#00C77A",
   "categories": ["business", "shopping"],
   "icons": [
     {
-      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/01189fb69_Gems24-logo.png",
+      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/2a913915b_Screenshot2026-08-18at51727pm.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
-      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/01189fb69_Gems24-logo.png",
+      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/2a913915b_Screenshot2026-08-18at51727pm.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
-      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/01189fb69_Gems24-logo.png",
+      "src": "https://media.base44.com/images/public/6a661583e07cf311ecceee39/2a913915b_Screenshot2026-08-18at51727pm.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
