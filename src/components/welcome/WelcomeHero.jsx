@@ -1,12 +1,18 @@
 import React from "react";
 import { motion } from "framer-motion";
-import GemPattern from "./GemPattern";
+import { Image } from "@/components/ui/image";
 import GemDoodle from "./GemDoodle";
 
 export default function WelcomeHero() {
   return (
     <section className="relative flex h-[47svh] min-h-[320px] max-h-[520px] items-center justify-center overflow-hidden bg-welcome-green">
-      <GemPattern />
+      <Image
+        src="https://media.base44.com/images/public/6a661583e07cf311ecceee39/d9a45820a_image.png"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full"
+        fittingType="fill"
+      />
       <motion.div
         className="relative z-10 flex flex-col items-center"
         initial={{ opacity: 0, y: 14 }}
