@@ -60,8 +60,9 @@ const AuthenticatedApp = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/welcome" element={<Welcome />} />
+      {!isAuthenticated && <Route path="/" element={<Welcome />} />}
       <Route element={<AppLayout />}>
-        <Route path="/" element={isAuthenticated ? <Home /> : <Welcome />} />
+        <Route path="/" element={<Home />} />
         <Route path="/gemstones" element={<Gemstones />} />
         <Route path="/add" element={<AddListing />} />
         <Route path="/listing/:id" element={<ListingDetail />} />
