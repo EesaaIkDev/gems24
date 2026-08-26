@@ -1,4 +1,4 @@
-export const LOGO_URL = "https://media.base44.com/images/public/6a661583e07cf311ecceee39/2a913915b_Screenshot2026-08-18at51727pm.png";
+export const LOGO_URL = "https://media.base44.com/images/public/6a661583e07cf311ecceee39/497267ee2_Gems24-logo.png";
 
 export const TIERS = {
   none: { key: "none", label: "Free", limit: 0, rank: 0, price: null },

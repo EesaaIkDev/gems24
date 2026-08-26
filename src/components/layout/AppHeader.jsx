@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Settings } from "lucide-react";
+import { Image } from "@/components/ui/image";
 import { LOGO_URL } from "@/lib/gems";
 import { haptic } from "@/lib/despia";
 
@@ -16,7 +17,7 @@ export default function AppHeader() {
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4" style={{ height: "var(--header-h)" }}>
         <Link to="/" className="tap-scale flex items-center" onClick={() => haptic("light")} aria-label="Gems24 home">
-          <img src={LOGO_URL} alt="Gems24" className="h-8 w-8" />
+          <Image src={LOGO_URL} alt="Gems24" className="h-8 w-8" fittingType="fit" />
         </Link>
         <Link
           to="/settings"
