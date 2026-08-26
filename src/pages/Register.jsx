@@ -10,12 +10,7 @@ import AuthLayout from "@/components/AuthLayout";
 import PasswordStrength, { MIN_PASSWORD_LENGTH } from "@/components/auth/PasswordStrength";
 import ConsentChecks from "@/components/auth/ConsentChecks";
 import { toast } from "@/components/ui/use-toast";
-import {
-  clearPendingReferralCode,
-  getPendingReferralCode,
-  newTraderReferralFields,
-  redeemReferralCode,
-} from "@/lib/referral";
+import { writeProfileDraft } from "@/lib/profileDraft";
 
 export default function Register() {
   const [fullName, setFullName] = useState("");
@@ -63,23 +58,15 @@ export default function Register() {
       if (result?.access_token) {
         base44.auth.setToken(result.access_token);
       }
-      // Seed the trader profile with the details captured at signup.
+      // Carry the signup details into onboarding, which asks how they heard
+      // about us and then creates the trader profile.
       const existing = await base44.entities.Trader.filter({ user_email: email });
-      if (!existing.length) {
-        const created = await base44.entities.Trader.create({
-          user_email: email,
-          full_name: fullName.trim(),
-          business_name: businessName.trim(),
-          ...newTraderReferralFields(),
-        });
-        // Email is verified at this point, so the referral counts now.
-        const pending = getPendingReferralCode();
-        if (pending) {
-          await redeemReferralCode(pending, created);
-          clearPendingReferralCode();
-        }
+      if (existing.length) {
+        window.location.href = "/";
+        return;
       }
-      window.location.href = "/";
+      writeProfileDraft({ full_name: fullName.trim(), business_name: businessName.trim() });
+      window.location.href = "/onboarding";
     } catch (err) {
       setError(err.message || "Invalid verification code");
     } finally {

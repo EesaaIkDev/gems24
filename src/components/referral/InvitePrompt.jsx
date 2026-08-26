@@ -2,13 +2,14 @@ import React from "react";
 import { UserPlus } from "lucide-react";
 import ShareInviteButton from "@/components/referral/ShareInviteButton";
 import useReferralCode from "@/hooks/useReferralCode";
+import { tierRank } from "@/lib/gems";
 import { BONUS_PER_REFERRAL, bonusRemaining } from "@/lib/referral";
 
-/** Ongoing growth nudge — hidden once the referral bonus cap is reached. */
+/** Ongoing growth nudge — hidden at the bonus cap, and for traders off-plan. */
 export default function InvitePrompt({ trader }) {
   const code = useReferralCode(trader);
   const remaining = bonusRemaining(trader);
-  if (remaining <= 0) return null;
+  if (remaining <= 0 || tierRank(trader?.subscription_tier) === 0) return null;
 
   return (
     <div className="rounded-2xl bg-card p-5">

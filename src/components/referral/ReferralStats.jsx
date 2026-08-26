@@ -1,9 +1,11 @@
 import React from "react";
 import useReferralCode from "@/hooks/useReferralCode";
+import { tierRank } from "@/lib/gems";
 import { MAX_REFERRAL_BONUS } from "@/lib/referral";
 
 export default function ReferralStats({ trader }) {
   const code = useReferralCode(trader);
+  if (tierRank(trader?.subscription_tier) === 0) return null;
   const stats = [
     { label: "Your code", value: code || "…" },
     { label: "Traders joined", value: trader?.referral_count || 0 },

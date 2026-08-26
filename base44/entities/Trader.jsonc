@@ -76,6 +76,10 @@
       "default": false,
       "description": "When true, other traders must be accepted before they can message this trader"
     },
+    "signup_source": {
+      "type": "string",
+      "description": "How the trader heard about Gems24"
+    },
     "referral_code": {
       "type": "string",
       "description": "Unique short code this trader shares to invite others"

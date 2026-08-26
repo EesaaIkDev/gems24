@@ -1,8 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Image } from "@/components/ui/image";
-import { LOGO_URL } from "@/lib/gems";
 import GemPattern from "./GemPattern";
+import GemDoodle from "./GemDoodle";
 
 export default function WelcomeHero() {
   return (
@@ -14,7 +13,7 @@ export default function WelcomeHero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15, duration: 0.5, ease: "easeOut" }}
       >
-        <Image src={LOGO_URL} alt="Gems24 logo" className="h-24 w-24 brightness-0 sm:h-28 sm:w-28" fittingType="fit" />
+        <GemDoodle className="h-24 w-24 text-welcome-ink sm:h-28 sm:w-28" />
         <p className="mt-4 font-display text-4xl font-bold tracking-tight text-welcome-ink sm:text-5xl">Gems24</p>
       </motion.div>
       <svg aria-hidden="true" viewBox="0 0 390 72" preserveAspectRatio="none" className="absolute -bottom-px left-0 h-20 w-full fill-welcome-ink">

@@ -1,5 +1,5 @@
 import { base44 } from "@/api/base44Client";
-import { tierLimit } from "@/lib/gems";
+import { tierLimit, tierRank } from "@/lib/gems";
 import { isNative, shareApp } from "@/lib/despia";
 
 export const BONUS_PER_REFERRAL = 5;
@@ -34,6 +34,25 @@ export function effectiveLimit(trader) {
 
 export const bonusRemaining = (trader) =>
   Math.max(0, MAX_REFERRAL_BONUS - (trader?.referral_bonus_listings || 0));
+
+/**
+ * Resolves the owner of a code. Only established traders (on a plan) can hand
+ * out working codes — presented to users simply as a valid / invalid code.
+ */
+export async function findReferrer(code) {
+  const clean = String(code || "").trim().toUpperCase();
+  if (!clean) return null;
+  try {
+    const rows = await base44.entities.Trader.filter({ referral_code: clean });
+    const referrer = rows[0];
+    if (!referrer || tierRank(referrer.subscription_tier) === 0) return null;
+    return referrer;
+  } catch {
+    return null;
+  }
+}
+
+export const validateReferralCode = async (code) => !!(await findReferrer(code));
 
 /** Back-fills a code for traders created before the referral programme. */
 export async function ensureReferralCode(trader) {
@@ -76,8 +95,7 @@ export async function redeemReferralCode(code, newTrader) {
   const clean = String(code || "").trim().toUpperCase();
   if (!clean || !newTrader?.id || newTrader.referred_by_code) return false;
   try {
-    const rows = await base44.entities.Trader.filter({ referral_code: clean });
-    const referrer = rows[0];
+    const referrer = await findReferrer(clean);
     if (!referrer || referrer.id === newTrader.id) return false;
 
     const granted = Math.min(BONUS_PER_REFERRAL, bonusRemaining(referrer));

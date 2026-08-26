@@ -29,7 +29,7 @@ export default function Onboarding() {
   const [draft, setDraft] = useState(null);
   const [accountType, setAccountType] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [profileData, setProfileData] = useState(null);
+  const [attribution, setAttribution] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -44,6 +44,8 @@ export default function Onboarding() {
       if (saved) {
         setDraft(saved);
         setAccountType(saved.account_type || null);
+        if (saved.signup_source)
+          setAttribution({ source: saved.signup_source, code: saved.referral_code_entered || "" });
       }
       if (me) {
         const rows = await base44.entities.Trader.filter({ user_email: me.email });
@@ -61,26 +63,30 @@ export default function Onboarding() {
   const save = async (data) => {
     if (!user) {
       setSaving(true);
-      localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...data, account_type: accountType }));
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({
+          ...data,
+          account_type: accountType,
+          signup_source: attribution?.source || "",
+          referral_code_entered: attribution?.code || ""
+        })
+      );
       base44.auth.redirectToLogin(window.location.href);
       return;
     }
-    // Signed in (so the email is verified) — last step asks where they came from.
-    setProfileData(data);
-  };
-
-  const finish = async (referralCode) => {
     setSaving(true);
     const created = await base44.entities.Trader.create({
-      ...profileData,
+      ...data,
       ...newTraderReferralFields(),
       account_type: accountType,
       user_email: user.email,
       subscription_tier: "none",
-      verified: false
+      verified: false,
+      signup_source: attribution?.source || ""
     });
-    // Invalid or already-used codes are ignored silently.
-    if (referralCode) await redeemReferralCode(referralCode, created);
+    // Email is verified by this point, so the referrer's bonus lands now.
+    if (attribution?.code) await redeemReferralCode(attribution.code, created);
     clearPendingReferralCode();
     localStorage.removeItem(DRAFT_KEY);
     navigate("/profile", { replace: true });
@@ -88,10 +94,10 @@ export default function Onboarding() {
 
   if (checking) return <Spinner />;
 
-  if (profileData)
+  if (!attribution)
     return (
       <div className="px-4 pt-8 pb-10 max-w-lg mx-auto">
-        <AttributionStep onDone={finish} saving={saving} />
+        <AttributionStep onDone={setAttribution} />
       </div>);
 
   if (!accountType) {

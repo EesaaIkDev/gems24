@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Crown, EyeOff, UserPlus } from "lucide-react";
 import ShareInviteButton from "@/components/referral/ShareInviteButton";
 import useReferralCode from "@/hooks/useReferralCode";
-import { TIERS } from "@/lib/gems";
+import { TIERS, tierRank } from "@/lib/gems";
 import { BONUS_PER_REFERRAL, bonusRemaining } from "@/lib/referral";
 
 /**
@@ -29,7 +29,7 @@ export default function LimitChoice({ trader, active, limit }) {
         {label} shows {limit} {limit === 1 ? "stone" : "stones"} at a time. Free up room in one of two ways.
       </p>
 
-      {unlock > 0 && (
+      {unlock > 0 && tierRank(trader?.subscription_tier) > 0 && (
         <div className="mt-6 rounded-2xl bg-card p-5 text-left">
           <div className="flex items-center gap-2">
             <UserPlus className="h-4 w-4 text-primary" />

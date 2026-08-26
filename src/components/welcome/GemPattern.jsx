@@ -1,8 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Image } from "@/components/ui/image";
-import { LOGO_URL } from "@/lib/gems";
 
+/** Background doodles — nothing but a variety of gemstone cuts, drawn as line art. */
 export default function GemPattern() {
   return (
     <motion.div
@@ -13,20 +12,54 @@ export default function GemPattern() {
       transition={{ duration: 0.7 }}
     >
       <svg viewBox="0 0 390 430" className="absolute inset-0 h-full w-full">
-        <g fill="none" stroke="currentColor" strokeWidth="1.2">
-          <path d="M28 48 47 29h28l19 19-33 39Z M47 29l14 58 14-58M28 48h66M47 29l14 19 14-19" />
-          <path d="M286 38c18-13 43 1 39 23-3 19-27 33-27 33s-18-22-17-39c0-7 2-13 5-17Z M285 52l28 20M281 62l35-10" />
-          <ellipse cx="177" cy="55" rx="27" ry="20" /><path d="M150 55h54M177 35l-14 20 14 20 14-20Z" />
-          <path d="M22 155h73v45H22zM31 164h55v27H31zM40 173h8m10 0h8m10 0h2" />
-          <path d="M296 143h42l12 17-33 42-33-42Z M296 143l21 59 21-59M284 160h66" />
-          <path d="M41 272c0-17 15-31 33-31s33 14 33 31-33 50-33 50-33-33-33-50Z M48 265h52M74 241v81" />
-          <path d="M285 254h68v42h-68zM294 263h50v24M302 272h8m9 0h8m9 0h2" />
-          <path d="M26 373h66M59 347v26M39 355h40M34 373l-8 22h66l-8-22" />
+        <g fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round">
+          {/* Round brilliant */}
+          <g>
+            <circle cx="58" cy="52" r="26" />
+            <path d="M40 34l9 12h18l9-12M32 52h52M40 70l9-12h18l9 12M49 46l9 12 9-12" />
+          </g>
+          {/* Emerald cut */}
+          <g>
+            <path d="M290 30h44l12 14v34l-12 14h-44l-12-14V44Z" />
+            <path d="M296 40h32v48h-32zM278 44l18-4M346 44l-18-4M278 78l18 4M346 78l-18 4" />
+          </g>
+          {/* Pear */}
+          <g>
+            <path d="M177 32c14 14 22 26 22 38a22 22 0 0 1-44 0c0-12 8-24 22-38Z" />
+            <path d="M155 70h44M177 32v60M163 52h28" />
+          </g>
+          {/* Marquise */}
+          <g>
+            <path d="M58 150c18 12 26 24 26 32s-8 20-26 32c-18-12-26-24-26-32s8-20 26-32Z" />
+            <path d="M32 182h52M58 150v64M44 166h28M44 198h28" />
+          </g>
+          {/* Cushion */}
+          <g>
+            <path d="M300 148h30a16 16 0 0 1 16 16v26a16 16 0 0 1-16 16h-30a16 16 0 0 1-16-16v-26a16 16 0 0 1 16-16Z" />
+            <path d="M296 162h38v28h-38M284 164l12-2M346 164l-12-2M284 190l12 2M346 190l-12 2" />
+          </g>
+          {/* Trillion */}
+          <g>
+            <path d="M74 258 108 314H40Z" />
+            <path d="M74 258v56M52 296h44M60 278h28" />
+          </g>
+          {/* Oval */}
+          <g>
+            <ellipse cx="318" cy="286" rx="24" ry="32" />
+            <path d="M294 286h48M318 254v64M302 268h32M302 304h32" />
+          </g>
+          {/* Heart */}
+          <g>
+            <path d="M60 400c-16-12-28-22-28-34a16 16 0 0 1 28-10 16 16 0 0 1 28 10c0 12-12 22-28 34Z" />
+            <path d="M32 366h56M60 356v44M46 380h28" />
+          </g>
+          {/* Asscher */}
+          <g>
+            <path d="M300 366h36l12 12v28l-12 12h-36l-12-12v-28Z" />
+            <path d="M306 378h24v36h-24M288 378l18 0M348 378l-18 0" />
+          </g>
         </g>
       </svg>
-      <Image src={LOGO_URL} alt="" className="absolute left-[42%] top-[30%] h-14 w-14 -rotate-12 opacity-[0.15]" fittingType="fit" />
-      <Image src={LOGO_URL} alt="" className="absolute -left-3 bottom-[10%] h-20 w-20 rotate-12 opacity-10" fittingType="fit" />
-      <Image src={LOGO_URL} alt="" className="absolute -right-4 top-[49%] h-24 w-24 -rotate-6 opacity-10" fittingType="fit" />
     </motion.div>
   );
 }
