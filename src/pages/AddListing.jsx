@@ -12,8 +12,9 @@ import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import usePopularDefaults from "@/hooks/usePopularDefaults";
-import LimitWarning from "@/components/subscription/LimitWarning";
-import { GEM_TYPES, TREATMENTS, cap, tierLimit } from "@/lib/gems";
+import LimitChoice from "@/components/subscription/LimitChoice";
+import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
+import { effectiveLimit } from "@/lib/referral";
 import { createRecord } from "@/lib/offlineSync";
 import useOnline from "@/hooks/useOnline";
 
@@ -90,9 +91,9 @@ export default function AddListing() {
   if (loading) return <Spinner />;
   if (!user) return <SignInPrompt title="Sign in to add a listing" />;
   if (!trader) return <SignInPrompt title="Create your trader profile first" cta="Get started" to="/onboarding" />;
-  const limit = tierLimit(trader.subscription_tier);
+  const limit = effectiveLimit(trader);
   if (activeCount !== null && activeCount >= limit)
-    return <LimitWarning tier={trader.subscription_tier} active={activeCount} limit={limit} />;
+    return <LimitChoice trader={trader} active={activeCount} limit={limit} />;
 
   if (step === 0)
     return (

@@ -1,0 +1,29 @@
+{
+  "name": "Referral",
+  "type": "object",
+  "properties": {
+    "referrer_id": {
+      "type": "string",
+      "description": "Trader id that owns the code"
+    },
+    "code": {
+      "type": "string"
+    },
+    "referred_trader_id": {
+      "type": "string"
+    },
+    "referred_email": {
+      "type": "string"
+    },
+    "bonus_granted": {
+      "type": "number",
+      "default": 0,
+      "description": "Extra listing slots granted for this referral"
+    }
+  },
+  "required": [
+    "referrer_id",
+    "code",
+    "referred_trader_id"
+  ]
+}

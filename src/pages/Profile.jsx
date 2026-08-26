@@ -11,8 +11,11 @@ import VerifiedBadge from "@/components/common/VerifiedBadge";
 import EmptyState from "@/components/common/EmptyState";
 import OwnListingsGrid from "@/components/listings/OwnListingsGrid";
 import ProfileProgress from "@/components/profile/ProfileProgress";
+import InvitePrompt from "@/components/referral/InvitePrompt";
+import ReferralStats from "@/components/referral/ReferralStats";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
-import { TIERS, cap, tierLimit } from "@/lib/gems";
+import { TIERS, cap } from "@/lib/gems";
+import { effectiveLimit } from "@/lib/referral";
 
 export default function Profile() {
   const { user, trader, loading } = useCurrentTrader();
@@ -39,7 +42,7 @@ export default function Profile() {
   ];
 
   const active = (listings || []).filter((l) => l.status !== "sold");
-  const limit = tierLimit(trader.subscription_tier);
+  const limit = effectiveLimit(trader);
 
   return (
     <div className="pt-5 pb-6 max-w-lg mx-auto">
@@ -75,6 +78,10 @@ export default function Profile() {
         </div>
 
         <ProfileProgress trader={trader} />
+
+        <InvitePrompt trader={trader} />
+
+        <ReferralStats trader={trader} />
 
         <div className="rounded-2xl bg-card border border-border overflow-hidden divide-y divide-border">
           {links.map(({ to, icon: Icon, label }) => (

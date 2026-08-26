@@ -4,7 +4,13 @@ import { base44 } from "@/api/base44Client";
 import { Gem, Search, ArrowLeft } from "lucide-react";
 import TraderForm from "@/components/traders/TraderForm";
 import Spinner from "@/components/common/Spinner";
+import AttributionStep from "@/components/referral/AttributionStep";
 import { LOGO_URL } from "@/lib/gems";
+import {
+  clearPendingReferralCode,
+  newTraderReferralFields,
+  redeemReferralCode,
+} from "@/lib/referral";
 
 const DRAFT_KEY = "gems24_profile_draft";
 
@@ -23,6 +29,7 @@ export default function Onboarding() {
   const [draft, setDraft] = useState(null);
   const [accountType, setAccountType] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [profileData, setProfileData] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -52,24 +59,40 @@ export default function Onboarding() {
   // Profile choices are made first and kept locally; the account is only
   // created at the very end, so nobody signs up before building something.
   const save = async (data) => {
-    setSaving(true);
     if (!user) {
+      setSaving(true);
       localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...data, account_type: accountType }));
       base44.auth.redirectToLogin(window.location.href);
       return;
     }
-    await base44.entities.Trader.create({
-      ...data,
+    // Signed in (so the email is verified) — last step asks where they came from.
+    setProfileData(data);
+  };
+
+  const finish = async (referralCode) => {
+    setSaving(true);
+    const created = await base44.entities.Trader.create({
+      ...profileData,
+      ...newTraderReferralFields(),
       account_type: accountType,
       user_email: user.email,
       subscription_tier: "none",
       verified: false
     });
+    // Invalid or already-used codes are ignored silently.
+    if (referralCode) await redeemReferralCode(referralCode, created);
+    clearPendingReferralCode();
     localStorage.removeItem(DRAFT_KEY);
     navigate("/profile", { replace: true });
   };
 
   if (checking) return <Spinner />;
+
+  if (profileData)
+    return (
+      <div className="px-4 pt-8 pb-10 max-w-lg mx-auto">
+        <AttributionStep onDone={finish} saving={saving} />
+      </div>);
 
   if (!accountType) {
     const options = [

@@ -10,6 +10,12 @@ import AuthLayout from "@/components/AuthLayout";
 import PasswordStrength, { MIN_PASSWORD_LENGTH } from "@/components/auth/PasswordStrength";
 import ConsentChecks from "@/components/auth/ConsentChecks";
 import { toast } from "@/components/ui/use-toast";
+import {
+  clearPendingReferralCode,
+  getPendingReferralCode,
+  newTraderReferralFields,
+  redeemReferralCode,
+} from "@/lib/referral";
 
 export default function Register() {
   const [fullName, setFullName] = useState("");
@@ -60,11 +66,18 @@ export default function Register() {
       // Seed the trader profile with the details captured at signup.
       const existing = await base44.entities.Trader.filter({ user_email: email });
       if (!existing.length) {
-        await base44.entities.Trader.create({
+        const created = await base44.entities.Trader.create({
           user_email: email,
           full_name: fullName.trim(),
           business_name: businessName.trim(),
+          ...newTraderReferralFields(),
         });
+        // Email is verified at this point, so the referral counts now.
+        const pending = getPendingReferralCode();
+        if (pending) {
+          await redeemReferralCode(pending, created);
+          clearPendingReferralCode();
+        }
       }
       window.location.href = "/";
     } catch (err) {

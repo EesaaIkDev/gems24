@@ -28,6 +28,7 @@ import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import Welcome from '@/pages/Welcome';
+import Join from '@/pages/Join';
 
 const AuthenticatedApp = () => {
   const { isAuthenticated, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -60,6 +61,7 @@ const AuthenticatedApp = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/welcome" element={<Welcome />} />
+      <Route path="/join" element={<Join />} />
       {!isAuthenticated && <Route path="/" element={<Welcome />} />}
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
