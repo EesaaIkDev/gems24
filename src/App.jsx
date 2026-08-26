@@ -30,7 +30,7 @@ import ResetPassword from '@/pages/ResetPassword';
 import Welcome from '@/pages/Welcome';
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isAuthenticated, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
@@ -61,7 +61,7 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/welcome" element={<Welcome />} />
       <Route element={<AppLayout />}>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={isAuthenticated ? <Home /> : <Welcome />} />
         <Route path="/gemstones" element={<Gemstones />} />
         <Route path="/add" element={<AddListing />} />
         <Route path="/listing/:id" element={<ListingDetail />} />
