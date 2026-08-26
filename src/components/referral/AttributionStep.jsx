@@ -74,7 +74,7 @@ export default function AttributionStep({ onDone }) {
   return (
     <div>
       <h1 className="font-heading text-[26px] font-bold leading-tight">How did you hear about us?</h1>
-      <p className="mt-1.5 text-sm text-muted-foreground hidden">Pick whichever is closest — it only takes a tap.</p>
+      
       <div className="mt-6 space-y-2.5">
         {SOURCES.map(({ key, icon: Icon, label }) =>
         <button
