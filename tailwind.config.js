@@ -24,6 +24,17 @@ module.exports = {
   				DEFAULT: 'hsl(var(--primary))',
   				foreground: 'hsl(var(--primary-foreground))'
   			},
+  			welcome: {
+  				green: 'hsl(var(--welcome-green))',
+  				'green-bright': 'hsl(var(--welcome-green-bright))',
+  				ink: 'hsl(var(--welcome-ink))',
+  				panel: 'hsl(var(--welcome-panel))',
+  				border: 'hsl(var(--welcome-border))',
+  				text: 'hsl(var(--welcome-text))',
+  				muted: 'hsl(var(--welcome-muted))',
+  				subtle: 'hsl(var(--welcome-subtle))',
+  				pattern: 'hsl(var(--welcome-pattern))'
+  			},
   			secondary: {
   				DEFAULT: 'hsl(var(--secondary))',
   				foreground: 'hsl(var(--secondary-foreground))'
