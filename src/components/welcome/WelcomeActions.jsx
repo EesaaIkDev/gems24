@@ -6,7 +6,7 @@ const reveal = { hidden: { opacity: 0, y: 14 }, visible: { opacity: 1, y: 0 } };
 
 export default function WelcomeActions() {
   return (
-    <motion.section initial="hidden" animate="visible" className="mx-auto flex w-full max-w-md flex-col px-6 pb-8 pt-5 text-center sm:px-8">
+    <motion.section initial="hidden" animate="visible" className="mx-auto flex w-full max-w-md flex-col px-6 pb-6 pt-4 text-center sm:px-8">
       <motion.h1 variants={reveal} transition={{ delay: 0.3, duration: 0.45 }} className="text-balance font-heading text-[2rem] font-bold leading-[1.08] text-welcome-text sm:text-4xl">
         Your <span className="text-welcome-green">Gemstone Network</span>, Connected.
       </motion.h1>
@@ -21,7 +21,7 @@ export default function WelcomeActions() {
           Sign In
         </Link>
       </motion.div>
-      <motion.p variants={reveal} transition={{ delay: 0.66, duration: 0.35 }} className="mt-5 text-sm leading-relaxed text-welcome-subtle">
+      <motion.p variants={reveal} transition={{ delay: 0.66, duration: 0.35 }} className="mt-4 text-sm leading-relaxed text-welcome-subtle">
         The marketplace built for the global gemstone trade.
       </motion.p>
     </motion.section>
