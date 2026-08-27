@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { LOGO_URL } from "@/lib/gems";
 
-export default function SignInPrompt({ title, description, cta = "Sign in", to }) {
+export default function SignInPrompt({ title, description, cta = "Sign in", to, showLogin = false }) {
   return (
     <div className="flex flex-col items-center justify-center text-center px-6 py-20">
       <img src={LOGO_URL} alt="Gems24" className="w-16 h-16" />
@@ -19,6 +19,11 @@ export default function SignInPrompt({ title, description, cta = "Sign in", to }
       ) : (
         <Button size="lg" className="mt-6" onClick={() => base44.auth.redirectToLogin()}>
           {cta}
+        </Button>
+      )}
+      {showLogin && (
+        <Button asChild variant="outline" size="lg" className="mt-3">
+          <Link to="/login">Log in to an account</Link>
         </Button>
       )}
     </div>

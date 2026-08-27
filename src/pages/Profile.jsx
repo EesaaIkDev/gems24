@@ -31,7 +31,15 @@ export default function Profile() {
   if (loading) return <Spinner />;
   if (!user) return <SignInPrompt title="Sign in to Gems24" />;
   if (!trader)
-    return <SignInPrompt title="Create your profile" description="Tell us who you are to get started." cta="Get started" to="/onboarding" />;
+    return (
+      <SignInPrompt
+        title="Create your profile"
+        description="Tell us who you are to get started."
+        cta="Get started"
+        to="/onboarding"
+        showLogin
+      />
+    );
 
   const links = [
     { to: `/trader/${trader.id}`, icon: User, label: "View public profile" },
