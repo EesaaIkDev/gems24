@@ -10,6 +10,7 @@ import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import TierBadge from "@/components/common/TierBadge";
 import NativeSettings from "@/components/settings/NativeSettings";
+import VerificationUpload from "@/components/settings/VerificationUpload";
 import useTheme from "@/hooks/useTheme";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { TIERS } from "@/lib/gems";
@@ -80,6 +81,8 @@ export default function Settings() {
               <Link to="/subscription">{trader.subscription_tier === "none" ? "View plans" : "Change plan"}</Link>
             </Button>
           </div>
+
+          <VerificationUpload trader={trader} onVerified={reload} />
 
           <div className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3">
             <ShieldCheck className="w-[18px] h-[18px] text-primary" />
