@@ -1,6 +1,6 @@
 import React from "react";
 
-export const MIN_PASSWORD_LENGTH = 10;
+export const MIN_PASSWORD_LENGTH = 8;
 
 /** Length-based strength meter — no character-variety rules. */
 export default function PasswordStrength({ value = "" }) {

@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserPlus, Mail, Lock, Loader2, User, Building2 } from "lucide-react";
+import { UserPlus, Mail, Lock, Loader2, User, Building2, Eye, EyeOff, X } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import AuthLayout from "@/components/AuthLayout";
 import PasswordStrength, { MIN_PASSWORD_LENGTH } from "@/components/auth/PasswordStrength";
@@ -18,6 +18,7 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [consent, setConsent] = useState({ terms: false, privacy: false });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -90,7 +91,7 @@ export default function Register() {
         {error && (
           <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">{error}</div>
         )}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-3">
           <InputOTP maxLength={6} value={otpCode} onChange={setOtpCode} autoFocus autoComplete="one-time-code">
             <InputOTPGroup>
               {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -99,6 +100,18 @@ export default function Register() {
             </InputOTPGroup>
           </InputOTP>
         </div>
+        {otpCode.length > 0 && (
+          <div className="flex justify-center mb-6">
+            <button
+              type="button"
+              onClick={() => setOtpCode("")}
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary"
+            >
+              <X className="w-3 h-3" /> Clear code
+            </button>
+          </div>
+        )}
+        {otpCode.length === 0 && <div className="mb-6" />}
         <Button className="w-full h-12 font-medium" onClick={handleVerify} disabled={loading || otpCode.length < 6}>
           {loading ? (
             <>
@@ -191,14 +204,22 @@ export default function Register() {
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               autoComplete="new-password"
               placeholder={`At least ${MIN_PASSWORD_LENGTH} characters`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="pl-10 h-11"
+              className="pl-10 pr-10 h-11"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
           </div>
           <PasswordStrength value={password} />
         </div>
@@ -208,7 +229,7 @@ export default function Register() {
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
               id="confirm"
-              type="password"
+              type={showPassword ? "text" : "password"}
               autoComplete="new-password"
               placeholder="••••••••"
               value={confirmPassword}
