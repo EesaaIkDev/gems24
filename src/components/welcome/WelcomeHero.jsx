@@ -14,18 +14,18 @@ export default function WelcomeHero() {
       >
         <p className="font-display text-4xl font-bold tracking-tight text-welcome-ink sm:text-5xl">Gems24</p>
       </motion.div>
-      {/* Faceted divider: flowing curves interrupted by a few gemstone-cut
-          angles, as if the green were cut into the dark section. */}
+      {/* Faceted divider: a trapezium silhouette, as if the green were cut
+          into the dark section by a single large gem facet. */}
       <svg aria-hidden="true" viewBox="0 0 390 84" preserveAspectRatio="none" className="absolute -bottom-px left-0 h-16 w-full sm:h-20">
         <path
           className="fill-welcome-ink"
-          d="M0 52C26 38 52 30 78 32L146 16C172 11 194 15 214 26L268 50C294 60 318 58 342 46L390 20V84H0Z"
+          d="M0 46 96 18 294 18 390 46V84H0Z"
         />
         <path
           className="stroke-welcome-ink/25"
           fill="none"
           strokeWidth="1"
-          d="M78 32 146 16M214 26 268 50M342 46 390 20"
+          d="M0 46 96 18M294 18 390 46"
         />
       </svg>
     </section>
