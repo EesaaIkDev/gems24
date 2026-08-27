@@ -1,0 +1,49 @@
+{
+  "name": "DiscountCode",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "6-character code traders enter (uppercase)",
+      "minLength": 6,
+      "maxLength": 6
+    },
+    "percent_off": {
+      "type": "number",
+      "description": "Discount percentage, 1-100. 100 grants the plan for free",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "tiers": {
+      "type": "array",
+      "description": "Tiers this code can be used for",
+      "items": {
+        "type": "string",
+        "enum": [
+          "bronze",
+          "silver",
+          "gold",
+          "platinum"
+        ]
+      },
+      "default": []
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "times_used": {
+      "type": "number",
+      "default": 0
+    },
+    "note": {
+      "type": "string",
+      "description": "Internal note, e.g. campaign name"
+    }
+  },
+  "required": [
+    "code",
+    "percent_off",
+    "tiers"
+  ]
+}

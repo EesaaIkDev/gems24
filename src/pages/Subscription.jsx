@@ -3,6 +3,7 @@ import BottomSheet from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Settings2 } from "lucide-react";
 import TierRow from "@/components/subscription/TierRow";
+import RedeemCode from "@/components/subscription/RedeemCode";
 import Spinner from "@/components/common/Spinner";
 import TierBadge from "@/components/common/TierBadge";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
@@ -40,11 +41,27 @@ export default function Subscription() {
   useEntitlements(trader, reload);
   const online = useOnline();
   const [selected, setSelected] = useState(null);
+  const [discount, setDiscount] = useState(null);
+
+  const openTier = (t) => {
+    setDiscount(null);
+    setSelected(t);
+  };
+
+  const closeSheet = () => {
+    setSelected(null);
+    setDiscount(null);
+  };
 
   const subscribe = () => {
     haptic("light");
     launchPaywall(selected, trader.id);
-    setSelected(null);
+    closeSheet();
+  };
+
+  const onGranted = () => {
+    closeSheet();
+    reload();
   };
 
   if (loading) return <Spinner />;
@@ -80,7 +97,7 @@ export default function Subscription() {
             anchor={ANCHOR[t]}
             current={tier === t}
             recommended={t === "gold"}
-            onSelect={setSelected}
+            onSelect={openTier}
           />
         ))}
       </div>
@@ -101,7 +118,7 @@ export default function Subscription() {
 
       <BottomSheet
         open={!!selected}
-        onOpenChange={(o) => !o && setSelected(null)}
+        onOpenChange={(o) => !o && closeSheet()}
         title={selected ? `${TIERS[selected].label} grade` : ""}
       >
         <div className="mx-auto max-w-md space-y-5 pb-2">
@@ -110,13 +127,28 @@ export default function Subscription() {
               <div className="flex items-baseline justify-between">
                 <TierBadge tier={selected} />
                 <p className="font-heading text-xl font-bold">
-                  ${TIERS[selected].price}
+                  {discount && (
+                    <span className="mr-2 text-sm font-medium text-muted-foreground line-through">
+                      ${TIERS[selected].price}
+                    </span>
+                  )}
+                  $
+                  {discount
+                    ? Math.round(TIERS[selected].price * (1 - discount.percent_off / 100) * 100) / 100
+                    : TIERS[selected].price}
                   <span className="ml-1 text-xs font-medium text-muted-foreground">/ month</span>
                 </p>
               </div>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {CAPACITY[selected]}. {PLACEMENT[selected]}
               </p>
+              <RedeemCode
+                tier={selected}
+                trader={trader}
+                discount={discount}
+                onDiscount={setDiscount}
+                onGranted={onGranted}
+              />
               <Button className="w-full" onClick={subscribe} disabled={!online}>
                 {online ? "Continue to payment" : "Unavailable offline"}
               </Button>
