@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Gem, Search, ArrowLeft } from "lucide-react";
-import TraderForm from "@/components/traders/TraderForm";
+import { Gem, Search } from "lucide-react";
+import ProfileWizard from "@/components/traders/ProfileWizard";
 import Spinner from "@/components/common/Spinner";
 import AttributionStep from "@/components/referral/AttributionStep";
 import { LOGO_URL } from "@/lib/gems";
@@ -141,30 +141,14 @@ export default function Onboarding() {
 
   return (
     <div className="px-4 pt-6 pb-10 max-w-lg mx-auto">
-      <button
-        onClick={() => setAccountType(null)}
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary">
-        
-        <ArrowLeft className="w-4 h-4" /> Back
-      </button>
-      <h1 className="mt-4 text-[26px] font-bold leading-tight">
-        {accountType === "trader" ? "Build your trader profile" : "Set up your buyer profile"}
-      </h1>
-      <p className="mt-1.5 text-sm text-muted-foreground">
-        {user ?
-        accountType === "trader" ?
-        "This is what other traders and buyers will see." :
-        "So traders know who they're speaking with." :
-        "Set it up first — we'll only ask for an email at the end to save it."}
-      </p>
-      <div className="mt-6">
-        <TraderForm
-          initial={draft || {}}
-          onSave={save}
-          saving={saving}
-          submitLabel={user ? "Create my profile" : "Continue"} />
-        
-      </div>
+      <ProfileWizard
+        initial={draft || {}}
+        accountType={accountType}
+        onSave={save}
+        saving={saving}
+        onExit={() => setAccountType(null)}
+        submitLabel={user ? "Create my profile" : "Continue"} />
+
     </div>);
 
 }

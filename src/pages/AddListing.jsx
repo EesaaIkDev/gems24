@@ -89,7 +89,7 @@ export default function AddListing() {
   const back = () => (step === 0 ? navigate(-1) : setStep(step - 1));
 
   if (loading) return <Spinner />;
-  if (!user) return <SignInPrompt title="Sign in to add a listing" />;
+  if (!user) return <SignInPrompt title="Log in to add a listing" />;
   if (!trader) return <SignInPrompt title="Create your trader profile first" cta="Get started" to="/onboarding" />;
   const limit = effectiveLimit(trader);
   if (activeCount !== null && activeCount >= limit)

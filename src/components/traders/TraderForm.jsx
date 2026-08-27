@@ -90,7 +90,7 @@ export default function TraderForm({ initial = {}, onSave, saving, submitLabel =
       </div>
 
       <div className="space-y-1.5">
-        <Label>Business name</Label>
+        <Label>Business name (optional)</Label>
         <Input value={form.business_name} onChange={(e) => set("business_name", e.target.value)} className="h-11" />
       </div>
 
@@ -144,7 +144,7 @@ export default function TraderForm({ initial = {}, onSave, saving, submitLabel =
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label>Phone</Label>
-          <div className="flex gap-2">
+          <div className="space-y-2">
             <PhoneRegionSelect value={phoneCode} onChange={setPhoneCode} />
             <Input
               type="tel"

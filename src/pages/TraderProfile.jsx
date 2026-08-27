@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import { ArrowLeft, Lock, Mail, MapPin, Phone, User } from "lucide-react";
+import { ArrowLeft, Lock, Mail, MapPin, User } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import LoadError from "@/components/common/LoadError";
 import useLoader from "@/hooks/useLoader";
@@ -106,12 +106,8 @@ export default function TraderProfile() {
                     <Mail className="w-4 h-4 text-primary" /> {trader.contact_email}
                   </a>
                 )}
-                {trader.phone && (
-                  <a href={`tel:${trader.phone}`} className="flex items-center gap-2 text-sm hover:text-primary">
-                    <Phone className="w-4 h-4 text-primary" /> {trader.phone}
-                  </a>
-                )}
-                {!trader.contact_email && !trader.phone && (
+                {/* Phone numbers stay private — never shown to other users. */}
+                {!trader.contact_email && (
                   <p className="text-sm text-muted-foreground">No contact details added yet.</p>
                 )}
               </div>

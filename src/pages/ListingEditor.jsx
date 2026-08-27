@@ -94,7 +94,7 @@ export default function ListingEditor() {
   };
 
   if (loading) return <Spinner />;
-  if (!user) return <SignInPrompt title="Sign in to create a listing" />;
+  if (!user) return <SignInPrompt title="Log in to create a listing" />;
   if (!trader) return <SignInPrompt title="Create your trader profile first" cta="Get started" to="/onboarding" />;
   if (blocked)
     return (

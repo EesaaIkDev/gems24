@@ -52,7 +52,7 @@ export default function Messages() {
   };
 
   if (loading) return <Spinner />;
-  if (!user) return <SignInPrompt title="Sign in to Gems24" description="Sign in to chat with traders." />;
+  if (!user) return <SignInPrompt title="Log in to Gems24" description="Log in to chat with traders." />;
   if (!trader)
     return (
       <SignInPrompt

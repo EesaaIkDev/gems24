@@ -18,7 +18,7 @@ export default function WelcomeActions() {
           Get Started
         </Link>
         <Link to="/login" className="flex min-h-[3.25rem] w-full cursor-pointer items-center justify-center rounded-full border border-welcome-border bg-welcome-panel px-6 font-heading text-base font-semibold text-welcome-text transition-[background-color,border-color] duration-200 hover:bg-welcome-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-welcome-green focus-visible:ring-offset-2 focus-visible:ring-offset-welcome-ink">
-          Sign In
+          Log In
         </Link>
       </motion.div>
       <motion.p variants={reveal} transition={{ delay: 0.66, duration: 0.35 }} className="mt-3 text-xs leading-relaxed text-welcome-subtle">

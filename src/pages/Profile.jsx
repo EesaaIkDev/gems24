@@ -29,7 +29,7 @@ export default function Profile() {
   }, [trader?.id]);
 
   if (loading) return <Spinner />;
-  if (!user) return <SignInPrompt title="Sign in to Gems24" />;
+  if (!user) return <SignInPrompt title="Log in to Gems24" />;
   if (!trader)
     return (
       <SignInPrompt

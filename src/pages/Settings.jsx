@@ -61,7 +61,7 @@ export default function Settings() {
       </div>
 
       {!user ? (
-        <SignInPrompt title="Sign in to manage your account" />
+        <SignInPrompt title="Log in to manage your account" />
       ) : !trader ? (
         <SignInPrompt title="Create your profile" cta="Get started" to="/onboarding" />
       ) : (

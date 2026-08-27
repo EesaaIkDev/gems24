@@ -47,7 +47,7 @@ export default function Connections() {
   };
 
   if (loading) return <Spinner />;
-  if (!user) return <SignInPrompt title="Sign in to see your network" />;
+  if (!user) return <SignInPrompt title="Log in to see your network" />;
   if (!trader) return <SignInPrompt title="Create your profile first" cta="Get started" to="/onboarding" />;
 
   return (

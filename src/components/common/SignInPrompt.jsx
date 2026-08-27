@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { LOGO_URL } from "@/lib/gems";
 
-export default function SignInPrompt({ title, description, cta = "Sign in", to, showLogin = false }) {
+export default function SignInPrompt({ title, description, cta = "Log in", to, showLogin = true }) {
   return (
     <div className="flex flex-col items-center justify-center text-center px-6 py-20">
       <img src={LOGO_URL} alt="Gems24" className="w-16 h-16" />
@@ -21,9 +21,10 @@ export default function SignInPrompt({ title, description, cta = "Sign in", to, 
           {cta}
         </Button>
       )}
-      {showLogin && (
+      {/* Guests always get a way back into an existing account. */}
+      {showLogin && to && (
         <Button asChild variant="outline" size="lg" className="mt-3">
-          <Link to="/login">Log in to an account</Link>
+          <Link to="/login">Log in</Link>
         </Button>
       )}
     </div>
