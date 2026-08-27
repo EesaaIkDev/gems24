@@ -19,13 +19,13 @@ export default function WelcomeHero() {
       <svg aria-hidden="true" viewBox="0 0 390 84" preserveAspectRatio="none" className="absolute -bottom-px left-0 h-16 w-full sm:h-20">
         <path
           className="fill-welcome-ink"
-          d="M0 46 96 18 294 18 390 46V84H0Z"
+          d="M0 64 96 38 294 38 390 64V84H0Z"
         />
         <path
           className="stroke-welcome-ink/25"
           fill="none"
           strokeWidth="1"
-          d="M0 46 96 18M294 18 390 46"
+          d="M0 64 96 38M294 38 390 64"
         />
       </svg>
     </section>
