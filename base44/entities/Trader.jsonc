@@ -35,17 +35,10 @@
     "specialties": {
       "type": "array",
       "items": {
-        "type": "string",
-        "enum": [
-          "sapphire",
-          "ruby",
-          "emerald",
-          "spinel",
-          "garnet",
-          "other"
-        ]
+        "type": "string"
       },
-      "default": []
+      "default": [],
+      "description": "Free-text specialties entered by the trader"
     },
     "bio": {
       "type": "string"

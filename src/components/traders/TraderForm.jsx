@@ -6,10 +6,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Camera, Loader2, User } from "lucide-react";
-import { GEM_TYPES, cap } from "@/lib/gems";
 import { detectCountry } from "@/lib/locale";
+import { countWords, limitWords } from "@/lib/words";
+import CountrySelect from "./CountrySelect";
+import PhoneRegionSelect from "./PhoneRegionSelect";
+
+const SPECIALTY_WORD_LIMIT = 20;
+const BIO_WORD_LIMIT = 70;
+
+/** Splits a stored phone into a dial code and the local number. */
+function splitPhone(phone = "") {
+  const match = phone.trim().match(/^(\+\d{1,4})\s*(.*)$/);
+  return match ? { code: match[1], number: match[2] } : { code: "", number: phone };
+}
 
 export default function TraderForm({ initial = {}, onSave, saving, submitLabel = "Save profile" }) {
+  const initialPhone = splitPhone(initial.phone || "");
   const [form, setForm] = useState({
     full_name: initial.full_name || "",
     business_name: initial.business_name || "",
@@ -17,18 +29,16 @@ export default function TraderForm({ initial = {}, onSave, saving, submitLabel =
     country: initial.country || detectCountry(),
     city: initial.city || "",
     years_experience: initial.years_experience ?? "",
-    specialties: initial.specialties || [],
     bio: initial.bio || "",
-    phone: initial.phone || "",
     contact_email: initial.contact_email || "",
   });
+  const [specialtiesText, setSpecialtiesText] = useState((initial.specialties || []).join(", "));
+  const [phoneCode, setPhoneCode] = useState(initialPhone.code);
+  const [phoneNumber, setPhoneNumber] = useState(initialPhone.number);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
 
   const set = (k, v) => setForm({ ...form, [k]: v });
-
-  const toggleSpecialty = (s) =>
-    set("specialties", form.specialties.includes(s) ? form.specialties.filter((x) => x !== s) : [...form.specialties, s]);
 
   const uploadPhoto = async (e) => {
     const file = e.target.files?.[0];
@@ -48,6 +58,11 @@ export default function TraderForm({ initial = {}, onSave, saving, submitLabel =
     setError("");
     onSave({
       ...form,
+      specialties: specialtiesText
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      phone: phoneNumber.trim() ? `${phoneCode} ${phoneNumber.trim()}`.trim() : "",
       years_experience: form.years_experience === "" ? undefined : Number(form.years_experience),
     });
   };
@@ -82,7 +97,7 @@ export default function TraderForm({ initial = {}, onSave, saving, submitLabel =
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label>Country</Label>
-          <Input value={form.country} onChange={(e) => set("country", e.target.value)} className="h-11" />
+          <CountrySelect value={form.country} onChange={(v) => set("country", v)} />
         </div>
         <div className="space-y-1.5">
           <Label>City</Label>
@@ -91,44 +106,57 @@ export default function TraderForm({ initial = {}, onSave, saving, submitLabel =
       </div>
 
       <div className="space-y-1.5">
-        <Label>Years of experience</Label>
+        <Label>How long have you been in this industry?</Label>
         <Input
           type="number"
+          placeholder="Years, e.g. 8"
           value={form.years_experience}
           onChange={(e) => set("years_experience", e.target.value)}
           className="h-11"
         />
       </div>
 
-      <div className="space-y-2">
-        <Label>Specialties</Label>
-        <div className="flex flex-wrap gap-2">
-          {GEM_TYPES.map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => toggleSpecialty(s)}
-              className={`rounded-full border px-3.5 py-2 text-xs font-medium transition-colors ${
-                form.specialties.includes(s)
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-card border-border text-muted-foreground"
-              }`}
-            >
-              {cap(s)}
-            </button>
-          ))}
-        </div>
+      <div className="space-y-1.5">
+        <Label>What do you specialise in?</Label>
+        <Textarea
+          rows={2}
+          placeholder="e.g. Ceylon blue sapphires, unheated padparadscha, rough spinel"
+          value={specialtiesText}
+          onChange={(e) => setSpecialtiesText(limitWords(e.target.value, SPECIALTY_WORD_LIMIT))}
+        />
+        <p className="text-xs text-muted-foreground">
+          Separate with commas · {countWords(specialtiesText)}/{SPECIALTY_WORD_LIMIT} words
+        </p>
       </div>
 
       <div className="space-y-1.5">
         <Label>Short bio</Label>
-        <Textarea rows={4} value={form.bio} onChange={(e) => set("bio", e.target.value)} />
+        <Textarea
+          rows={4}
+          value={form.bio}
+          onChange={(e) => set("bio", limitWords(e.target.value, BIO_WORD_LIMIT))}
+        />
+        <p className="text-xs text-muted-foreground">
+          {countWords(form.bio)}/{BIO_WORD_LIMIT} words
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label>Phone</Label>
-          <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} className="h-11" />
+          <div className="flex gap-2">
+            <PhoneRegionSelect value={phoneCode} onChange={setPhoneCode} />
+            <Input
+              type="tel"
+              placeholder="771234567"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="h-11"
+            />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Your number is never revealed to anyone — it stays private.
+          </p>
         </div>
         <div className="space-y-1.5">
           <Label>Contact email</Label>
