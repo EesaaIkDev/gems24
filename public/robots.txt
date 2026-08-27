@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+
+# Member-only areas — nothing here belongs in a search index.
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /messages
+Disallow: /settings
+Disallow: /profile
+Disallow: /connections
+Disallow: /subscription
+Disallow: /onboarding
+Disallow: /add
+Disallow: /my-listings
+Disallow: /join
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /account
+Disallow: /checkout
+
+Sitemap: https://gems24.base44.app/sitemap.xml
+Sitemap: https://gems24.base44.app/functions/sitemap

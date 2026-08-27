@@ -12,6 +12,9 @@ import EmptyState from "@/components/common/EmptyState";
 import usePopularDefaults from "@/hooks/usePopularDefaults";
 import useOfflineEntity from "@/hooks/useOfflineEntity";
 import { tierRank } from "@/lib/gems";
+import Seo from "@/components/seo/Seo";
+import CategoryLinks from "@/components/seo/CategoryLinks";
+import { SITE, absolute } from "@/lib/seo";
 
 export default function Gemstones() {
   const listingsQuery = useOfflineEntity(
@@ -81,7 +84,18 @@ export default function Gemstones() {
 
   return (
     <div className="px-3.5 pt-4 space-y-3">
-      <h1 className="text-[1.375rem] font-bold leading-tight">Gemstones</h1>
+      <Seo
+        canonical={absolute("/gemstones")}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Gemstone marketplace",
+          url: absolute("/gemstones"),
+          description: SITE.description,
+          isPartOf: { "@type": "WebSite", name: SITE.name, url: SITE.url },
+        }}
+      />
+      <h1 className="text-[1.375rem] font-bold leading-tight">Gemstone marketplace</h1>
 
       <div className="relative">
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -129,6 +143,8 @@ export default function Gemstones() {
           )}
         </TabsContent>
       </Tabs>
+
+      <CategoryLinks />
     </div>
   );
 }

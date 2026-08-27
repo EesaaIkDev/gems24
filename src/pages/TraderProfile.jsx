@@ -13,6 +13,8 @@ import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { cap } from "@/lib/gems";
 import { findConnection, listMyConnections } from "@/lib/network";
+import Seo from "@/components/seo/Seo";
+import { SITE, absolute } from "@/lib/seo";
 
 export default function TraderProfile() {
   const { id } = useParams();
@@ -47,8 +49,35 @@ export default function TraderProfile() {
   const showContact = isSelf || connected;
   const active = listings.filter((l) => l.status !== "sold");
 
+  const traderName = trader.business_name || trader.full_name;
+  const place = [trader.city, trader.country].filter(Boolean).join(", ");
+
   return (
     <div className="pb-6">
+      {/* Public profile: only the trade-facing details, never contact data. */}
+      <Seo
+        title={`${traderName} — Gemstone ${trader.account_type === "buyer" ? "Buyer" : "Trader"}${place ? ` in ${place}` : ""} | Gems24`}
+        description={`${traderName} on Gems24${place ? `, based in ${place}` : ""}${
+          trader.specialties?.length ? `, specialising in ${trader.specialties.slice(0, 3).join(", ")}` : ""
+        }. View ${active.length} active gemstone listing${active.length === 1 ? "" : "s"} and connect on Gems24.`}
+        canonical={absolute(`/trader/${trader.id}`)}
+        image={trader.profile_photo}
+        type="profile"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ProfilePage",
+          url: absolute(`/trader/${trader.id}`),
+          mainEntity: {
+            "@type": "Organization",
+            name: traderName,
+            description: trader.bio || undefined,
+            image: trader.profile_photo || undefined,
+            address: place ? { "@type": "PostalAddress", addressLocality: trader.city, addressCountry: trader.country } : undefined,
+            knowsAbout: trader.specialties?.length ? trader.specialties : undefined,
+          },
+          isPartOf: { "@type": "WebSite", name: SITE.name, url: SITE.url },
+        }}
+      />
       <div className="px-4 pt-4">
         <Link to="/gemstones" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary">
           <ArrowLeft className="w-4 h-4" /> Gemstones
@@ -60,7 +89,7 @@ export default function TraderProfile() {
           <div className="flex items-start gap-4">
             <div className="w-20 h-20 rounded-2xl overflow-hidden bg-secondary flex items-center justify-center shrink-0">
               {trader.profile_photo ? (
-                <Image src={trader.profile_photo} alt={trader.full_name} className="w-full h-full" />
+                <Image src={trader.profile_photo} alt={`${traderName}, gemstone trader on Gems24`} className="w-full h-full" />
               ) : (
                 <User className="w-8 h-8 text-muted-foreground/50" />
               )}

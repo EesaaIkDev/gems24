@@ -5,6 +5,7 @@ import { Gem, MapPin } from "lucide-react";
 import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import { cap } from "@/lib/gems";
+import { listingAlt, listingPath } from "@/lib/seo";
 
 const STATUS = {
   available: "text-primary",
@@ -16,7 +17,7 @@ export default function ListingCard({ listing }) {
   const photo = listing.photos?.[0];
   return (
     <Link
-      to={`/listing/${listing.id}`}
+      to={listingPath(listing)}
       className="group neu-raised flex h-full gem-corners gem-card bg-background"
     >
       <div className="flex flex-col w-full gem-corners gem-card overflow-hidden bg-background">
@@ -24,7 +25,7 @@ export default function ListingCard({ listing }) {
         {photo ? (
           <Image
             src={photo}
-            alt={listing.gemstone_type}
+            alt={listingAlt(listing)}
             className="w-full h-full group-hover:scale-[1.04] transition-transform duration-500"
           />
         ) : (

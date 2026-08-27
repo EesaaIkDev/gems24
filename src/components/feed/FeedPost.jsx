@@ -6,6 +6,7 @@ import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import NetworkButton from "@/components/chat/NetworkButton";
 import { cap } from "@/lib/gems";
+import { listingAlt, listingPath } from "@/lib/seo";
 
 /** A photo-forward feed post for a single gemstone listing. */
 export default function FeedPost({ listing, trader, viewerId, connection }) {
@@ -40,10 +41,10 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
         <TierBadge tier={listing.trader_tier} />
       </div>
 
-      <Link to={`/listing/${listing.id}`} className="block bg-secondary">
+      <Link to={listingPath(listing)} className="block bg-secondary">
         <div className="aspect-square w-full flex items-center justify-center">
           {photo ? (
-            <Image src={photo} alt={`${listing.weight_carats} ct ${listing.gemstone_type}`} className="w-full h-full" />
+            <Image src={photo} alt={listingAlt(listing)} className="w-full h-full" />
           ) : (
             <Gem className="w-10 h-10 text-muted-foreground/40" />
           )}
@@ -51,7 +52,7 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
       </Link>
 
       <div className="px-4 pt-3">
-        <Link to={`/listing/${listing.id}`} className="font-semibold text-[0.9375rem] hover:text-primary">
+        <Link to={listingPath(listing)} className="font-semibold text-[0.9375rem] hover:text-primary">
           {listing.weight_carats} ct {cap(listing.gemstone_type)}
         </Link>
         <p className="mt-0.5 text-sm text-muted-foreground">
@@ -62,7 +63,7 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
             viewerId={viewerId}
             other={trader}
             connection={connection}
-            context={{ label: `${listing.weight_carats} ct ${cap(listing.gemstone_type)}`, path: `/listing/${listing.id}` }}
+            context={{ label: `${listing.weight_carats} ct ${cap(listing.gemstone_type)}`, path: listingPath(listing) }}
             className="mt-3 w-full"
           />
         )}

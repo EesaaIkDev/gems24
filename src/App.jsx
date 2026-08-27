@@ -29,6 +29,9 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import Welcome from '@/pages/Welcome';
 import Join from '@/pages/Join';
+import GemstoneCategory from '@/pages/GemstoneCategory';
+import About from '@/pages/About';
+import RouteSeo from '@/components/seo/RouteSeo';
 
 const AuthenticatedApp = () => {
   const { isAuthenticated, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -66,8 +69,11 @@ const AuthenticatedApp = () => {
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/gemstones" element={<Gemstones />} />
+        <Route path="/gemstones/:slug" element={<GemstoneCategory />} />
+        <Route path="/about" element={<About />} />
         <Route path="/add" element={<AddListing />} />
         <Route path="/listing/:id" element={<ListingDetail />} />
+        <Route path="/listing/:slug/:id" element={<ListingDetail />} />
         <Route path="/trader/:id" element={<TraderProfile />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/messages/:id" element={<ConversationView />} />
@@ -93,6 +99,7 @@ function App() {
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <ScrollToTop />
+          <RouteSeo />
           <AuthenticatedApp />
         </Router>
         <Toaster />

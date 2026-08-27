@@ -11,6 +11,8 @@ import VerifiedBadge from "@/components/common/VerifiedBadge";
 import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { cap } from "@/lib/gems";
+import Seo from "@/components/seo/Seo";
+import { SITE, absolute, listingAlt, listingPath, listingTitle } from "@/lib/seo";
 
 function Spec({ label, value }) {
   if (!value) return null;
@@ -40,9 +42,74 @@ export default function ListingDetail() {
   const { listing, owner } = data;
 
   const photos = listing.photos?.length ? listing.photos : [];
+  const heading = listingTitle(listing);
+  const canonical = absolute(listingPath(listing));
+  // Only publicly stated stone attributes go into structured data — never the
+  // seller's private contact information.
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: heading,
+      description:
+        listing.description ||
+        `Natural ${listing.gemstone_type} of ${listing.weight_carats} ct, ${listing.treatment}${
+          listing.origin ? `, from ${listing.origin}` : ""
+        }, listed on Gems24.`,
+      image: photos,
+      category: `Gemstones > ${cap(listing.gemstone_type)}`,
+      url: canonical,
+      brand: { "@type": "Organization", name: SITE.name },
+      additionalProperty: [
+        { "@type": "PropertyValue", name: "Carat weight", value: `${listing.weight_carats} ct` },
+        listing.color ? { "@type": "PropertyValue", name: "Colour", value: listing.color } : null,
+        { "@type": "PropertyValue", name: "Treatment", value: cap(listing.treatment) },
+        listing.origin ? { "@type": "PropertyValue", name: "Origin", value: listing.origin } : null,
+        listing.certificate_lab
+          ? { "@type": "PropertyValue", name: "Certificate", value: listing.certificate_lab }
+          : null,
+      ].filter(Boolean),
+      offers: {
+        "@type": "Offer",
+        url: canonical,
+        availability:
+          listing.status === "sold"
+            ? "https://schema.org/SoldOut"
+            : listing.status === "reserved"
+            ? "https://schema.org/PreOrder"
+            : "https://schema.org/InStock",
+        seller: owner ? { "@type": "Organization", name: owner.business_name || owner.full_name } : undefined,
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Gems24", item: SITE.url },
+        { "@type": "ListItem", position: 2, name: "Gemstone marketplace", item: absolute("/gemstones") },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: cap(listing.gemstone_type),
+          item: absolute(`/gemstones/${listing.gemstone_type}`),
+        },
+        { "@type": "ListItem", position: 4, name: heading, item: canonical },
+      ],
+    },
+  ];
 
   return (
     <div className="pb-6">
+      <Seo
+        title={`${heading} | Gems24`}
+        description={`${heading}. ${cap(listing.treatment)}${
+          listing.certificate_lab ? `, ${listing.certificate_lab} certificate` : ""
+        }, listed by a verified gemstone trader on the Gems24 marketplace.`}
+        canonical={canonical}
+        image={photos[0]}
+        type="product"
+        jsonLd={jsonLd}
+      />
       <div className="px-4 pt-4">
         <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary">
           <ArrowLeft className="w-4 h-4" /> Back
@@ -52,7 +119,7 @@ export default function ListingDetail() {
       <div className="mt-3 px-4">
         <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-secondary flex items-center justify-center">
           {photos.length ? (
-            <Image src={photos[active]} alt={listing.gemstone_type} className="w-full h-full" />
+            <Image src={photos[active]} alt={listingAlt(listing)} className="w-full h-full" />
           ) : (
             <Gem className="w-10 h-10 text-muted-foreground/40" />
           )}
@@ -67,7 +134,7 @@ export default function ListingDetail() {
                   i === active ? "border-primary" : "border-transparent"
                 }`}
               >
-                <Image src={p} alt="" className="w-full h-full" />
+                <Image src={p} alt={`${listingAlt(listing)} — photo ${i + 1}`} className="w-full h-full" />
               </button>
             ))}
           </div>
@@ -77,9 +144,7 @@ export default function ListingDetail() {
       <div className="px-4 mt-5 space-y-5">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">
-              {listing.weight_carats} ct {cap(listing.gemstone_type)}
-            </h1>
+            <h1 className="text-2xl font-bold">{heading}</h1>
             <TierBadge tier={listing.trader_tier} />
           </div>
           <p className="text-sm text-muted-foreground mt-1">
@@ -158,7 +223,7 @@ export default function ListingDetail() {
               other={owner}
               context={{
                 label: `${listing.weight_carats} ct ${cap(listing.gemstone_type)}`,
-                path: `/listing/${listing.id}`,
+                path: listingPath(listing),
               }}
               className="w-full"
               size="lg"
