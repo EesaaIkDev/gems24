@@ -257,6 +257,78 @@
   }
 }
 
+/* --- Payment success animation: gem under a loupe resolving into a tick --- */
+.gs-loading-group { animation: gs-fade-out 0.4s ease forwards; animation-delay: 2.35s; }
+.gs-shake { transform-box: view-box; transform-origin: 50px 48px; animation: gs-shake 1.95s ease-in-out infinite; }
+.gs-gem {
+  fill: hsl(var(--primary));
+  transform-box: view-box;
+  transform-origin: 50px 48px;
+  animation: gs-compress 0.4s ease forwards, gs-fade-out 0.2s ease forwards;
+  animation-delay: 2.35s, 2.75s;
+}
+.gs-glass { transform-box: view-box; transform-origin: 50px 48px; animation: gs-pulse 2.35s ease-in-out infinite; }
+.gs-ring { fill: none; stroke: hsl(var(--primary)); stroke-width: 5.76; }
+.gs-handle { transform-box: view-box; transform-origin: 50px 48px; animation: gs-spin 2.35s linear 1 forwards; }
+.gs-handle-retract { transform-box: view-box; transform-origin: 73px 71px; animation: gs-retract 0.4s ease forwards; animation-delay: 2.35s; }
+.gs-handle line { stroke: hsl(var(--primary)); stroke-width: 5.76; stroke-linecap: round; }
+.gs-sparkle { fill: hsl(var(--background)); opacity: 0; animation: gs-twinkle 3s ease-in-out infinite; }
+.gs-sparkle.s2 { animation-delay: 0.8s; }
+.gs-sparkle.s3 { animation-delay: 1.6s; }
+.gs-success-circle {
+  fill: none;
+  stroke: hsl(var(--primary));
+  stroke-width: 4;
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: 50px 48px;
+  animation: gs-pop-in 0.4s ease forwards;
+  animation-delay: 2.35s;
+}
+.gs-check {
+  fill: none;
+  stroke: hsl(var(--primary));
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 46;
+  stroke-dashoffset: 46;
+  animation: gs-draw-check 0.575s ease forwards;
+  animation-delay: 2.75s;
+}
+
+@keyframes gs-fade-out { to { opacity: 0; } }
+@keyframes gs-pop-in { 0% { opacity: 0; transform: scale(0.97); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes gs-draw-check { to { stroke-dashoffset: 0; } }
+@keyframes gs-retract { 0% { transform: scale(1); } 100% { transform: scale(0.02); } }
+@keyframes gs-compress {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1, 1); }
+  100% { transform: translate(-9px, 7px) rotate(45deg) scale(0.45, 0.06); }
+}
+@keyframes gs-shake {
+  0% { transform: translate(0, 0); }
+  8% { transform: translate(-0.4px, 0.3px); }
+  16% { transform: translate(0.4px, -0.3px); }
+  24% { transform: translate(-0.3px, -0.4px); }
+  32% { transform: translate(0.3px, 0.3px); }
+  40% { transform: translate(-0.4px, 0.2px); }
+  48% { transform: translate(0.3px, -0.3px); }
+  56% { transform: translate(-0.2px, 0.2px); }
+  60%, 100% { transform: translate(0, 0); }
+}
+@keyframes gs-pulse {
+  0% { transform: scale(1); }
+  25% { transform: scale(0.93); }
+  50% { transform: scale(1); }
+  75% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+@keyframes gs-spin { to { transform: rotate(360deg); } }
+@keyframes gs-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

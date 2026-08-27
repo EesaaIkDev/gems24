@@ -9,7 +9,7 @@ export default function Welcome() {
       style={{ paddingTop: "var(--safe-top)", paddingBottom: "var(--safe-bottom)" }}
     >
       <WelcomeHero />
-      <main className="flex flex-1 items-center bg-welcome-ink">
+      <main className="flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-welcome-ink">
         <WelcomeActions />
       </main>
     </div>

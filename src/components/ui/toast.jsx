@@ -22,7 +22,7 @@ const ToastViewport = React.forwardRef(({ ...props }, ref) => (
 ToastViewport.displayName = "ToastViewport";
 
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:duration-200 data-[state=open]:duration-300 data-[state=open]:ease-out data-[state=closed]:slide-out-to-top-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  "group pointer-events-auto relative flex w-full touch-pan-y select-none items-center justify-between space-x-4 overflow-hidden rounded-2xl border p-5 pr-9 shadow-lg data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:duration-200 data-[state=open]:duration-300 data-[state=open]:ease-out data-[state=closed]:slide-out-to-top-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
   {
     variants: {
       variant: {
@@ -37,10 +37,47 @@ const toastVariants = cva(
   }
 );
 
-const Toast = React.forwardRef(({ className, variant, ...props }, ref) => {
+/** Drops down from the top and dismisses on a leftward swipe. */
+const Toast = React.forwardRef(({ className, variant, onDismiss, ...props }, ref) => {
+  const start = React.useRef(null);
+  const [dx, setDx] = React.useState(0);
+  const [gone, setGone] = React.useState(false);
+
+  const onPointerDown = (e) => {
+    start.current = e.clientX;
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+
+  const onPointerMove = (e) => {
+    if (start.current === null) return;
+    setDx(Math.min(0, e.clientX - start.current));
+  };
+
+  const onPointerUp = () => {
+    if (start.current === null) return;
+    start.current = null;
+    if (dx < -80) {
+      setGone(true);
+      setDx(-500);
+      setTimeout(() => onDismiss?.(), 180);
+    } else {
+      setDx(0);
+    }
+  };
+
   return (
     <div
       ref={ref}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      style={{
+        transform: `translateX(${dx}px)`,
+        opacity: gone ? 0 : 1,
+        transition: start.current === null ? "transform 200ms ease, opacity 200ms ease" : "none",
+        touchAction: "pan-y",
+      }}
       className={cn(toastVariants({ variant }), className)}
       {...props}
     />

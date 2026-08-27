@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { haptic } from "@/lib/despia";
 
-const EDGE = 28;      // px from the left edge that starts the gesture
-const DISTANCE = 70;  // px of travel needed to trigger back
+const EDGE = 60;      // px from the left edge that starts the gesture
+const DISTANCE = 60;  // px of travel needed to trigger back
 
 /** iOS-style edge swipe-back on the given element. */
 export default function useSwipeBack(ref, enabled = true) {

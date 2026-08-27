@@ -5,7 +5,7 @@ import { Crown, EyeOff, UserPlus } from "lucide-react";
 import ShareInviteButton from "@/components/referral/ShareInviteButton";
 import useReferralCode from "@/hooks/useReferralCode";
 import { TIERS, tierRank } from "@/lib/gems";
-import { BONUS_PER_REFERRAL, bonusRemaining } from "@/lib/referral";
+import { bonusPerReferral, referralsRemaining } from "@/lib/referral";
 
 /**
  * Shown when a trader is out of listing slots: upgrading and inviting a trader
@@ -13,8 +13,7 @@ import { BONUS_PER_REFERRAL, bonusRemaining } from "@/lib/referral";
  */
 export default function LimitChoice({ trader, active, limit }) {
   const code = useReferralCode(trader);
-  const remaining = bonusRemaining(trader);
-  const unlock = Math.min(BONUS_PER_REFERRAL, remaining);
+  const unlock = referralsRemaining(trader) > 0 ? bonusPerReferral(trader) : 0;
   const label = TIERS[trader?.subscription_tier || "none"].label;
 
   return (

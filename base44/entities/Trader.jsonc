@@ -84,12 +84,27 @@
     "referral_count": {
       "type": "number",
       "default": 0,
-      "description": "Confirmed signups attributed to this trader"
+      "description": "Confirmed signups attributed to this trader, all time"
     },
     "referral_bonus_listings": {
       "type": "number",
       "default": 0,
       "description": "Extra active listing slots earned from referrals"
+    },
+    "referral_count_year": {
+      "type": "number",
+      "default": 0,
+      "description": "Referrals used in the current 12-month window"
+    },
+    "referral_year_start": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Start of the current 12-month referral window"
+    },
+    "purchased_listings": {
+      "type": "number",
+      "default": 0,
+      "description": "Extra listing slots bought individually \u2014 never expire or reset"
     }
   },
   "required": [

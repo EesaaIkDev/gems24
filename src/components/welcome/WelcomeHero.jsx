@@ -4,7 +4,7 @@ import GemPattern from "./GemPattern";
 
 export default function WelcomeHero() {
   return (
-    <section className="relative flex h-[47svh] min-h-[320px] max-h-[520px] items-center justify-center overflow-hidden bg-welcome-green">
+    <section className="relative flex h-[38svh] min-h-[200px] max-h-[420px] shrink-0 items-center justify-center overflow-hidden bg-welcome-green">
       <GemPattern />
       <motion.div
         className="relative z-10 flex flex-col items-center"

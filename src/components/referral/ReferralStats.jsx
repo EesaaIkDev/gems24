@@ -1,14 +1,15 @@
 import React from "react";
 import useReferralCode from "@/hooks/useReferralCode";
-import { tierRank } from "@/lib/gems";
-import { MAX_REFERRAL_BONUS } from "@/lib/referral";
+import { REFERRALS_PER_YEAR, tierRank } from "@/lib/gems";
+import { bonusPerReferral, referralsRemaining } from "@/lib/referral";
 
 export default function ReferralStats({ trader }) {
   const code = useReferralCode(trader);
   if (tierRank(trader?.subscription_tier) === 0) return null;
+  const left = referralsRemaining(trader);
   const stats = [
     { label: "Your code", value: code || "…" },
-    { label: "Traders joined", value: trader?.referral_count || 0 },
+    { label: "Invites left", value: left },
     { label: "Bonus listings", value: `+${trader?.referral_bonus_listings || 0}` },
   ];
 
@@ -26,8 +27,8 @@ export default function ReferralStats({ trader }) {
         ))}
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
-        Up to +{MAX_REFERRAL_BONUS} bonus listings from referrals. A referral counts once the trader
-        you invited verifies their email and creates their profile.
+        {REFERRALS_PER_YEAR} referrals a year, each worth +{bonusPerReferral(trader)} listings on your
+        grade. Listings you earn are yours to keep — only the invite count resets each year.
       </p>
     </div>
   );

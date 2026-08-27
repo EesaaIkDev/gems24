@@ -2,11 +2,20 @@ export const LOGO_URL = "https://media.base44.com/images/public/6a661583e07cf311
 
 export const TIERS = {
   none: { key: "none", label: "Free", limit: 0, rank: 0, price: null },
-  bronze: { key: "bronze", label: "Bronze", limit: 3, rank: 1, price: 9 },
-  silver: { key: "silver", label: "Silver", limit: 10, rank: 2, price: 29 },
-  gold: { key: "gold", label: "Gold", limit: 30, rank: 3, price: 79 },
-  platinum: { key: "platinum", label: "Platinum", limit: Infinity, rank: 4, price: 199 },
+  bronze: { key: "bronze", label: "Bronze", limit: 25, rank: 1, price: 9 },
+  silver: { key: "silver", label: "Silver", limit: 40, rank: 2, price: 29 },
+  gold: { key: "gold", label: "Gold", limit: 80, rank: 3, price: 59 },
+  platinum: { key: "platinum", label: "Platinum", limit: 300, rank: 4, price: 199 },
 };
+
+/** Referral reward scales with the grade of the trader handing out the code. */
+export const REFERRAL_BONUS = { bronze: 5, silver: 8, gold: 12, platinum: 20 };
+
+/** Referrals are a growth lever, not a plan replacement — twice a year each. */
+export const REFERRALS_PER_YEAR = 2;
+
+/** Price of one extra listing slot, bought outright and never expiring. */
+export const EXTRA_LISTING_PRICE = 10;
 
 // Highest grade first: Platinum anchors the price scale so Gold reads as the
 // reasonable choice rather than the expensive end of a build-up from Bronze.

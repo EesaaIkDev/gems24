@@ -10,7 +10,7 @@ import { TIERS, TIER_STYLES } from "@/lib/gems";
  */
 export default function TierRow({ tier, capacity, placement, anchor, current, recommended, onSelect }) {
   const t = TIERS[tier];
-  const filled = t.limit === Infinity ? 5 : Math.max(1, Math.round((t.limit / 30) * 4));
+  const filled = Math.min(5, t.rank + 1);
 
   return (
     <div className={`gem-corners gem-card gem-frame ${recommended ? "gem-frame-primary" : ""}`}>

@@ -8,6 +8,7 @@ import FeedPost from "@/components/feed/FeedPost";
 import ActivityStrip from "@/components/feed/ActivityStrip";
 import SuggestedTraders from "@/components/feed/SuggestedTraders";
 import FeedSearch from "@/components/feed/FeedSearch";
+import RefreshButton from "@/components/feed/RefreshButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { feedTraderIds, findConnection, listMyConnections } from "@/lib/network";
 import { TIERS, tierRank } from "@/lib/gems";
@@ -90,7 +91,10 @@ export default function Home() {
   return (
     <div className="pb-4">
       <div className="px-4 pt-5 pb-4">
-        <h1 className="text-[1.625rem] font-bold leading-tight">Your feed</h1>
+        <div className="flex items-start gap-3">
+          <h1 className="flex-1 text-[1.625rem] font-bold leading-tight">Your feed</h1>
+          <RefreshButton onRefresh={reload} />
+        </div>
         <p className="mt-1 text-sm text-muted-foreground">
           {networkIds.length
             ? "Latest stones and updates from traders in your network."

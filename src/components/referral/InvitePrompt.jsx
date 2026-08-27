@@ -3,13 +3,14 @@ import { UserPlus } from "lucide-react";
 import ShareInviteButton from "@/components/referral/ShareInviteButton";
 import useReferralCode from "@/hooks/useReferralCode";
 import { tierRank } from "@/lib/gems";
-import { BONUS_PER_REFERRAL, bonusRemaining } from "@/lib/referral";
+import { bonusPerReferral, referralsRemaining } from "@/lib/referral";
 
 /** Ongoing growth nudge — hidden at the bonus cap, and for traders off-plan. */
 export default function InvitePrompt({ trader }) {
   const code = useReferralCode(trader);
-  const remaining = bonusRemaining(trader);
-  if (remaining <= 0 || tierRank(trader?.subscription_tier) === 0) return null;
+  const invitesLeft = referralsRemaining(trader);
+  const perInvite = bonusPerReferral(trader);
+  if (invitesLeft <= 0 || tierRank(trader?.subscription_tier) === 0) return null;
 
   return (
     <div className="rounded-2xl bg-card p-5">
@@ -19,10 +20,10 @@ export default function InvitePrompt({ trader }) {
         </div>
         <div className="min-w-0">
           <h3 className="font-heading font-semibold leading-tight">
-            Invite a trader, unlock {Math.min(BONUS_PER_REFERRAL, remaining)} more listings
+            Invite a trader, unlock {perInvite} more listings
           </h3>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Your code {code || "…"} · {remaining} bonus listings still available
+            Your code {code || "…"} · {invitesLeft} invite{invitesLeft === 1 ? "" : "s"} left this year
           </p>
         </div>
       </div>
