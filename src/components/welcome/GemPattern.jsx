@@ -6,58 +6,36 @@ export default function GemPattern() {
   return (
     <motion.div
       aria-hidden="true"
-      className="absolute inset-0 text-welcome-pattern"
+      className="absolute inset-0 text-welcome-text/70"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.7 }}
     >
       <svg viewBox="0 0 390 430" className="absolute inset-0 h-full w-full">
-        <g fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round">
-          {/* Round brilliant */}
-          <g>
-            <circle cx="58" cy="52" r="26" />
-            <path d="M40 34l9 12h18l9-12M32 52h52M40 70l9-12h18l9 12M49 46l9 12 9-12" />
-          </g>
-          {/* Emerald cut */}
-          <g>
-            <path d="M290 30h44l12 14v34l-12 14h-44l-12-14V44Z" />
-            <path d="M296 40h32v48h-32zM278 44l18-4M346 44l-18-4M278 78l18 4M346 78l-18 4" />
-          </g>
-          {/* Pear */}
-          <g>
-            <path d="M177 32c14 14 22 26 22 38a22 22 0 0 1-44 0c0-12 8-24 22-38Z" />
-            <path d="M155 70h44M177 32v60M163 52h28" />
-          </g>
-          {/* Marquise */}
-          <g>
-            <path d="M58 150c18 12 26 24 26 32s-8 20-26 32c-18-12-26-24-26-32s8-20 26-32Z" />
-            <path d="M32 182h52M58 150v64M44 166h28M44 198h28" />
-          </g>
-          {/* Cushion */}
-          <g>
-            <path d="M300 148h30a16 16 0 0 1 16 16v26a16 16 0 0 1-16 16h-30a16 16 0 0 1-16-16v-26a16 16 0 0 1 16-16Z" />
-            <path d="M296 162h38v28h-38M284 164l12-2M346 164l-12-2M284 190l12 2M346 190l-12 2" />
-          </g>
-          {/* Trillion */}
-          <g>
-            <path d="M74 258 108 314H40Z" />
-            <path d="M74 258v56M52 296h44M60 278h28" />
-          </g>
-          {/* Oval */}
-          <g>
-            <ellipse cx="318" cy="286" rx="24" ry="32" />
-            <path d="M294 286h48M318 254v64M302 268h32M302 304h32" />
-          </g>
-          {/* Heart */}
-          <g>
-            <path d="M60 400c-16-12-28-22-28-34a16 16 0 0 1 28-10 16 16 0 0 1 28 10c0 12-12 22-28 34Z" />
-            <path d="M32 366h56M60 356v44M46 380h28" />
-          </g>
-          {/* Asscher */}
-          <g>
-            <path d="M300 366h36l12 12v28l-12 12h-36l-12-12v-28Z" />
-            <path d="M306 378h24v36h-24M288 378l18 0M348 378l-18 0" />
-          </g>
+        <g fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round">
+          {/* Small, widely spaced cuts frame a clear central wordmark area. */}
+          <g transform="translate(32 38)"><circle r="13" /><path d="m-9-9 6 7h6l6-7M-13 0h26M-9 9l6-7h6l6 7" /></g>
+          <g transform="translate(116 24)"><path d="m-10-7 4-5H6l4 5v14l-4 5H-6l-4-5Z" /><path d="M-5-7H5V7H-5Z" /></g>
+          <g transform="translate(252 38)"><path d="m0-13 11 8-4 14H-7l-4-14Z" /><path d="M-7-5 0 7l7-12" /></g>
+          <g transform="translate(354 70)"><ellipse rx="10" ry="13" /><path d="M-10 0h20M0-13v26" /></g>
+
+          <g transform="translate(70 112)"><path d="m0-12 11 8-4 14H-7l-4-14Z" /></g>
+          <g transform="translate(166 84)"><path d="m-10-7 4-5H6l4 5v14l-4 5H-6l-4-5Z" /><path d="M-5-7H5V7H-5Z" /></g>
+          <g transform="translate(306 118)"><circle r="12" /><path d="M-12 0h24M0-12v24" /></g>
+          <circle cx="22" cy="169" r="2" fill="currentColor" stroke="none" />
+          <circle cx="366" cy="172" r="2" fill="currentColor" stroke="none" />
+
+          <g transform="translate(38 225)"><ellipse rx="10" ry="13" /><path d="M-10 0h20M0-13v26" /></g>
+          <g transform="translate(348 226)"><path d="m0-13 12 9-5 14H-7l-5-14Z" /><path d="M-7-4 0 8l7-12" /></g>
+          <circle cx="76" cy="286" r="2" fill="currentColor" stroke="none" />
+          <circle cx="314" cy="286" r="2" fill="currentColor" stroke="none" />
+
+          <g transform="translate(56 338)"><circle r="13" /><path d="m-9-9 6 7h6l6-7M-13 0h26M-9 9l6-7h6l6 7" /></g>
+          <g transform="translate(142 372)"><path d="m-10-7 4-5H6l4 5v14l-4 5H-6l-4-5Z" /><path d="M-5-7H5V7H-5Z" /></g>
+          <g transform="translate(270 350)"><ellipse rx="10" ry="14" /><path d="M-10 0h20M0-14v28" /></g>
+          <g transform="translate(352 382)"><path d="m0-13 12 9-5 14H-7l-5-14Z" /></g>
+          <circle cx="24" cy="404" r="2" fill="currentColor" stroke="none" />
+          <circle cx="226" cy="402" r="2" fill="currentColor" stroke="none" />
         </g>
       </svg>
     </motion.div>
