@@ -3,7 +3,7 @@ import useCountries from "@/hooks/useCountries";
 
 /** Native select of world countries — reliable and fast on mobile. */
 export default function CountrySelect({ value, onChange }) {
-  const { countries, loading } = useCountries();
+  const { countries } = useCountries();
 
   return (
     <select
@@ -11,7 +11,7 @@ export default function CountrySelect({ value, onChange }) {
       onChange={(e) => onChange(e.target.value)}
       className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
     >
-      <option value="">{loading ? "Loading countries…" : "Select country"}</option>
+      <option value="">Select country</option>
       {value && !countries.some((c) => c.name === value) && <option value={value}>{value}</option>}
       {countries.map((c) => (
         <option key={c.code} value={c.name}>
