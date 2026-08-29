@@ -18,8 +18,7 @@ export default function DeleteAccount({ trader }) {
     setBusy(true);
     setError("");
     try {
-      const [listings, asA, asB, sent, received] = await Promise.all([
-        base44.entities.Listing.filter({ trader_id: trader.id }),
+      const [asA, asB, sent, received] = await Promise.all([
         base44.entities.Conversation.filter({ participant_a_id: trader.id }),
         base44.entities.Conversation.filter({ participant_b_id: trader.id }),
         base44.entities.Connection.filter({ requester_id: trader.id }),
@@ -31,7 +30,9 @@ export default function DeleteAccount({ trader }) {
       );
       await Promise.all([
         ...messageBatches.flat().map((m) => base44.entities.Message.delete(m.id)),
-        ...listings.map((l) => base44.entities.Listing.delete(l.id)),
+        // Every stone this trader ever published goes in the same pass, in one
+        // call — no page limit can leave listings orphaned behind the profile.
+        base44.entities.Listing.deleteMany({ trader_id: trader.id }),
         ...[...sent, ...received].map((c) => base44.entities.Connection.delete(c.id)),
       ]);
       await Promise.all(conversations.map((c) => base44.entities.Conversation.delete(c.id)));
