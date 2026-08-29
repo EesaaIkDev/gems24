@@ -23,7 +23,7 @@ export default function TierRow({ tier, capacity, placement, anchor, current, re
           </span>
           {recommended && (
             <span className="text-[0.625rem] font-bold uppercase tracking-wider text-primary">
-              Most traded
+              Most chosen
             </span>
           )}
           {current && (
@@ -35,10 +35,8 @@ export default function TierRow({ tier, capacity, placement, anchor, current, re
 
         <div className="mt-3 flex items-end justify-between gap-3">
           <div>
-            <p className="font-heading text-2xl font-bold leading-none">
-              ${t.price}
-              <span className="ml-1 text-xs font-medium text-muted-foreground">/ month</span>
-            </p>
+            {/* The amount stays hidden until the store's billing screen. */}
+            <p className="font-heading text-lg font-bold leading-none">Billed annually</p>
             <p className="mt-1.5 text-[0.8125rem] text-muted-foreground">{capacity}</p>
             {anchor && <p className="mt-1 text-[0.75rem] leading-snug text-primary">{anchor}</p>}
           </div>
@@ -63,7 +61,7 @@ export default function TierRow({ tier, capacity, placement, anchor, current, re
           disabled={current}
           onClick={() => onSelect(tier)}
         >
-          {current ? "Current plan" : `Trade on ${t.label}`}
+          {current ? "Current plan" : `Choose ${t.label}`}
         </Button>
       </div>
     </div>

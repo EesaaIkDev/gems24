@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
 
 /** Full-screen confirmation: the loupe finishes inspecting, then a tick draws. */
 export default function SuccessSplash({ title = "Payment complete", subtitle, onDone }) {
@@ -7,8 +8,10 @@ export default function SuccessSplash({ title = "Payment complete", subtitle, on
     return () => clearTimeout(t);
   }, [onDone]);
 
-  return (
-    <div className="fixed inset-0 z-[120] flex flex-col items-center justify-center bg-background px-8 text-center">
+  // Portalled to <body> so no page transform, header or tab bar can offset or
+  // clip it — it always lands dead centre of the screen.
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-background px-8 text-center">
       <div className="h-[140px] w-[140px]">
         <svg viewBox="0 0 100 100" className="h-full w-full overflow-visible" aria-hidden="true">
           <g className="gs-loading-group">
@@ -38,7 +41,8 @@ export default function SuccessSplash({ title = "Payment complete", subtitle, on
         </svg>
       </div>
       <h2 className="mt-6 font-heading text-xl font-bold">{title}</h2>
-      {subtitle && <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>}
-    </div>
+      {subtitle && <p className="mt-2 max-w-xs text-sm text-muted-foreground">{subtitle}</p>}
+    </div>,
+    document.body
   );
 }

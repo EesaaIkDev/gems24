@@ -46,7 +46,7 @@ export default function RedeemCode({ tier, trader, onGranted, onDiscount, discou
   if (discount) {
     return (
       <p className="text-center text-xs font-semibold text-primary">
-        Code {discount.code} applied — {discount.percent_off}% off
+        Valid discount code — {discount.percent_off}% off applied at billing
       </p>
     );
   }

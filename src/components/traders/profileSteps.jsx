@@ -117,8 +117,8 @@ export function buildSteps(accountType) {
     },
     {
       key: "contact_email",
-      title: "Which email should traders reach you on?",
-      hint: "Only shown to traders you've accepted a connection with.",
+      title: "Would you like to add a contact email?",
+      hint: "Optional — messaging happens right here in Gems24 chat. This is only shown to traders you've accepted a connection with.",
       optional: true,
       render: ({ form, set }) => (
         <Input

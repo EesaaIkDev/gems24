@@ -142,7 +142,8 @@ export default function Subscription() {
       )}
 
       <p className="mx-auto mt-8 max-w-sm text-center text-xs leading-relaxed text-muted-foreground">
-        Billed through your {isNative ? "app store" : "App Store or Google Play"} account. Cancel anytime.
+        All grades are billed annually through your{" "}
+        {isNative ? "app store" : "App Store or Google Play"} account. Cancel anytime.
       </p>
 
       <BottomSheet
@@ -155,17 +156,14 @@ export default function Subscription() {
             <>
               <div className="flex items-baseline justify-between">
                 <TierBadge tier={selected} />
-                <p className="font-heading text-xl font-bold">
+                {/* Annual-only, and the amount is revealed on the billing screen. */}
+                <p className="font-heading text-sm font-bold">
+                  Annual plan
                   {discount && (
-                    <span className="mr-2 text-sm font-medium text-muted-foreground line-through">
-                      ${TIERS[selected].price}
+                    <span className="ml-1.5 text-xs font-medium text-primary">
+                      {discount.percent_off}% off
                     </span>
                   )}
-                  $
-                  {discount
-                    ? Math.round(TIERS[selected].price * (1 - discount.percent_off / 100) * 100) / 100
-                    : TIERS[selected].price}
-                  <span className="ml-1 text-xs font-medium text-muted-foreground">/ month</span>
                 </p>
               </div>
               <p className="text-sm leading-relaxed text-muted-foreground">
@@ -179,8 +177,13 @@ export default function Subscription() {
                 onGranted={onGranted}
               />
               <Button className="w-full" onClick={subscribe} disabled={!online}>
-                {online ? "Continue to payment" : "Unavailable offline"}
+                {online ? "Continue to billing" : "Unavailable offline"}
               </Button>
+              {online && (
+                <p className="text-center text-xs text-muted-foreground">
+                  Your annual total is shown on the next screen before you confirm.
+                </p>
+              )}
               {!online && (
                 <p className="text-center text-xs text-muted-foreground">
                   Payments need a connection — reconnect to upgrade your grade.
