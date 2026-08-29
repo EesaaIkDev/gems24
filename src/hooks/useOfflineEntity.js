@@ -33,8 +33,11 @@ export default function useOfflineEntity(entity, fetcher, deps = []) {
       if (alive && local.length) setRows(visible(local));
     });
     refresh();
+    // Pull-to-refresh anywhere in the app refetches this list too.
+    window.addEventListener("app:refresh", refresh);
     return () => {
       alive = false;
+      window.removeEventListener("app:refresh", refresh);
     };
   }, [entity, refresh]);
 

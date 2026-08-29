@@ -11,6 +11,7 @@ import VerifiedBadge from "@/components/common/VerifiedBadge";
 import EmptyState from "@/components/common/EmptyState";
 import OwnListingsGrid from "@/components/listings/OwnListingsGrid";
 import ProfileProgress from "@/components/profile/ProfileProgress";
+import VerificationCard from "@/components/verification/VerificationCard";
 import InvitePrompt from "@/components/referral/InvitePrompt";
 import ReferralStats from "@/components/referral/ReferralStats";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
@@ -18,7 +19,7 @@ import { TIERS, cap } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
 
 export default function Profile() {
-  const { user, trader, loading } = useCurrentTrader();
+  const { user, trader, loading, reload } = useCurrentTrader();
   const [listings, setListings] = useState(null);
 
   useEffect(() => {
@@ -84,6 +85,8 @@ export default function Profile() {
             <Link to="/settings">Edit profile</Link>
           </Button>
         </div>
+
+        <VerificationCard trader={trader} onVerified={reload} />
 
         <ProfileProgress trader={trader} />
 

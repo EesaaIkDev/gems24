@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useLocation, useNavigationType, useOutlet } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import AppHeader from "./AppHeader";
@@ -8,6 +8,9 @@ import useTheme from "@/hooks/useTheme";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useMessageNotifications from "@/hooks/useMessageNotifications";
 import useSwipeBack from "@/hooks/useSwipeBack";
+import usePullToRefresh from "@/hooks/usePullToRefresh";
+import PullIndicator from "./PullIndicator";
+import { queryClientInstance } from "@/lib/query-client";
 import AppLockGate from "@/components/native/AppLockGate";
 import { registerPush } from "@/lib/despia";
 import OfflineBanner from "@/components/common/OfflineBanner";
@@ -25,6 +28,14 @@ export default function AppLayout() {
 
   useSwipeBack(scrollRef);
   const { toast } = useToast();
+
+  // Pull down at the top of any page to refetch everything on screen.
+  const refreshApp = useCallback(async () => {
+    window.dispatchEvent(new Event("app:refresh"));
+    await queryClientInstance.invalidateQueries();
+    await new Promise((r) => setTimeout(r, 600));
+  }, []);
+  const { pull, progress, refreshing } = usePullToRefresh(scrollRef, refreshApp);
 
   useEffect(() => {
     setSyncErrorHandler(() =>
@@ -49,6 +60,8 @@ export default function AppLayout() {
         <div className="pointer-events-none absolute inset-x-0 top-0 z-40">
           <OfflineBanner />
         </div>
+
+        <PullIndicator pull={pull} progress={progress} refreshing={refreshing} />
 
         <div
           id="app-scroll"

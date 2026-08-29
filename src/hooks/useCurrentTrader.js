@@ -56,8 +56,10 @@ export default function useCurrentTrader() {
       }
     });
     load();
+    window.addEventListener("app:refresh", load);
     return () => {
       alive = false;
+      window.removeEventListener("app:refresh", load);
     };
   }, [load]);
 
