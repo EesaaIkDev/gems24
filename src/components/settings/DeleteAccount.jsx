@@ -30,11 +30,16 @@ export default function DeleteAccount({ trader }) {
       );
       await Promise.all([
         ...messageBatches.flat().map((m) => base44.entities.Message.delete(m.id)),
-        // Every stone this trader ever published goes in the same pass, in one
-        // call — no page limit can leave listings orphaned behind the profile.
-        base44.entities.Listing.deleteMany({ trader_id: trader.id }),
         ...[...sent, ...received].map((c) => base44.entities.Connection.delete(c.id)),
       ]);
+      // Every stone this trader ever published goes before the profile does, and
+      // we keep sweeping until nothing is left, so no listing can survive the
+      // account and stay visible to other users.
+      for (let pass = 0; pass < 10; pass += 1) {
+        await base44.entities.Listing.deleteMany({ trader_id: trader.id });
+        const left = await base44.entities.Listing.filter({ trader_id: trader.id });
+        if (left.length === 0) break;
+      }
       await Promise.all(conversations.map((c) => base44.entities.Conversation.delete(c.id)));
       await base44.entities.Trader.delete(trader.id);
       base44.auth.logout("/");
