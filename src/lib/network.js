@@ -1,10 +1,10 @@
 import { base44 } from "@/api/base44Client";
 
 /**
- * Networking works like a follow system: a Connection row is created the moment
- * a trader taps "Network". Its status decides messaging only —
- * "accepted" = can chat, "pending" = awaiting the other trader's approval.
- * Feed relationships count both.
+ * Networking is request-and-accept for everyone: tapping "Network" creates a
+ * Connection row with status "pending", and the recipient must accept before
+ * the two traders are connected. Only "accepted" unlocks messaging, contact
+ * details and feed boosting — "pending" grants nothing.
  */
 const involves = (c, id) => c.requester_id === id || c.recipient_id === id;
 
@@ -31,16 +31,27 @@ export async function getConnection(viewerId, otherId) {
   return findConnection(rows, viewerId, otherId);
 }
 
-/** Connects the viewer to a trader, respecting that trader's approval setting. */
+/**
+ * Sends a network request. Every request starts "pending" — no trader is ever
+ * auto-connected, so the recipient always decides.
+ */
 export async function networkWith(viewerId, otherTrader) {
   const existing = await getConnection(viewerId, otherTrader.id);
   if (existing) return existing;
   return base44.entities.Connection.create({
     requester_id: viewerId,
     recipient_id: otherTrader.id,
-    status: otherTrader.require_message_approval ? "pending" : "accepted",
+    status: "pending",
   });
 }
+
+/** True when the viewer sent a request that the other trader hasn't answered. */
+export const isAwaitingTheirApproval = (connection, viewerId) =>
+  connection?.status === "pending" && connection?.requester_id === viewerId;
+
+/** True when the other trader asked to connect and the viewer must respond. */
+export const isAwaitingMyApproval = (connection, viewerId) =>
+  connection?.status === "pending" && connection?.recipient_id === viewerId;
 
 /**
  * Accepting establishes the network in both directions at once (a single

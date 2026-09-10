@@ -8,6 +8,7 @@ export default [
   {
     files: [
       "src/components/**/*.{js,mjs,cjs,jsx}",
+      "src/hooks/**/*.{js,mjs,cjs,jsx}",
       "src/pages/**/*.{js,mjs,cjs,jsx}",
       "src/Layout.jsx",
     ],
@@ -55,6 +56,7 @@ export default [
         { ignore: ["cmdk-input-wrapper", "toast-close"] },
       ],
       "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
     },
   },
 ];

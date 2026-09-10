@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import { ArrowLeft, Lock, Mail, MapPin, User } from "lucide-react";
+import { ArrowLeft, Briefcase, Clock, Gem, Lock, Mail, MapPin, User } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import LoadError from "@/components/common/LoadError";
 import useLoader from "@/hooks/useLoader";
@@ -12,7 +12,12 @@ import ListingCard from "@/components/listings/ListingCard";
 import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { cap } from "@/lib/gems";
-import { findConnection, listMyConnections } from "@/lib/network";
+import {
+  findConnection,
+  isAwaitingMyApproval,
+  isAwaitingTheirApproval,
+  listMyConnections,
+} from "@/lib/network";
 import Seo from "@/components/seo/Seo";
 import { SITE, absolute } from "@/lib/seo";
 
@@ -47,7 +52,10 @@ export default function TraderProfile() {
   const { trader, listings } = data;
   const connected = connection?.status === "accepted";
   const showContact = isSelf || connected;
+  const requestSent = isAwaitingTheirApproval(connection, viewer?.id);
+  const needsMyReply = isAwaitingMyApproval(connection, viewer?.id);
   const active = listings.filter((l) => l.status !== "sold");
+  const isBuyer = trader.account_type === "buyer";
 
   const traderName = trader.business_name || trader.full_name;
   const place = [trader.city, trader.country].filter(Boolean).join(", ");
@@ -101,6 +109,9 @@ export default function TraderProfile() {
               </div>
               {trader.business_name && <p className="text-sm text-muted-foreground">{trader.business_name}</p>}
               <div className="mt-2 flex flex-wrap items-center gap-2">
+                <span className="rounded-lg bg-primary/10 px-2 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-wide text-primary">
+                  {isBuyer ? "Buyer" : "Trader"}
+                </span>
                 <TierBadge tier={trader.subscription_tier} />
                 {(trader.city || trader.country) && (
                   <span className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -108,23 +119,38 @@ export default function TraderProfile() {
                   </span>
                 )}
                 {trader.years_experience ? (
-                  <span className="text-xs text-muted-foreground">{trader.years_experience} yrs experience</span>
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Briefcase className="w-3 h-3" /> {trader.years_experience} yrs experience
+                  </span>
                 ) : null}
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Gem className="w-3 h-3" /> {active.length} active listing{active.length === 1 ? "" : "s"}
+                </span>
               </div>
             </div>
           </div>
 
           {trader.specialties?.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              {trader.specialties.map((s) => (
-                <span key={s} className="rounded-lg bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground">
-                  {cap(s)}
-                </span>
-              ))}
+            <div className="mt-5">
+              <p className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground font-semibold">
+                {isBuyer ? "Looking for" : "Specialises in"}
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {trader.specialties.map((s) => (
+                  <span key={s} className="rounded-lg bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground">
+                    {cap(s)}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 
-          {trader.bio && <p className="mt-4 text-[0.9375rem] leading-relaxed text-foreground/85">{trader.bio}</p>}
+          {trader.bio && (
+            <div className="mt-5">
+              <p className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground font-semibold">About</p>
+              <p className="mt-2 text-[0.9375rem] leading-relaxed text-foreground/85">{trader.bio}</p>
+            </div>
+          )}
 
           <div className="mt-5 rounded-2xl bg-secondary/70 p-4">
             <p className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground font-semibold">Contact details</p>
@@ -140,9 +166,17 @@ export default function TraderProfile() {
                   <p className="text-sm text-muted-foreground">No contact details added yet.</p>
                 )}
               </div>
+            ) : requestSent ? (
+              <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                <Clock className="w-4 h-4" /> Request sent — visible once {trader.full_name} accepts.
+              </p>
+            ) : needsMyReply ? (
+              <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                <Lock className="w-4 h-4" /> Accept their request in Chats to share contact details.
+              </p>
             ) : (
               <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-                <Lock className="w-4 h-4" /> Visible once you're connected.
+                <Lock className="w-4 h-4" /> Send a network request — contact details are shared once accepted.
               </p>
             )}
           </div>

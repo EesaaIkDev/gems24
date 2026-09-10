@@ -81,18 +81,15 @@ export default function Settings() {
             </Button>
           </div>
 
-          <div className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3">
-            <ShieldCheck className="w-[18px] h-[18px] text-primary" />
+          <div className="rounded-2xl bg-card border border-border p-4 flex items-start gap-3">
+            <ShieldCheck className="mt-0.5 w-[18px] h-[18px] text-primary shrink-0" />
             <div className="flex-1">
-              <p className="text-sm font-medium">Restricted Messaging</p>
+              <p className="text-sm font-medium">Approval required</p>
               <p className="text-xs text-muted-foreground">
-                When on, other traders must send a request and be accepted before they can message you.
+                Every trader must send you a network request and be accepted by you before they can
+                message you or see your contact details. This always applies and can't be turned off.
               </p>
             </div>
-            <Switch
-              checked={!!trader.require_message_approval}
-              onCheckedChange={(v) => save({ require_message_approval: v })}
-            />
           </div>
 
           <div className="rounded-2xl bg-card border border-border p-5">
