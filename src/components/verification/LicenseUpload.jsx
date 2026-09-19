@@ -5,13 +5,16 @@ import { Camera, Upload, X } from "lucide-react";
 import { haptic } from "@/lib/despia";
 
 /**
- * Gem License capture. The scan stays on the device — it is held as a preview
+ * Verification document capture. The scan stays on the device — it is held as a preview
  * URL and discarded the moment the check is submitted. A real license-checking
  * tool will replace the submit step later, so for now every submission passes.
  */
 export default function LicenseUpload({ trader, onDone }) {
   const [docs, setDocs] = useState([]);
   const [busy, setBusy] = useState(false);
+  // Buyers verify identity, not a Gem License. The exact buyer document is
+  // still to be decided — change this one label when it is.
+  const isBuyer = trader.account_type === "buyer";
   const pickRef = useRef(null);
   const cameraRef = useRef(null);
 
@@ -48,8 +51,9 @@ export default function LicenseUpload({ trader, onDone }) {
   return (
     <div className="mx-auto max-w-md space-y-4 pb-2">
       <p className="text-sm leading-relaxed text-muted-foreground">
-        Photograph or upload your Gem License, along with a government ID if the license doesn't carry
-        your photo. Documents are checked for verification only — never stored, never shown to anyone.
+        {isBuyer
+          ? "Photograph or upload a government ID to confirm your identity. Documents are checked for verification only — never stored, never shown to anyone."
+          : "Photograph or upload your Gem License, along with a government ID if the license doesn't carry your photo. Documents are checked for verification only — never stored, never shown to anyone."}
       </p>
 
       <div className="grid grid-cols-2 gap-2">
@@ -77,7 +81,7 @@ export default function LicenseUpload({ trader, onDone }) {
       )}
 
       <Button className="h-11 w-full" onClick={submit} disabled={busy || docs.length === 0}>
-        {busy ? "Checking your license…" : "Submit for verification"}
+        {busy ? (isBuyer ? "Checking your document…" : "Checking your license…") : "Submit for verification"}
       </Button>
     </div>
   );
