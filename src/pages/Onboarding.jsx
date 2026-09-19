@@ -76,7 +76,7 @@ export default function Onboarding() {
       return;
     }
     setSaving(true);
-    const created = await base44.entities.Trader.create({
+    await base44.entities.Trader.create({
       ...data,
       ...newTraderReferralFields(),
       account_type: accountType,
@@ -87,7 +87,7 @@ export default function Onboarding() {
       signup_source: attribution?.source || ""
     });
     // Email is verified by this point, so the referrer's bonus lands now.
-    if (attribution?.code) await redeemReferralCode(attribution.code, created);
+    if (attribution?.code) await redeemReferralCode(attribution.code);
     clearPendingReferralCode();
     localStorage.removeItem(DRAFT_KEY);
     navigate("/profile", { replace: true });

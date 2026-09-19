@@ -1,35 +1,26 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import BottomSheet from "@/components/ui/bottom-sheet";
-import { Minus, Plus, PlusCircle } from "lucide-react";
-import { haptic } from "@/lib/despia";
+import { PlusCircle } from "lucide-react";
+import { haptic, isNative } from "@/lib/despia";
+import { launchPaywall } from "@/lib/revenuecat";
 import { EXTRA_LISTING_PRICE } from "@/lib/gems";
 
 /**
  * Extra listing slots bought outright — they stack on top of the tier capacity
  * and never expire or reset, even across renewal years.
+ *
+ * The slots are added by the store webhook once payment clears, never by this
+ * screen: a client-side grant here meant anyone could mint free listing slots.
  */
-export default function BuyListings({ trader, onPurchased }) {
+export default function BuyListings({ trader, onPurchaseStarted }) {
   const [open, setOpen] = useState(false);
-  const [qty, setQty] = useState(1);
-  const [busy, setBusy] = useState(false);
 
-  const step = (n) => {
+  const buy = () => {
     haptic("light");
-    setQty((q) => Math.min(50, Math.max(1, q + n)));
-  };
-
-  const buy = async () => {
-    setBusy(true);
-    haptic("light");
-    await base44.entities.Trader.update(trader.id, {
-      purchased_listings: (trader.purchased_listings || 0) + qty,
-    });
-    setBusy(false);
+    launchPaywall("extra_listings", trader.id);
     setOpen(false);
-    setQty(1);
-    onPurchased?.(qty);
+    onPurchaseStarted?.();
   };
 
   return (
@@ -40,8 +31,8 @@ export default function BuyListings({ trader, onPurchased }) {
           <p className="text-sm font-medium">Need more room?</p>
         </div>
         <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-          Buy extra listing slots at ${EXTRA_LISTING_PRICE} each. They're added to your grade's capacity
-          and stay yours for good — nothing resets at renewal.
+          Buy extra listing slots from ${EXTRA_LISTING_PRICE} each. They're added to your grade's
+          capacity and stay yours for good — nothing resets at renewal.
           {trader?.purchased_listings ? ` You've bought ${trader.purchased_listings} so far.` : ""}
         </p>
         <Button variant="outline" className="mt-4 h-11 w-full" onClick={() => setOpen(true)}>
@@ -51,25 +42,19 @@ export default function BuyListings({ trader, onPurchased }) {
 
       <BottomSheet open={open} onOpenChange={setOpen} title="Extra listings">
         <div className="mx-auto max-w-md space-y-5 pb-2">
-          <div className="flex items-center justify-between">
-            <Button variant="outline" size="icon" onClick={() => step(-1)} aria-label="One fewer">
-              <Minus className="h-4 w-4" />
-            </Button>
-            <div className="text-center">
-              <p className="font-heading text-3xl font-bold leading-none">{qty}</p>
-              <p className="mt-1 text-xs text-muted-foreground">listing slot{qty === 1 ? "" : "s"}</p>
-            </div>
-            <Button variant="outline" size="icon" onClick={() => step(1)} aria-label="One more">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-          <p className="text-center font-heading text-xl font-bold">
-            ${qty * EXTRA_LISTING_PRICE}
-            <span className="ml-1 text-xs font-medium text-muted-foreground">one-time</span>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Choose how many slots you want on the next screen. They're billed once through your{" "}
+            {isNative ? "app store" : "App Store or Google Play"} account and added to your account as
+            soon as the payment clears.
           </p>
-          <Button className="w-full" onClick={buy} disabled={busy}>
-            {busy ? "Processing…" : "Continue to payment"}
+          <Button className="w-full" onClick={buy} disabled={!isNative}>
+            {isNative ? "Continue to billing" : "Available in the mobile app"}
           </Button>
+          {!isNative && (
+            <p className="text-center text-xs text-muted-foreground">
+              Extra listings are purchased through the Gems24 mobile app.
+            </p>
+          )}
         </div>
       </BottomSheet>
     </>

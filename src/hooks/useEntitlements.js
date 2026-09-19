@@ -1,28 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
 import { isNative } from "@/lib/despia";
-import { getEntitledTier } from "@/lib/revenuecat";
 
 /**
- * Keeps the trader's subscription_tier in sync with their live store entitlements.
- * Runs on load, after every purchase, and when the Customer Center reports a change.
+ * Refreshes the trader after the store reports a purchase or a restore.
+ *
+ * The grade itself is set by the store webhook, never here: writing
+ * subscription_tier from the client meant the device could claim any grade it
+ * liked. This hook only asks the app to re-read the server's answer.
  */
 export default function useEntitlements(trader, onSynced) {
-  const [checking, setChecking] = useState(isNative);
+  const [checking, setChecking] = useState(false);
 
   const check = useCallback(async () => {
     if (!isNative || !trader?.id) return;
     setChecking(true);
-    const tier = await getEntitledTier();
-    if (tier !== trader.subscription_tier) {
-      await base44.entities.Trader.update(trader.id, { subscription_tier: tier });
-      onSynced?.();
-    }
+    await onSynced?.();
     setChecking(false);
-  }, [trader?.id, trader?.subscription_tier, onSynced]);
+  }, [trader?.id, onSynced]);
 
   useEffect(() => {
-    check();
     window.onRevenueCatPurchase = check;
     window.onRevenueCatCenter = (event) => {
       if (event?.event === "restoreCompleted" || event?.event === "dismissed") check();

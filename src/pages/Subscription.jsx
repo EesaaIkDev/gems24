@@ -119,16 +119,7 @@ export default function Subscription() {
       </div>
 
       {trader && tier !== "none" && (
-        <BuyListings
-          trader={trader}
-          onPurchased={(n) => {
-            reload();
-            setSplash({
-              title: "Payment complete",
-              subtitle: `${n} extra listing slot${n === 1 ? "" : "s"} added to your account — yours to keep.`,
-            });
-          }}
-        />
+        <BuyListings trader={trader} onPurchaseStarted={reload} />
       )}
 
       {isNative && tier !== "none" && (

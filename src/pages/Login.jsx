@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { LogIn, Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import { LOCK_MINUTES, clearFailures, lockedMinutes, recordFailure } from "@/lib/loginLockout";
+import { safeReturnTo } from "@/lib/authReturnTo";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -29,8 +30,7 @@ export default function Login() {
     try {
       await base44.auth.loginViaEmailPassword(email, password);
       clearFailures(email);
-      const returnTo = new URLSearchParams(window.location.search).get("returnTo");
-      window.location.href = returnTo && returnTo.startsWith("/") ? returnTo : "/";
+      window.location.href = safeReturnTo();
     } catch (err) {
       const { locked: justLocked, attemptsLeft } = recordFailure(email);
       const message = err.message || "Invalid email or password";

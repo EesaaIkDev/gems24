@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { TIERS } from "@/lib/gems";
 import { haptic } from "@/lib/despia";
 
-// Discount codes are 6 characters, stored uppercase, and each one lists the
-// tiers it is valid for. A 100% code grants the grade immediately.
+// Codes are validated and applied entirely on the server (redeemDiscountCode):
+// the client never reads a DiscountCode row or writes a grade itself.
 export default function RedeemCode({ tier, trader, onGranted, onDiscount, discount }) {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
@@ -20,27 +20,24 @@ export default function RedeemCode({ tier, trader, onGranted, onDiscount, discou
     }
     setBusy(true);
     setError("");
-    const [found] = await base44.entities.DiscountCode.filter({ code: value });
+    const { data } = await base44.functions.invoke("redeemDiscountCode", { code: value, tier });
     setBusy(false);
 
-    if (!found || found.active === false) {
-      setError("That code isn't valid.");
-      return;
-    }
-    if (!(found.tiers || []).includes(tier)) {
-      setError(`That code can't be used for the ${TIERS[tier].label} grade.`);
-      return;
-    }
-
-    haptic("light");
-    await base44.entities.DiscountCode.update(found.id, { times_used: (found.times_used || 0) + 1 });
-
-    if (found.percent_off >= 100) {
-      await base44.entities.Trader.update(trader.id, { subscription_tier: tier });
+    if (data?.state === "granted") {
+      haptic("light");
       onGranted();
       return;
     }
-    onDiscount({ code: value, percent_off: found.percent_off });
+    if (data?.state === "discount") {
+      haptic("light");
+      onDiscount({ code: value, percent_off: data.percentOff });
+      return;
+    }
+    if (data?.state === "wrong_tier") {
+      setError(`That code can't be used for the ${TIERS[tier].label} grade.`);
+      return;
+    }
+    setError(data?.reason || "That code isn't valid.");
   };
 
   if (discount) {

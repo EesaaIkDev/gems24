@@ -99,36 +99,17 @@ export const getPendingReferralCode = () => localStorage.getItem(PENDING_KEY) ||
 export const clearPendingReferralCode = () => localStorage.removeItem(PENDING_KEY);
 
 /**
- * Links a brand-new (email-verified) trader to the owner of `code` and grants
- * the referrer their bonus slots. Fails silently — onboarding is never blocked.
+ * Asks the server to credit the signup to the owner of `code`. The referrer's
+ * counters and bonus slots are written there, never here — the annual cap has to
+ * be enforced somewhere the browser can't skip it. Fails silently: onboarding is
+ * never blocked.
  */
-export async function redeemReferralCode(code, newTrader) {
+export async function redeemReferralCode(code) {
   const clean = String(code || "").trim().toUpperCase();
-  if (!clean || !newTrader?.id || newTrader.referred_by_code) return false;
+  if (!clean) return false;
   try {
-    const referrer = await findReferrer(clean);
-    if (!referrer || referrer.id === newTrader.id) return false;
-
-    if (referralsRemaining(referrer) <= 0) return false;
-    const granted = bonusPerReferral(referrer);
-    const used = referralsUsedThisYear(referrer);
-    // A fresh window opens on the first referral after the previous year lapsed.
-    const yearStart = used === 0 ? new Date().toISOString() : referrer.referral_year_start;
-    await base44.entities.Trader.update(newTrader.id, { referred_by_code: clean });
-    await base44.entities.Referral.create({
-      referrer_id: referrer.id,
-      code: clean,
-      referred_trader_id: newTrader.id,
-      referred_email: newTrader.user_email || "",
-      bonus_granted: granted,
-    });
-    await base44.entities.Trader.update(referrer.id, {
-      referral_count: (referrer.referral_count || 0) + 1,
-      referral_bonus_listings: (referrer.referral_bonus_listings || 0) + granted,
-      referral_count_year: used + 1,
-      referral_year_start: yearStart,
-    });
-    return true;
+    const { data } = await base44.functions.invoke("redeemReferral", { code: clean });
+    return data?.state === "credited";
   } catch {
     return false;
   }
