@@ -1,0 +1,107 @@
+{
+  "name": "VerificationAttempt",
+  "type": "object",
+  "description": "Append-only audit log: one row per verification submission, plus the decision it ended in. Exists so attempts can be rate limited reliably and so provider spend can be reconciled once a paid provider is wired in.",
+  "properties": {
+    "trader_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Owning user's email, used to scope reads to the owner"
+    },
+    "document_type": {
+      "type": "string",
+      "description": "Document requested for this attempt"
+    },
+    "document_uris": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Private-storage URIs of the submitted documents. Requires a signed URL to open, is readable only by the owner or an admin, and is cleared once a decision is recorded. Never a public URL.",
+      "rls": {
+        "read": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "provider": {
+      "type": "string",
+      "description": "Provider that handled this attempt, e.g. manual"
+    },
+    "provider_ref": {
+      "type": "string",
+      "description": "Provider's identifier for this attempt, used to match webhooks"
+    },
+    "requested_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the attempt was submitted. This is the timestamp the rate limiter counts."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "submitted",
+        "approved",
+        "declined",
+        "resubmission_requested",
+        "review",
+        "expired",
+        "abandoned"
+      ],
+      "default": "submitted",
+      "description": "Starts at 'submitted' and is updated once a decision arrives"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Provider reason for a non-approved outcome"
+    },
+    "reason_code": {
+      "type": "number",
+      "description": "Provider reason code for a non-approved outcome"
+    },
+    "decided_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the decision was applied"
+    }
+  },
+  "required": [
+    "trader_id",
+    "user_email",
+    "requested_at"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

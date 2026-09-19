@@ -56,7 +56,15 @@
     },
     "verified": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "description": "Public verified badge. Set only by the verificationWebhook backend function on an approved decision — never writable by the client.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "phone": {
       "type": "string"

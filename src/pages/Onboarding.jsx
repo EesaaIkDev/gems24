@@ -82,7 +82,8 @@ export default function Onboarding() {
       account_type: accountType,
       user_email: user.email,
       subscription_tier: "none",
-      verified: false,
+      // `verified` is deliberately not sent: it is backend-write-only now, so
+      // including it here would be rejected. The entity default is already false.
       signup_source: attribution?.source || ""
     });
     // Email is verified by this point, so the referrer's bonus lands now.

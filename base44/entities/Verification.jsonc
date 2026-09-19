@@ -1,0 +1,117 @@
+{
+  "name": "Verification",
+  "type": "object",
+  "description": "Per-trader identity verification state. Written only by backend functions; the owner may read their own row. Document images are never stored here — only private storage references on the attempt, which are cleared once a decision lands.",
+  "properties": {
+    "trader_id": {
+      "type": "string",
+      "description": "Trader this verification state belongs to"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Owning user's email, used to scope reads to the owner"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "pending",
+        "review",
+        "resubmission_requested",
+        "declined",
+        "approved",
+        "expired",
+        "abandoned"
+      ],
+      "default": "none",
+      "description": "'pending' means a submission is awaiting a decision from the verification provider or a reviewer"
+    },
+    "document_type": {
+      "type": "string",
+      "description": "Which document was requested, e.g. gem_license or government_id"
+    },
+    "provider": {
+      "type": "string",
+      "description": "Verification provider that handled the current attempt, e.g. manual. Set by the backend when a provider is wired in."
+    },
+    "provider_ref": {
+      "type": "string",
+      "description": "Provider's own identifier for the current check, used to match incoming webhooks"
+    },
+    "submitted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the current submission was sent for checking"
+    },
+    "last_event_id": {
+      "type": "string",
+      "description": "Provider event/attempt id of the most recently applied decision, used to drop duplicate webhook deliveries"
+    },
+    "attempt_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Lifetime count of verification attempts submitted by this trader"
+    },
+    "first_attempt_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the first attempt ever submitted"
+    },
+    "last_attempt_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the most recent submission, used for the cooldown window"
+    },
+    "last_decision_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the most recent decision was applied"
+    },
+    "decline_reason": {
+      "type": "string",
+      "description": "Human-readable reason for a declined or resubmission_requested decision, shown to the trader"
+    },
+    "decline_reason_code": {
+      "type": "number",
+      "description": "Provider reason code for the most recent non-approval"
+    },
+    "blocked": {
+      "type": "boolean",
+      "default": false,
+      "description": "True once the lifetime attempt cap is reached; only support can lift it"
+    }
+  },
+  "required": [
+    "trader_id",
+    "user_email"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
