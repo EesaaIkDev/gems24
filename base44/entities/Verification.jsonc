@@ -1,7 +1,7 @@
 {
   "name": "Verification",
   "type": "object",
-  "description": "Per-trader identity verification state. Written only by backend functions; the owner may read their own row. Document images are never stored here — only private storage references on the attempt, which are cleared once a decision lands.",
+  "description": "Per-trader identity verification state. Written only by backend functions; the owner may read their own row. Document images are never stored here \u2014 only private storage references on the attempt, which are cleared once a decision lands.",
   "properties": {
     "trader_id": {
       "type": "string",
@@ -94,7 +94,7 @@
     "read": {
       "$or": [
         {
-          "user_email": "{{user.email}}"
+          "data.user_email": "{{user.email}}"
         },
         {
           "user_condition": {

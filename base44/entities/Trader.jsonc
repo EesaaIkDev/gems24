@@ -57,7 +57,7 @@
     "verified": {
       "type": "boolean",
       "default": false,
-      "description": "Public verified badge. Set only by the verificationWebhook backend function on an approved decision — never writable by the client.",
+      "description": "Public verified badge. Set only by the verificationWebhook backend function on an approved decision \u2014 never writable by the client.",
       "rls": {
         "write": {
           "user_condition": {
@@ -117,5 +117,48 @@
   },
   "required": [
     "full_name"
-  ]
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.user_email": "{{user.email}}"
+        }
+      ]
+    },
+    "read": null,
+    "update": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
 }
