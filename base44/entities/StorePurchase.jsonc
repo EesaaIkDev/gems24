@@ -1,0 +1,64 @@
+{
+  "name": "StorePurchase",
+  "type": "object",
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "description": "Store event id \u2014 used to make webhook delivery idempotent"
+    },
+    "trader_id": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string"
+    },
+    "product_id": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "tier",
+        "extra_listings",
+        "ignored"
+      ],
+      "description": "What the purchase granted"
+    },
+    "tier": {
+      "type": "string"
+    },
+    "listings_granted": {
+      "type": "number",
+      "default": 0
+    },
+    "applied_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "event_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

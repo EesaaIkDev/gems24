@@ -1,0 +1,58 @@
+{
+  "name": "CodeRedemption",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Discount code that was redeemed"
+    },
+    "trader_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "bronze",
+        "silver",
+        "gold",
+        "platinum"
+      ]
+    },
+    "percent_off": {
+      "type": "number"
+    },
+    "redeemed_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "code",
+    "trader_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
