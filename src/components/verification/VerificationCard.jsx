@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BadgeCheck, Clock, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BottomSheet from "@/components/ui/bottom-sheet";
@@ -19,16 +19,12 @@ const BUYER_POINTS = [
   "Only your document is checked — it is never stored or shared",
 ];
 
-// Decisions arrive asynchronously, so the celebration is tied to the approval
-// landing rather than to the trader pressing submit. This marks it as shown so
-// the splash fires once, not on every profile visit afterwards.
-const SPLASH_KEY = "gems24_verification_celebrated";
-
 /** Gem License verification, given its own standing on the profile. */
 export default function VerificationCard({ trader, onVerified }) {
   const [open, setOpen] = useState(false);
   const [splash, setSplash] = useState(false);
   const [status, setStatus] = useState(null);
+  const hadPendingDecision = useRef(false);
   const isBuyer = trader.account_type === "buyer";
 
   useEffect(() => {
@@ -46,11 +42,16 @@ export default function VerificationCard({ trader, onVerified }) {
   }, [trader.id, trader.verified]);
 
   useEffect(() => {
-    if (!trader.verified) return;
-    if (localStorage.getItem(SPLASH_KEY) === trader.id) return;
-    localStorage.setItem(SPLASH_KEY, trader.id);
+    if (isAwaitingDecision(status)) {
+      hadPendingDecision.current = true;
+    } else if (status !== STATUS.APPROVED) {
+      hadPendingDecision.current = false;
+    }
+
+    if (status !== STATUS.APPROVED || !trader.verified || !hadPendingDecision.current) return;
+    hadPendingDecision.current = false;
     setSplash(true);
-  }, [trader.verified, trader.id]);
+  }, [status, trader.verified]);
 
   const finish = async () => {
     setOpen(false);
