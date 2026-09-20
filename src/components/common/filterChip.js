@@ -2,8 +2,8 @@
  *  Inactive chips are filled rather than outlined — clip-path would cut a
  *  border away on the facets and leave the edges looking torn. */
 export const chipClass = (active) =>
-  `gem-chip shrink-0 px-4 py-1.5 text-xs font-semibold transition-shadow bg-background ${
+  `gem-chip shrink-0 px-3 py-1 text-[0.6875rem] font-semibold transition-shadow bg-background ${
     active
       ? "neu-inset text-primary"
-      : "neu-raised-sm text-foreground active:neu-inset-sm"
+      : "neu-raised-xs text-muted-foreground active:neu-inset-sm"
   }`;

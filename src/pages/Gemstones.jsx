@@ -83,7 +83,7 @@ export default function Gemstones() {
   }, [traders, traderFilters, q]);
 
   return (
-    <div className="px-3.5 pt-4 space-y-3">
+    <div className="px-3.5 pt-4 space-y-2.5">
       <Seo
         canonical={absolute("/gemstones")}
         jsonLd={{
@@ -98,17 +98,17 @@ export default function Gemstones() {
       <h1 className="text-[1.375rem] font-bold leading-tight">Gemstone marketplace</h1>
 
       <div className="relative">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[15px] w-[15px] text-muted-foreground" />
         <Input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search stones, traders, origins…"
-          className="pl-10 h-12 rounded-full"
+          placeholder="Search marketplace"
+          className="h-10 rounded-xl pl-10 text-sm"
         />
       </div>
 
       <Tabs defaultValue="stones">
-        <TabsList className="grid grid-cols-2 w-full h-11 rounded-full">
+        <TabsList className="grid grid-cols-2 w-full h-10 rounded-xl">
           <TabsTrigger value="stones">Stones</TabsTrigger>
           <TabsTrigger value="traders">Traders</TabsTrigger>
         </TabsList>
