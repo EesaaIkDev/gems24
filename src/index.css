@@ -158,6 +158,17 @@
     display: none;
   }
 
+  /* Hides the scrollbar on horizontally-scrollable chip rows etc, while
+     keeping the element scrollable. */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Frosted floating chrome (header + tab bar). */
   .glass-chrome {
     background-color: hsl(var(--background) / 0.72);
