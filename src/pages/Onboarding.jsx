@@ -5,6 +5,7 @@ import { Gem, Search } from "lucide-react";
 import ProfileWizard from "@/components/traders/ProfileWizard";
 import Spinner from "@/components/common/Spinner";
 import AttributionStep from "@/components/referral/AttributionStep";
+import SignupStep from "@/components/traders/SignupStep";
 import { LOGO_URL } from "@/lib/gems";
 import {
   clearPendingReferralCode,
@@ -30,6 +31,7 @@ export default function Onboarding() {
   const [accountType, setAccountType] = useState(null);
   const [saving, setSaving] = useState(false);
   const [attribution, setAttribution] = useState(null);
+  const [pendingProfile, setPendingProfile] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -58,11 +60,10 @@ export default function Onboarding() {
     })();
   }, [navigate]);
 
-  // Profile choices are made first and kept locally; the account is only
-  // created at the very end, so nobody signs up before building something.
+  // Profile choices are made first and kept locally; guests then verify their
+  // email right here, and the account plus profile are created on the spot.
   const save = async (data) => {
     if (!user) {
-      setSaving(true);
       localStorage.setItem(
         DRAFT_KEY,
         JSON.stringify({
@@ -72,15 +73,20 @@ export default function Onboarding() {
           referral_code_entered: attribution?.code || ""
         })
       );
-      base44.auth.redirectToLogin(window.location.href);
+      setPendingProfile(data);
       return;
     }
     setSaving(true);
+    await createProfile(data, user.email);
+    navigate("/profile", { replace: true });
+  };
+
+  const createProfile = async (data, email) => {
     await base44.entities.Trader.create({
       ...data,
       ...newTraderReferralFields(),
       account_type: accountType,
-      user_email: user.email,
+      user_email: email,
       subscription_tier: "none",
       // `verified` is deliberately not sent: it is backend-write-only now, so
       // including it here would be rejected. The entity default is already false.
@@ -90,10 +96,22 @@ export default function Onboarding() {
     if (attribution?.code) await redeemReferralCode(attribution.code);
     clearPendingReferralCode();
     localStorage.removeItem(DRAFT_KEY);
-    navigate("/profile", { replace: true });
+  };
+
+  // Fresh token: hard-redirect so the auth provider re-initialises.
+  const finishSignup = async (email) => {
+    setSaving(true);
+    await createProfile(pendingProfile, email);
+    window.location.href = "/profile";
   };
 
   if (checking) return <Spinner />;
+
+  if (pendingProfile)
+    return (
+      <div className="px-4 pt-8 pb-10 max-w-lg mx-auto">
+        <SignupStep onVerified={finishSignup} onBack={() => setPendingProfile(null)} working={saving} />
+      </div>);
 
   if (!attribution)
     return (

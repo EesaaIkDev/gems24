@@ -49,7 +49,7 @@ export default function Join() {
         )}
 
         <Button asChild variant="outline" className="mt-4 h-12 w-full font-semibold">
-          <Link to="/register">Get the app & join free</Link>
+          <Link to="/onboarding">Get the app & join free</Link>
         </Button>
         <p className="mt-4 text-xs text-welcome-subtle">
           Enter this code during signup so your invite is credited.
