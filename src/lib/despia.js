@@ -18,9 +18,15 @@ export function haptic(type = "light") {
   native(`${type}haptic://`);
 }
 
-/** Map this device's push registration to the signed-in user. */
+/** Map this device's push registration to the signed-in user.
+    Fires at most once per user per browser session so the native bridge
+    never re-triggers a navigation on every render. */
+const PUSH_KEY = "gems24_push_linked_user";
+
 export function registerPush(userId) {
   if (!isNative || !userId) return;
+  if (sessionStorage.getItem(PUSH_KEY) === String(userId)) return;
+  sessionStorage.setItem(PUSH_KEY, String(userId));
   despia(`setonesignalplayerid://?user_id=${userId}`);
 }
 
