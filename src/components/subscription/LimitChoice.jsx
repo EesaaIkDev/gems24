@@ -22,10 +22,12 @@ export default function LimitChoice({ trader, active, limit }) {
         <EyeOff className="h-6 w-6 text-destructive" />
       </div>
       <h1 className="mt-5 font-heading text-xl font-bold leading-tight">
-        You've used all {limit} of your listing slots
+        {limit > 0 ? `You've used all ${limit} of your listing slots` : "Choose a plan to start listing"}
       </h1>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        {label} shows {limit} {limit === 1 ? "stone" : "stones"} at a time. Free up room in one of two ways.
+        {limit > 0
+          ? `${label} shows ${limit} ${limit === 1 ? "stone" : "stones"} at a time. Free up room in one of two ways.`
+          : "Posting stones is part of every plan. Pick one to publish your first listing."}
       </p>
 
       {unlock > 0 && tierRank(trader?.subscription_tier) > 0 && (

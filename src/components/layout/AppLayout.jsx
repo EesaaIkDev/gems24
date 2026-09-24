@@ -83,7 +83,7 @@ export default function AppLayout() {
           </main>
         </div>
 
-        <BottomNav badge={unreadMessages} />
+        <BottomNav badge={unreadMessages} canList={trader?.account_type !== "buyer"} />
       </div>
     </AppLockGate>
   );

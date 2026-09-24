@@ -11,8 +11,9 @@ const TABS = [
   { to: "/profile", label: "Profile", icon: User },
 ];
 
-export default function BottomNav({ badge = 0 }) {
+export default function BottomNav({ badge = 0, canList = true }) {
   const { pathname } = useLocation();
+  const tabs = canList ? TABS : TABS.filter((t) => !t.raised);
 
   return (
     <nav
@@ -24,8 +25,8 @@ export default function BottomNav({ badge = 0 }) {
         paddingRight: "var(--safe-right)",
       }}
     >
-      <div className="mx-auto grid max-w-md grid-cols-5">
-        {TABS.map(({ to, label, icon: Icon, raised }) => {
+      <div className={`mx-auto grid max-w-md ${canList ? "grid-cols-5" : "grid-cols-4"}`}>
+        {tabs.map(({ to, label, icon: Icon, raised }) => {
           const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
           const unread = label === "Chats" && badge > 0;
 

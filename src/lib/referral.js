@@ -40,7 +40,12 @@ export const referralMessage = (code) =>
 export function effectiveLimit(trader) {
   const base = tierLimit(trader?.subscription_tier);
   if (base === Infinity) return Infinity;
-  return base + (trader?.referral_bonus_listings || 0) + (trader?.purchased_listings || 0);
+  return (
+    base +
+    (trader?.referral_bonus_listings || 0) +
+    (trader?.purchased_listings || 0) +
+    (trader?.loyalty_bonus_listings || 0)
+  );
 }
 
 /** Bonus listings still reachable in the trader's current referral year. */

@@ -18,6 +18,18 @@ export const REFERRAL_BONUS: Record<string, number> = {
 /** Referrals are a growth lever, not a plan replacement — twice a year each. */
 export const REFERRALS_PER_YEAR = 2;
 
+/**
+ * Loyalty listings: each uninterrupted annual renewal grants free slots, and
+ * the grant grows every year — renewal N adds step × (N − 1). Platinum: +50 at
+ * year 2, +100 at year 3, +150 at year 4 … Reset when the plan lapses.
+ */
+export const LOYALTY_STEP: Record<string, number> = {
+  bronze: 10,
+  silver: 15,
+  gold: 30,
+  platinum: 50,
+};
+
 export const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
 export const tierRank = (tier: string) => TIER_KEYS.indexOf(String(tier || '')) + 1;

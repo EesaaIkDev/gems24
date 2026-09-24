@@ -113,6 +113,30 @@
       "type": "number",
       "default": 0,
       "description": "Extra listing slots bought individually \u2014 never expire or reset"
+    },
+    "loyalty_years": {
+      "type": "number",
+      "default": 0,
+      "description": "Consecutive subscription years without the plan lapsing. Set only by storeWebhook.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "loyalty_bonus_listings": {
+      "type": "number",
+      "default": 0,
+      "description": "Free listing slots earned from uninterrupted annual renewals. Set only by storeWebhook; reset when the plan lapses.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     }
   },
   "required": [

@@ -91,6 +91,16 @@ export default function AddListing() {
   if (loading) return <Spinner />;
   if (!user) return <SignInPrompt title="Log in to add a listing" />;
   if (!trader) return <SignInPrompt title="Create your trader profile first" cta="Get started" to="/onboarding" />;
+  if (trader.account_type === "buyer")
+    return (
+      <SignInPrompt
+        title="Listings are for trader accounts"
+        description="Buyer accounts can browse stones and message traders, but can't post listings."
+        cta="Browse gemstones"
+        to="/gemstones"
+        showLogin={false}
+      />
+    );
   const limit = effectiveLimit(trader);
   if (activeCount !== null && activeCount >= limit)
     return <LimitChoice trader={trader} active={activeCount} limit={limit} />;

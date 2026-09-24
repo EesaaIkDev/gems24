@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { TIER_KEYS } from '../../shared/traders.ts';
+import { LOYALTY_STEP, TIER_KEYS } from '../../shared/traders.ts';
 
 /**
  * Applies a store purchase. This is the only thing in the system allowed to set
@@ -103,11 +103,28 @@ export default async function (req: Request): Promise<Response> {
     } else if (tier && GRANTING_EVENTS.includes(eventType)) {
       kind = 'tier';
       appliedTier = tier;
-      await base44.asServiceRole.entities.Trader.update(row.id, { subscription_tier: tier });
+      const update: Record<string, unknown> = { subscription_tier: tier };
+      if (eventType === 'INITIAL_PURCHASE' || !row.loyalty_years) {
+        // A fresh (or first-seen) subscription starts year one with no loyalty bonus.
+        update.loyalty_years = 1;
+        update.loyalty_bonus_listings = 0;
+      } else if (eventType === 'RENEWAL') {
+        // Plans bill annually, so each renewal is another uninterrupted year.
+        const years = (row.loyalty_years || 1) + 1;
+        listingsGranted = (LOYALTY_STEP[tier] || 0) * (years - 1);
+        update.loyalty_years = years;
+        update.loyalty_bonus_listings = (row.loyalty_bonus_listings || 0) + listingsGranted;
+      }
+      await base44.asServiceRole.entities.Trader.update(row.id, update);
     } else if (tier && REVOKING_EVENTS.includes(eventType)) {
       kind = 'tier';
       appliedTier = 'none';
-      await base44.asServiceRole.entities.Trader.update(row.id, { subscription_tier: 'none' });
+      // Letting the plan lapse ends the streak and its loyalty listings.
+      await base44.asServiceRole.entities.Trader.update(row.id, {
+        subscription_tier: 'none',
+        loyalty_years: 0,
+        loyalty_bonus_listings: 0,
+      });
     }
 
     await base44.asServiceRole.entities.StorePurchase.create({

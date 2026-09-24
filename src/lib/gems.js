@@ -11,6 +11,9 @@ export const TIERS = {
 /** Referral reward scales with the grade of the trader handing out the code. */
 export const REFERRAL_BONUS = { bronze: 5, silver: 8, gold: 12, platinum: 20 };
 
+/** Loyalty listings: renewal N (uninterrupted) adds step × (N − 1) free slots. Mirrors the server. */
+export const LOYALTY_STEP = { bronze: 10, silver: 15, gold: 30, platinum: 50 };
+
 /** Referrals are a growth lever, not a plan replacement — twice a year each. */
 export const REFERRALS_PER_YEAR = 2;
 

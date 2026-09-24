@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
-import { TIERS, TIER_STYLES } from "@/lib/gems";
+import { LOYALTY_STEP, TIERS, TIER_STYLES } from "@/lib/gems";
 
 /**
  * A subscription tier presented like a gemstone grade card: the same tier badge
@@ -39,6 +39,11 @@ export default function TierRow({ tier, capacity, placement, anchor, current, re
             <p className="font-heading text-lg font-bold leading-none">Billed annually</p>
             <p className="mt-1.5 text-[0.8125rem] text-muted-foreground">{capacity}</p>
             {anchor && <p className="mt-1 text-[0.75rem] leading-snug text-primary">{anchor}</p>}
+            {LOYALTY_STEP[tier] > 0 && (
+              <p className="mt-1 text-[0.75rem] leading-snug text-muted-foreground">
+                +{LOYALTY_STEP[tier]} free listings when you renew, growing every year you stay
+              </p>
+            )}
           </div>
           <div className="flex items-end gap-1 pb-1" aria-hidden="true">
             {[0, 1, 2, 3, 4].map((i) => (
