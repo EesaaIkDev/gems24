@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
-import { Settings2 } from "lucide-react";
+import { Crown, Settings2 } from "lucide-react";
 import TierRow from "@/components/subscription/TierRow";
 import RedeemCode from "@/components/subscription/RedeemCode";
 import BuyListings from "@/components/subscription/BuyListings";
 import SuccessSplash from "@/components/subscription/SuccessSplash";
 import Spinner from "@/components/common/Spinner";
+import EmptyState from "@/components/common/EmptyState";
 import TierBadge from "@/components/common/TierBadge";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useEntitlements from "@/hooks/useEntitlements";
@@ -81,6 +82,15 @@ export default function Subscription() {
   };
 
   if (loading) return <Spinner />;
+
+  if (trader?.account_type === "buyer")
+    return (
+      <EmptyState
+        icon={Crown}
+        title="Subscriptions are for trader accounts"
+        description="Buyer accounts can browse and message traders for free — there's no plan to buy."
+      />
+    );
 
   const tier = trader?.subscription_tier || "none";
 

@@ -84,6 +84,12 @@ export default async function (req: Request): Promise<Response> {
       console.warn(`storeWebhook: no trader for app_user_id=${traderId}`);
       return Response.json({ ok: true, unmatched: true });
     }
+    if (row.account_type !== 'trader') {
+      // Buyer accounts can't hold a subscription tier — never grant, even if the
+      // store somehow billed one (e.g. a stale paywall link).
+      console.warn(`storeWebhook: refusing tier grant for non-trader account trader=${row.id}`);
+      return Response.json({ ok: true, ignored: true });
+    }
 
     const now = new Date().toISOString();
     const extra = EXTRA_LISTINGS.exec(productId);

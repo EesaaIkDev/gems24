@@ -43,6 +43,9 @@ export default async function (req: Request): Promise<Response> {
     if (!trader) {
       return Response.json({ error: 'No trader profile found' }, { status: 404 });
     }
+    if (trader.account_type !== 'trader') {
+      return Response.json({ error: 'Only trader accounts can redeem a subscription code' }, { status: 403 });
+    }
 
     const found = (await base44.asServiceRole.entities.DiscountCode.filter({ code }))?.[0] ?? null;
     if (!found || found.active === false) {

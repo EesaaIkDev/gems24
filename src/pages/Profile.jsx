@@ -42,11 +42,12 @@ export default function Profile() {
       />
     );
 
+  const isTrader = trader.account_type === "trader";
   const links = [
     { to: `/trader/${trader.id}`, icon: User, label: "View public profile" },
     { to: "/messages", icon: MessageCircle, label: "Chats" },
     { to: "/connections", icon: Users, label: "My network" },
-    { to: "/subscription", icon: Crown, label: "Subscription & upgrade" },
+    ...(isTrader ? [{ to: "/subscription", icon: Crown, label: "Subscription & upgrade" }] : []),
     { to: "/settings", icon: SettingsIcon, label: "Settings" },
   ];
 
@@ -73,12 +74,14 @@ export default function Profile() {
               <p className="text-sm text-muted-foreground truncate">
                 {trader.business_name || cap(trader.account_type)}
               </p>
-              <div className="mt-1.5 flex items-center gap-2">
-                <TierBadge tier={trader.subscription_tier} />
-                <span className="text-xs text-muted-foreground">
-                  {trader.subscription_tier === "none" ? "No active plan" : `${TIERS[trader.subscription_tier].label} plan`}
-                </span>
-              </div>
+              {isTrader && (
+                <div className="mt-1.5 flex items-center gap-2">
+                  <TierBadge tier={trader.subscription_tier} />
+                  <span className="text-xs text-muted-foreground">
+                    {trader.subscription_tier === "none" ? "No active plan" : `${TIERS[trader.subscription_tier].label} plan`}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
           <Button asChild variant="outline" className="mt-4 w-full h-11">
@@ -90,9 +93,9 @@ export default function Profile() {
 
         <ProfileProgress trader={trader} />
 
-        <InvitePrompt trader={trader} />
+        {isTrader && <InvitePrompt trader={trader} />}
 
-        <ReferralStats trader={trader} />
+        {isTrader && <ReferralStats trader={trader} />}
 
         <div className="rounded-2xl bg-card border border-border overflow-hidden divide-y divide-border">
           {links.map(({ to, icon: Icon, label }) => (
@@ -104,37 +107,41 @@ export default function Profile() {
           ))}
         </div>
 
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            My listings ({active.length}
-            {limit === Infinity ? "" : `/${limit}`})
-          </h2>
-          <Button asChild size="sm" variant="outline" className="h-9">
-            <Link to="/add">
-              <Plus className="w-4 h-4 mr-1.5" /> Add
-            </Link>
-          </Button>
-        </div>
-      </div>
-
-      <div className="mt-3">
-        {listings === null ? (
-          <Spinner />
-        ) : listings.length === 0 ? (
-          <EmptyState
-            icon={Gem}
-            title="No listings yet"
-            description="Publish your first gemstone to appear in traders' feeds."
-            action={
-              <Button asChild className="h-11 px-6 font-semibold">
-                <Link to="/add">Add a listing</Link>
-              </Button>
-            }
-          />
-        ) : (
-          <OwnListingsGrid listings={listings} />
+        {isTrader && (
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              My listings ({active.length}
+              {limit === Infinity ? "" : `/${limit}`})
+            </h2>
+            <Button asChild size="sm" variant="outline" className="h-9">
+              <Link to="/add">
+                <Plus className="w-4 h-4 mr-1.5" /> Add
+              </Link>
+            </Button>
+          </div>
         )}
       </div>
+
+      {isTrader && (
+        <div className="mt-3">
+          {listings === null ? (
+            <Spinner />
+          ) : listings.length === 0 ? (
+            <EmptyState
+              icon={Gem}
+              title="No listings yet"
+              description="Publish your first gemstone to appear in traders' feeds."
+              action={
+                <Button asChild className="h-11 px-6 font-semibold">
+                  <Link to="/add">Add a listing</Link>
+                </Button>
+              }
+            />
+          ) : (
+            <OwnListingsGrid listings={listings} />
+          )}
+        </div>
+      )}
     </div>
   );
 }
