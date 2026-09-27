@@ -31,6 +31,7 @@ import Welcome from '@/pages/Welcome';
 import Join from '@/pages/Join';
 import GemstoneCategory from '@/pages/GemstoneCategory';
 import About from '@/pages/About';
+import OAuthConsent from '@/pages/OAuthConsent';
 import RouteSeo from '@/components/seo/RouteSeo';
 
 const AuthenticatedApp = () => {
@@ -63,6 +64,7 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/oauth/consent" element={<OAuthConsent />} />
       <Route path="/welcome" element={<Welcome />} />
       <Route path="/join" element={<Join />} />
       {!isAuthenticated && <Route path="/" element={<Welcome />} />}

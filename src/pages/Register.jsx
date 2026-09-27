@@ -11,6 +11,7 @@ import PasswordStrength, { MIN_PASSWORD_LENGTH } from "@/components/auth/Passwor
 import ConsentChecks from "@/components/auth/ConsentChecks";
 import { toast } from "@/components/ui/use-toast";
 import { writeProfileDraft } from "@/lib/profileDraft";
+import { safeReturnTo } from "@/lib/authReturnTo";
 
 export default function Register() {
   const [fullName, setFullName] = useState("");
@@ -63,7 +64,7 @@ export default function Register() {
       // about us and then creates the trader profile.
       const existing = await base44.entities.Trader.filter({ user_email: email });
       if (existing.length) {
-        window.location.href = "/";
+        window.location.href = safeReturnTo();
         return;
       }
       writeProfileDraft({ full_name: fullName.trim(), business_name: businessName.trim() });
