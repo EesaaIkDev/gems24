@@ -1,23 +1,41 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAuth } from "@/lib/AuthContext";
 
-// Official Despia OneSignal registration scheme. Fires on load (guest id if
-// not signed in) and again once a signed-in user is known.
+const isDespia = () =>
+  navigator.userAgent.toLowerCase().includes("despia") || typeof window.despia !== "undefined";
+
+function guestId() {
+  let id = localStorage.getItem("guest_onesignal_id");
+  if (!id) {
+    id = "guest_" + Math.random().toString(36).substring(2, 9);
+    localStorage.setItem("guest_onesignal_id", id);
+  }
+  return id;
+}
+
+// Mounted once above the router, so page navigation never re-triggers it.
 export default function PushInit() {
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, isLoadingAuth } = useAuth();
+  const lastId = useRef(null);
 
+  // 1. Ask for native push permission once on launch.
   useEffect(() => {
-    const isDespia = navigator.userAgent.toLowerCase().includes("despia") || typeof window.despia !== "undefined";
-    if (!isDespia) return;
+    if (isDespia()) window.location.href = "checkNativePushPermissions://";
+  }, []);
 
-    const userId = currentUser?.id || currentUser?.email || "guest_" + Math.floor(Math.random() * 1000000);
-
-    if (window.despia) {
-      window.despia(`setonesignalplayerid://?user_id=${userId}`);
-    } else {
-      window.location.href = `setonesignalplayerid://?user_id=${userId}`;
-    }
-  }, [currentUser?.id, currentUser?.email]);
+  // 2–3. Register once auth is resolved, and again only if the id changes (login/logout).
+  const userId = currentUser ? currentUser.id || currentUser.email : null;
+  useEffect(() => {
+    if (!isDespia() || isLoadingAuth) return;
+    const id = userId || guestId();
+    if (lastId.current === id) return;
+    // Short delay so it doesn't cancel the permission request navigation.
+    const t = setTimeout(() => {
+      lastId.current = id;
+      window.location.href = "setonesignalplayerid://?user_id=" + encodeURIComponent(id);
+    }, 800);
+    return () => clearTimeout(t);
+  }, [userId, isLoadingAuth]);
 
   return null;
 }
