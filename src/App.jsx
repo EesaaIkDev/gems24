@@ -33,6 +33,7 @@ import GemstoneCategory from '@/pages/GemstoneCategory';
 import About from '@/pages/About';
 import OAuthConsent from '@/pages/OAuthConsent';
 import RouteSeo from '@/components/seo/RouteSeo';
+import PushInit from '@/components/native/PushInit';
 
 const AuthenticatedApp = () => {
   const { isAuthenticated, isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -102,6 +103,7 @@ function App() {
         <Router>
           <ScrollToTop />
           <RouteSeo />
+          <PushInit />
           <AuthenticatedApp />
         </Router>
         <Toaster />

@@ -2,7 +2,7 @@ import despia from "despia-native";
 
 const ua = typeof navigator !== "undefined" ? navigator.userAgent.toLowerCase() : "";
 
-export const isNative = ua.includes("despia");
+export const isNative = ua.includes("despia") || (typeof window !== "undefined" && typeof window.despia !== "undefined");
 export const isNativeIOS = isNative && (ua.includes("iphone") || ua.includes("ipad"));
 export const isNativeAndroid = isNative && ua.includes("android");
 
@@ -27,7 +27,16 @@ export function registerPush(userId) {
   if (!isNative || !userId) return;
   if (sessionStorage.getItem(PUSH_KEY) === String(userId)) return;
   sessionStorage.setItem(PUSH_KEY, String(userId));
-  despia(`setonesignalplayerid://?user_id=${userId}`);
+  window.location.href = `despia://setonesignalplayerid?user_id=${encodeURIComponent(userId)}`;
+}
+
+/** Ask for native push permission once per app launch. */
+const PERMISSION_KEY = "gems24_push_permission_checked";
+
+export function requestPushPermission() {
+  if (!isNative || sessionStorage.getItem(PERMISSION_KEY)) return;
+  sessionStorage.setItem(PERMISSION_KEY, "1");
+  window.location.href = "despia://checkNativePushPermissions";
 }
 
 export async function getAppVersion() {

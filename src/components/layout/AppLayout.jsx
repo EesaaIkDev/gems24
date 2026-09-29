@@ -12,7 +12,6 @@ import usePullToRefresh from "@/hooks/usePullToRefresh";
 import PullIndicator from "./PullIndicator";
 import { queryClientInstance } from "@/lib/query-client";
 import AppLockGate from "@/components/native/AppLockGate";
-import { registerPush } from "@/lib/despia";
 import OfflineBanner from "@/components/common/OfflineBanner";
 import { setSyncErrorHandler } from "@/lib/offlineSync";
 import { useToast } from "@/components/ui/use-toast";
@@ -47,10 +46,6 @@ export default function AppLayout() {
     );
     return () => setSyncErrorHandler(null);
   }, [toast]);
-
-  useEffect(() => {
-    registerPush(user?.id);
-  }, [user?.id]);
 
   return (
     <AppLockGate>
