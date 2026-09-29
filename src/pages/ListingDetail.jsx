@@ -176,7 +176,7 @@ export default function ListingDetail() {
         {listing.description && (
           <div>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Description</h2>
-            <p className="mt-2 text-[0.9375rem] leading-relaxed text-foreground/85 whitespace-pre-line">
+            <p className="mt-2 text-[0.9375rem] leading-relaxed text-foreground/85 whitespace-pre-line selectable">
               {listing.description}
             </p>
           </div>

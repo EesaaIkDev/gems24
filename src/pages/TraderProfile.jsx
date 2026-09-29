@@ -148,7 +148,7 @@ export default function TraderProfile() {
           {trader.bio && (
             <div className="mt-5">
               <p className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground font-semibold">About</p>
-              <p className="mt-2 text-[0.9375rem] leading-relaxed text-foreground/85">{trader.bio}</p>
+              <p className="mt-2 text-[0.9375rem] leading-relaxed text-foreground/85 selectable">{trader.bio}</p>
             </div>
           )}
 

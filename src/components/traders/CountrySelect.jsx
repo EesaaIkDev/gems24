@@ -1,23 +1,13 @@
 import React from "react";
 import useCountries from "@/hooks/useCountries";
+import SheetSelect from "@/components/common/SheetSelect";
 
-/** Native select of world countries — reliable and fast on mobile. */
+/** World countries, picked from a searchable bottom sheet. */
 export default function CountrySelect({ value, onChange }) {
   const { countries } = useCountries();
+  const options = countries.map((c) => ({ key: c.code, value: c.name, label: c.name }));
 
   return (
-    <select
-      value={value || ""}
-      onChange={(e) => onChange(e.target.value)}
-      className="h-11 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
-    >
-      <option value="">Select country</option>
-      {value && !countries.some((c) => c.name === value) && <option value={value}>{value}</option>}
-      {countries.map((c) => (
-        <option key={c.code} value={c.name}>
-          {c.name}
-        </option>
-      ))}
-    </select>
+    <SheetSelect value={value || ""} onChange={onChange} options={options} placeholder="Select country" title="Country" />
   );
 }

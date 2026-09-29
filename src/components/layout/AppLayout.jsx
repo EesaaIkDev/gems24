@@ -34,7 +34,7 @@ export default function AppLayout() {
     await queryClientInstance.invalidateQueries();
     await new Promise((r) => setTimeout(r, 600));
   }, []);
-  const { pull, progress, refreshing } = usePullToRefresh(scrollRef, refreshApp);
+  const { pull, progress, refreshing, dragging } = usePullToRefresh(scrollRef, refreshApp);
 
   useEffect(() => {
     setSyncErrorHandler(() =>
@@ -56,7 +56,7 @@ export default function AppLayout() {
           <OfflineBanner />
         </div>
 
-        <PullIndicator pull={pull} progress={progress} refreshing={refreshing} />
+        <PullIndicator pull={pull} progress={progress} refreshing={refreshing} dragging={dragging} />
 
         <div
           id="app-scroll"

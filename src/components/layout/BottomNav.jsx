@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Home, Search, Plus, MessageCircle, User } from "lucide-react";
 import { haptic } from "@/lib/despia";
 
@@ -12,7 +12,20 @@ const TABS = [
 ];
 
 export default function BottomNav({ badge = 0 }) {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+  const navigate = useNavigate();
+
+  // Tapping a tab always lands on its clean root; tapping the root again scrolls to top.
+  const onTab = (e, to) => {
+    e.preventDefault();
+    haptic("light");
+    if (pathname === to && !search) {
+      document.getElementById("app-scroll")?.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    const nested = to !== "/" && pathname.startsWith(to + "/");
+    navigate(to, { replace: nested, state: null });
+  };
 
   return (
     <nav
@@ -34,7 +47,7 @@ export default function BottomNav({ badge = 0 }) {
               <Link
                 key={to}
                 to={to}
-                onClick={() => haptic("light")}
+                onClick={(e) => onTab(e, to)}
                 aria-label="Add a gemstone listing"
                 className="tap-scale flex flex-col items-center justify-center"
                 style={{ height: "var(--tabbar-h)" }}
@@ -51,7 +64,7 @@ export default function BottomNav({ badge = 0 }) {
             <Link
               key={to}
               to={to}
-              onClick={() => haptic("light")}
+              onClick={(e) => onTab(e, to)}
               aria-label={unread ? `${label}, ${badge} unread` : label}
               aria-current={active ? "page" : undefined}
               className="tap-scale relative flex flex-col items-center justify-center gap-1"
