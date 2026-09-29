@@ -1,29 +1,23 @@
 import { useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { registerPush, registerGuestPush, requestPushPermission } from "@/lib/despia";
 
-// App-wide: asks for push permission on launch, links guests with an
-// anonymous id, then the signed-in user. No-op in a normal web browser.
+// Official Despia OneSignal registration scheme. Fires on load (guest id if
+// not signed in) and again once a signed-in user is known.
 export default function PushInit() {
-  const { user, isLoadingAuth } = useAuth();
+  const { user: currentUser } = useAuth();
 
   useEffect(() => {
-    requestPushPermission();
-  }, []);
+    const isDespia = navigator.userAgent.toLowerCase().includes("despia") || typeof window.despia !== "undefined";
+    if (!isDespia) return;
 
-  useEffect(() => {
-    if (isLoadingAuth || user) return;
-    const t = setTimeout(() => registerGuestPush(), 800);
-    return () => clearTimeout(t);
-  }, [isLoadingAuth, user]);
+    const userId = currentUser?.id || currentUser?.email || "guest_" + Math.floor(Math.random() * 1000000);
 
-  useEffect(() => {
-    const id = user?.id || user?.email;
-    if (!id) return;
-    // Small delay so the permission call isn't overridden by this navigation.
-    const t = setTimeout(() => registerPush(id), 800);
-    return () => clearTimeout(t);
-  }, [user?.id, user?.email]);
+    if (window.despia) {
+      window.despia(`setonesignalplayerid://?user_id=${userId}`);
+    } else {
+      window.location.href = `setonesignalplayerid://?user_id=${userId}`;
+    }
+  }, [currentUser?.id, currentUser?.email]);
 
   return null;
 }
