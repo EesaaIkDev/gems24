@@ -1,15 +1,21 @@
 import { useEffect } from "react";
 import { useAuth } from "@/lib/AuthContext";
-import { registerPush, requestPushPermission } from "@/lib/despia";
+import { registerPush, registerGuestPush, requestPushPermission } from "@/lib/despia";
 
-// App-wide: asks for push permission on launch and links the signed-in user
-// to OneSignal. Does nothing in a normal web browser.
+// App-wide: asks for push permission on launch, links guests with an
+// anonymous id, then the signed-in user. No-op in a normal web browser.
 export default function PushInit() {
-  const { user } = useAuth();
+  const { user, isLoadingAuth } = useAuth();
 
   useEffect(() => {
     requestPushPermission();
   }, []);
+
+  useEffect(() => {
+    if (isLoadingAuth || user) return;
+    const t = setTimeout(() => registerGuestPush(), 800);
+    return () => clearTimeout(t);
+  }, [isLoadingAuth, user]);
 
   useEffect(() => {
     const id = user?.id || user?.email;

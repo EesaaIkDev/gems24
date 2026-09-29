@@ -30,6 +30,15 @@ export function registerPush(userId) {
   window.location.href = `despia://setonesignalplayerid?user_id=${encodeURIComponent(userId)}`;
 }
 
+/** Link an anonymous guest id to OneSignal once per session, before login. */
+const GUEST_KEY = "gems24_push_guest";
+
+export function registerGuestPush() {
+  if (!isNative || sessionStorage.getItem(GUEST_KEY)) return;
+  sessionStorage.setItem(GUEST_KEY, "1");
+  despia("setonesignalplayerid://?user_id=guest_" + Math.random().toString(36).substring(7));
+}
+
 /** Ask for native push permission once per app launch. */
 const PERMISSION_KEY = "gems24_push_permission_checked";
 
