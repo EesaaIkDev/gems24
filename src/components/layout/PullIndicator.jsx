@@ -23,9 +23,17 @@ export default function PullIndicator({ pull, progress, refreshing, dragging }) 
           willChange: "transform, opacity",
         }}
       >
+        {/* Turns slowly upright as you pull, then spins while refreshing. */}
         <Gem
           className={`h-[18px] w-[18px] text-primary ${refreshing ? "animate-spin" : ""}`}
-          style={refreshing ? { animationDuration: "0.9s" } : { transform: `rotate(${progress * 270}deg)` }}
+          style={
+            refreshing
+              ? { animationDuration: "1.1s", animationTimingFunction: "linear" }
+              : {
+                  transform: `rotate(${(1 - Math.min(progress, 1)) * -180}deg)`,
+                  transition: `transform ${dragging ? "0.12s linear" : `0.45s ${EASE}`}`,
+                }
+          }
         />
       </div>
     </div>
