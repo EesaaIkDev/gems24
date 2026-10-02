@@ -8,6 +8,7 @@ import VerifiedBadge from "@/components/common/VerifiedBadge";
 import MessageBubble from "@/components/chat/MessageBubble";
 import MessageComposer from "@/components/chat/MessageComposer";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
+import useChatPresence from "@/hooks/useChatPresence";
 import { markRead, otherIdOf, sendMessage } from "@/lib/chat";
 import { canMessage, getConnection } from "@/lib/network";
 
@@ -19,6 +20,7 @@ export default function ConversationView() {
   const [messages, setMessages] = useState([]);
   const [networked, setNetworked] = useState(true);
   const bottomRef = useRef(null);
+  useChatPresence(trader?.id, id);
 
   useEffect(() => {
     if (!trader?.id) return;
@@ -59,10 +61,13 @@ export default function ConversationView() {
   };
 
   return (
-    <div className="pb-32">
-      <div className="sticky top-0 z-20 glass-chrome border-b border-border px-4 py-3">
+    <div className="-mt-4" style={{ paddingBottom: "5.5rem" }}>
+      <div
+        className="sticky z-20 glass-chrome px-4 py-2.5 shadow-[0_4px_12px_hsl(var(--neu-dark))]"
+        style={{ top: "calc(var(--safe-top) + var(--header-h) - 1px)" }}
+      >
         <div className="flex items-center gap-3">
-          <Link to="/messages" className="text-muted-foreground hover:text-primary">
+          <Link to="/messages" aria-label="Back" className="neu-raised-sm flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-foreground hover:text-primary">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <Link
@@ -112,7 +117,7 @@ export default function ConversationView() {
       {networked ? (
         <MessageComposer onSend={send} />
       ) : (
-        <p className="px-4 text-center text-sm text-muted-foreground">
+        <p className="px-6 pb-4 text-center text-sm text-muted-foreground">
           Messaging unlocks once {other?.full_name || "this trader"} accepts your network request.
         </p>
       )}

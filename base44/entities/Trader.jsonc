@@ -114,6 +114,15 @@
       "default": 0,
       "description": "Extra listing slots bought individually \u2014 never expire or reset"
     },
+    "active_conversation_id": {
+      "type": "string",
+      "description": "Conversation the trader is currently viewing; used to mute pushes"
+    },
+    "active_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last chat presence heartbeat"
+    },
     "loyalty_years": {
       "type": "number",
       "default": 0,

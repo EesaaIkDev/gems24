@@ -11,6 +11,10 @@ export default async function (req) {
     const recipientId = convo.participant_a_id === msg.sender_id ? convo.participant_b_id : convo.participant_a_id;
     const sender = await userIdForTrader(base44, msg.sender_id);
     const recipient = await userIdForTrader(base44, recipientId);
+    const t = recipient.trader;
+    const viewing = t?.active_conversation_id === msg.conversation_id &&
+      t?.active_at && Date.now() - new Date(t.active_at).getTime() < 60000;
+    if (viewing) return Response.json({ ok: true, skipped: "recipient viewing chat" });
     const text = msg.text.length > 140 ? msg.text.slice(0, 137) + "..." : msg.text;
     const result = await sendPushNotification(recipient.userId, `New message from ${sender.name}`, text, {
       type: "chat",
