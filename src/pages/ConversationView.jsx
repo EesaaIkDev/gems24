@@ -9,7 +9,7 @@ import MessageBubble from "@/components/chat/MessageBubble";
 import MessageComposer from "@/components/chat/MessageComposer";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useChatPresence from "@/hooks/useChatPresence";
-import { markRead, otherIdOf, sendMessage } from "@/lib/chat";
+import { isActive, markRead, otherIdOf, otherReadAt, sendMessage } from "@/lib/chat";
 import { canMessage, getConnection } from "@/lib/network";
 
 export default function ConversationView() {
@@ -29,7 +29,7 @@ export default function ConversationView() {
       const c = await base44.entities.Conversation.get(id);
       if (cancelled) return;
       setConversation(c);
-      markRead(c, trader.id);
+      markRead(c, trader.id, trader.read_receipts !== false);
       const otherId = otherIdOf(c, trader.id);
       setOther(await base44.entities.Trader.get(otherId).catch(() => null));
       const connection = await getConnection(trader.id, otherId).catch(() => null);
@@ -49,19 +49,38 @@ export default function ConversationView() {
     return unsubscribe;
   }, [id]);
 
+  // Live conversation updates: mark incoming messages read, pick up the other side's read receipt.
+  useEffect(() => {
+    if (!trader?.id) return;
+    return base44.entities.Conversation.subscribe((e) => {
+      if (e.id !== id || !e.data) return;
+      setConversation(e.data);
+      if (document.visibilityState === "visible") markRead(e.data, trader.id, trader.read_receipts !== false);
+    });
+  }, [id, trader?.id, trader?.read_receipts]);
+
+  // Refresh the other trader's Active/Away status.
+  useEffect(() => {
+    if (!other?.id) return;
+    const t = setInterval(() => base44.entities.Trader.get(other.id).then(setOther).catch(() => {}), 60000);
+    return () => clearInterval(t);
+  }, [other?.id]);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
 
   if (loading || !conversation || !trader) return <Spinner />;
 
+  const receiptsOn = other && trader.read_receipts !== false && other.read_receipts !== false;
+  const readAt = receiptsOn ? otherReadAt(conversation, trader, other) || "" : null;
   const send = async (text) => {
     await sendMessage(conversation, trader.id, text);
     setConversation(await base44.entities.Conversation.get(id));
   };
 
   return (
-    <div className="-mt-4" style={{ paddingBottom: "5.5rem" }}>
+    <div className="-mt-4" style={{ paddingBottom: "8.5rem" }}>
       <div
         className="sticky z-20 glass-chrome px-4 py-2.5 shadow-[0_4px_12px_hsl(var(--neu-dark))]"
         style={{ top: "calc(var(--safe-top) + var(--header-h) - 1px)" }}
@@ -86,9 +105,11 @@ export default function ConversationView() {
                 <p className="font-semibold truncate">{other?.full_name || "Trader"}</p>
                 <VerifiedBadge verified={other?.verified} />
               </div>
-              {other?.business_name && (
-                <p className="text-[0.6875rem] text-muted-foreground truncate">{other.business_name}</p>
-              )}
+              <p className="flex items-center gap-1.5 text-[0.6875rem] text-muted-foreground truncate">
+                <span className={`h-2 w-2 shrink-0 rounded-full ${isActive(other) ? "bg-primary" : "bg-muted-foreground/40"}`} />
+                {isActive(other) ? "Active" : "Away"}
+                {other?.business_name && <span className="truncate">· {other.business_name}</span>}
+              </p>
             </div>
           </Link>
         </div>
@@ -109,7 +130,12 @@ export default function ConversationView() {
           </p>
         )}
         {messages.map((m) => (
-          <MessageBubble key={m.id} message={m} mine={m.sender_id === trader.id} />
+          <MessageBubble
+            key={m.id}
+            message={m}
+            mine={m.sender_id === trader.id}
+            read={readAt === null ? undefined : !!readAt && new Date(readAt) >= new Date(m.created_date)}
+          />
         ))}
         <div ref={bottomRef} />
       </div>

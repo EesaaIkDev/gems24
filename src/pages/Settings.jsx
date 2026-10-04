@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Crown, FileText, LogOut, Moon, ShieldCheck } from "lucide-react";
+import { ArrowLeft, CheckCheck, Crown, FileText, LogOut, Moon, ShieldCheck } from "lucide-react";
 import DeleteAccount from "@/components/settings/DeleteAccount";
 import TraderForm from "@/components/traders/TraderForm";
 import Spinner from "@/components/common/Spinner";
@@ -79,6 +79,23 @@ export default function Settings() {
             <Button asChild variant="outline" className="mt-3 w-full h-11">
               <Link to="/subscription">{trader.subscription_tier === "none" ? "View plans" : "Change plan"}</Link>
             </Button>
+          </div>
+
+          <div className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3">
+            <CheckCheck className="w-[18px] h-[18px] text-primary shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">Read receipts</p>
+              <p className="text-xs text-muted-foreground">
+                Let traders see when you've read their messages. If you turn this off, you also won't see theirs.
+              </p>
+            </div>
+            <Switch
+              checked={trader.read_receipts !== false}
+              onCheckedChange={async (v) => {
+                await base44.entities.Trader.update(trader.id, { read_receipts: v });
+                reload();
+              }}
+            />
           </div>
 
           <div className="rounded-2xl bg-card border border-border p-4 flex items-start gap-3">

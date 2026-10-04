@@ -8,6 +8,7 @@ import useTheme from "@/hooks/useTheme";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useMessageNotifications from "@/hooks/useMessageNotifications";
 import useSwipeBack from "@/hooks/useSwipeBack";
+import useActivityHeartbeat from "@/hooks/useActivityHeartbeat";
 import usePullToRefresh from "@/hooks/usePullToRefresh";
 import PullIndicator from "./PullIndicator";
 import { queryClientInstance } from "@/lib/query-client";
@@ -20,6 +21,7 @@ export default function AppLayout() {
   useTheme();
   const { user, trader } = useCurrentTrader();
   const unreadMessages = useMessageNotifications(trader?.id);
+  useActivityHeartbeat(trader?.id);
   const { pathname } = useLocation();
   const navigationType = useNavigationType();
   const outlet = useOutlet();

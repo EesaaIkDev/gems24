@@ -35,6 +35,16 @@
     "unread_b": {
       "type": "number",
       "default": 0
+    },
+    "read_at_a": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When participant A last read the chat (only if they share read receipts)"
+    },
+    "read_at_b": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When participant B last read the chat (only if they share read receipts)"
     }
   },
   "required": [

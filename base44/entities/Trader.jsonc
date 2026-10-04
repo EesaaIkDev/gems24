@@ -121,7 +121,12 @@
     "active_at": {
       "type": "string",
       "format": "date-time",
-      "description": "Last chat presence heartbeat"
+      "description": "Last presence heartbeat"
+    },
+    "read_receipts": {
+      "type": "boolean",
+      "default": true,
+      "description": "Share read receipts; when off the trader also can't see others' receipts"
     },
     "loyalty_years": {
       "type": "number",

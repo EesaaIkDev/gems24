@@ -51,9 +51,21 @@ export async function sendMessage(conversation, senderId, text) {
   return message;
 }
 
-export async function markRead(conversation, viewerId) {
+export async function markRead(conversation, viewerId, shareReceipt = true) {
   if (unreadFor(conversation, viewerId) === 0) return;
+  const isA = conversation.participant_a_id === viewerId;
   await base44.entities.Conversation.update(conversation.id, {
-    [conversation.participant_a_id === viewerId ? "unread_a" : "unread_b"]: 0,
+    [isA ? "unread_a" : "unread_b"]: 0,
+    ...(shareReceipt ? { [isA ? "read_at_a" : "read_at_b"]: new Date().toISOString() } : {}),
   });
 }
+
+/** When the other participant last read the chat, or null if receipts are hidden either way. */
+export const otherReadAt = (c, viewer, other) => {
+  if (viewer?.read_receipts === false || other?.read_receipts === false) return null;
+  return c.participant_a_id === viewer.id ? c.read_at_b : c.read_at_a;
+};
+
+/** Professional presence: Active within the last 2 minutes, otherwise Away. */
+export const isActive = (trader) =>
+  !!trader?.active_at && Date.now() - new Date(trader.active_at).getTime() < 120000;
