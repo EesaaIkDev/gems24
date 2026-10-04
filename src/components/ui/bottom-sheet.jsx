@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Drawer } from "vaul";
 import { cn } from "@/lib/utils";
 
 /** Native-feeling bottom sheet with an iOS grabber and safe-area padding. */
 export default function BottomSheet({ open, onOpenChange, title, description, children, className }) {
+  const [snap, setSnap] = useState(0.88);
   return (
-    <Drawer.Root open={open} onOpenChange={onOpenChange} snapPoints={[0.55, 0.88]} fadeFromIndex={0} handleOnly>
+    <Drawer.Root open={open} onOpenChange={(value) => { setSnap(0.88); onOpenChange(value); }} snapPoints={[0.55, 0.88]} activeSnapPoint={snap} setActiveSnapPoint={setSnap} fadeFromIndex={0} handleOnly>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-50 bg-black/45" />
         <Drawer.Content
@@ -25,7 +26,7 @@ export default function BottomSheet({ open, onOpenChange, title, description, ch
           )}
           <div
             className="app-scroll min-h-0 px-5 pt-4"
-            style={{ paddingBottom: "calc(var(--safe-bottom) + 1.25rem)" }}
+            style={{ maxHeight: `calc(${(snap || 0.88) * 100}dvh - 6rem)`, paddingBottom: "calc(var(--safe-bottom) + 1.25rem)" }}
           >
             {children}
           </div>

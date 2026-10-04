@@ -8,6 +8,7 @@ import Spinner from "@/components/common/Spinner";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import MessageBubble from "@/components/chat/MessageBubble";
 import MessageComposer from "@/components/chat/MessageComposer";
+import useKeyboardInset from "@/components/chat/useKeyboardInset";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useChatPresence from "@/hooks/useChatPresence";
 import { isActive, markRead, otherIdOf, otherReadAt, sendMessage } from "@/lib/chat";
@@ -20,6 +21,7 @@ export default function ConversationView() {
   const [other, setOther] = useState(null);
   const [messages, setMessages] = useState([]);
   const [networked, setNetworked] = useState(true);
+  const keyboardInset = useKeyboardInset();
   const bottomRef = useRef(null);
   const listRef = useRef(null);
   useChatPresence(trader?.id, id);
@@ -86,7 +88,7 @@ export default function ConversationView() {
     createPortal(
     <div
       className="absolute inset-x-0 z-30 flex flex-col bg-background"
-      style={{ top: "calc(var(--safe-top) + var(--header-h))", bottom: "calc(var(--safe-bottom) + var(--tabbar-h))" }}
+      style={{ top: "calc(var(--safe-top) + var(--header-h))", bottom: `max(calc(var(--safe-bottom) + var(--tabbar-h) + 1.5rem), calc(${keyboardInset}px + 1rem))` }}
     >
       <div
         className="relative z-10 shrink-0 bg-background px-4 py-2.5 shadow-[0_4px_12px_hsl(var(--neu-dark))]"

@@ -1,5 +1,5 @@
 import React from "react";
-import { Gem } from "lucide-react";
+import GemLoader from "@/components/common/GemLoader";
 
 const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
 
@@ -24,17 +24,8 @@ export default function PullIndicator({ pull, progress, refreshing, dragging }) 
         }}
       >
         {/* Turns slowly upright as you pull, then spins while refreshing. */}
-        <Gem
-          className={`h-[18px] w-[18px] text-primary ${refreshing ? "animate-spin" : ""}`}
-          style={
-            refreshing
-              ? { animationDuration: "1.1s", animationTimingFunction: "linear" }
-              : {
-                  transform: `rotate(${(1 - Math.min(progress, 1)) * -180}deg)`,
-                  transition: `transform ${dragging ? "0.12s linear" : `0.45s ${EASE}`}`,
-                }
-          }
-        />
+        <GemLoader className="h-7 w-7" spinning={refreshing}
+          style={refreshing ? undefined : { transform: `rotate(${(1 - Math.min(progress, 1)) * -180}deg)` }} />
       </div>
     </div>
   );
