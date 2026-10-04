@@ -8,7 +8,7 @@ import { haptic } from "@/lib/despia";
 export default function AppHeader() {
   return (
     <header
-      className="glass-chrome absolute inset-x-0 top-0 z-40 border-b border-border/60"
+      className="bg-background absolute inset-x-0 top-0 z-50 shadow-[0_4px_12px_hsl(var(--neu-dark))]"
       style={{
         paddingTop: "var(--safe-top)",
         paddingLeft: "var(--safe-left)",

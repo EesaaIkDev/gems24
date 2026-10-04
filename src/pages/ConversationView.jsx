@@ -85,7 +85,7 @@ export default function ConversationView() {
   return (
     createPortal(
     <div
-      className="fixed inset-x-0 z-30 flex flex-col bg-background"
+      className="absolute inset-x-0 z-30 flex flex-col bg-background"
       style={{ top: "calc(var(--safe-top) + var(--header-h))", bottom: "calc(var(--safe-bottom) + var(--tabbar-h))" }}
     >
       <div
@@ -155,7 +155,7 @@ export default function ConversationView() {
         </p>
       )}
     </div>,
-    document.body
+    document.getElementById("app-shell") || document.body
     )
   );
 }

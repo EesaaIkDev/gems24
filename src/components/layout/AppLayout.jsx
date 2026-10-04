@@ -51,7 +51,7 @@ export default function AppLayout() {
 
   return (
     <AppLockGate>
-      <div className="relative flex h-full flex-col overflow-hidden bg-background">
+      <div id="app-shell" className="fixed inset-0 flex flex-col overflow-hidden bg-background">
         <AppHeader />
 
         <div className="pointer-events-none absolute inset-x-0 top-0 z-40">
