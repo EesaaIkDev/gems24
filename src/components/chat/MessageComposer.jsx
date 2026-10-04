@@ -44,8 +44,8 @@ export default function MessageComposer({ onSend }) {
   return (
     <form
       onSubmit={submit}
-      className="glass-chrome fixed inset-x-0 z-40 px-3 py-2 shadow-[0_-4px_12px_hsl(var(--neu-dark))]"
-      style={{ bottom: "calc(var(--safe-bottom) + var(--tabbar-h))", paddingLeft: "calc(var(--safe-left) + 0.75rem)", paddingRight: "calc(var(--safe-right) + 0.75rem)" }}
+      className="shrink-0 bg-background px-3 py-2 shadow-[0_-4px_12px_hsl(var(--neu-dark))]"
+      style={{ paddingLeft: "calc(var(--safe-left) + 0.75rem)", paddingRight: "calc(var(--safe-right) + 0.75rem)" }}
     >
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center gap-1 pb-1.5">

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import { ArrowLeft, User } from "lucide-react";
@@ -20,6 +21,7 @@ export default function ConversationView() {
   const [messages, setMessages] = useState([]);
   const [networked, setNetworked] = useState(true);
   const bottomRef = useRef(null);
+  const listRef = useRef(null);
   useChatPresence(trader?.id, id);
 
   useEffect(() => {
@@ -67,7 +69,8 @@ export default function ConversationView() {
   }, [other?.id]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = listRef.current;
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [messages.length]);
 
   if (loading || !conversation || !trader) return <Spinner />;
@@ -80,10 +83,14 @@ export default function ConversationView() {
   };
 
   return (
-    <div className="-mt-4" style={{ paddingBottom: "8.5rem" }}>
+    createPortal(
+    <div
+      className="fixed inset-x-0 z-30 flex flex-col bg-background"
+      style={{ top: "calc(var(--safe-top) + var(--header-h))", bottom: "calc(var(--safe-bottom) + var(--tabbar-h))" }}
+    >
       <div
-        className="sticky z-20 glass-chrome px-4 py-2.5 shadow-[0_4px_12px_hsl(var(--neu-dark))]"
-        style={{ top: "calc(var(--safe-top) + var(--header-h) - 1px)" }}
+        className="relative z-10 shrink-0 bg-background px-4 py-2.5 shadow-[0_4px_12px_hsl(var(--neu-dark))]"
+        style={{ paddingLeft: "calc(var(--safe-left) + 1rem)", paddingRight: "calc(var(--safe-right) + 1rem)" }}
       >
         <div className="flex items-center gap-3">
           <Link to="/messages" aria-label="Back" className="neu-raised-sm flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-foreground hover:text-primary">
@@ -123,7 +130,7 @@ export default function ConversationView() {
         )}
       </div>
 
-      <div className="px-4 py-4 space-y-2">
+      <div ref={listRef} className="app-scroll min-h-0 px-4 pt-4 pb-6 space-y-2">
         {messages.length === 0 && (
           <p className="text-center text-sm text-muted-foreground py-10">
             No messages yet — say hello and start the conversation.
@@ -147,6 +154,8 @@ export default function ConversationView() {
           Messaging unlocks once {other?.full_name || "this trader"} accepts your network request.
         </p>
       )}
-    </div>
+    </div>,
+    document.body
+    )
   );
 }

@@ -30,7 +30,7 @@ export default function BottomNav({ badge = 0 }) {
   return (
     <nav
       aria-label="Main"
-      className="glass-chrome absolute inset-x-0 bottom-0 z-40 border-t border-border/60"
+      className="bg-background absolute inset-x-0 bottom-0 z-50 shadow-[0_-4px_12px_hsl(var(--neu-dark))]"
       style={{
         paddingBottom: "var(--safe-bottom)",
         paddingLeft: "var(--safe-left)",
