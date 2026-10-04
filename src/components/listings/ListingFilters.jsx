@@ -5,14 +5,17 @@ import BottomSheet from "@/components/ui/bottom-sheet";
 import { SlidersHorizontal } from "lucide-react";
 import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
 import { chipClass as chip } from "@/components/common/filterChip";
+import CountryFilter from "@/components/common/CountryFilter";
+import { values, selected, toggle } from "@/components/common/filterValues";
 
 export default function ListingFilters({ filters, setFilters, countries }) {
   const [open, setOpen] = useState(false);
-  const set = (k, v) => setFilters({ ...filters, [k]: v });
-  const secondaryCount = [filters.treatment, filters.country, filters.minCt || filters.maxCt].filter(Boolean).length;
+  const set = (k, v) => setFilters((f) => ({ ...f, [k]: v }));
+  const pick = (k, v) => setFilters((f) => ({ ...f, [k]: toggle(f[k], v) }));
+  const secondaryCount = values(filters.treatment).length + values(filters.country).length + (filters.minCt || filters.maxCt ? 1 : 0);
 
   const clearAll = () =>
-    setFilters({ q: filters.q, type: "", treatment: "", country: "", minCt: "", maxCt: "" });
+    setFilters({ q: filters.q, type: [], treatment: [], country: [], minCt: "", maxCt: "" });
 
   return (
     <>
@@ -29,9 +32,9 @@ export default function ListingFilters({ filters, setFilters, countries }) {
           <SlidersHorizontal className="h-3.5 w-3.5" />
           Filters{secondaryCount ? ` · ${secondaryCount}` : ""}
         </button>
-        <button className={chip(!filters.type)} onClick={() => set("type", "")}>All</button>
+        <button aria-pressed={!values(filters.type).length} className={chip(!values(filters.type).length)} onClick={() => set("type", [])}>All</button>
         {GEM_TYPES.map((t) => (
-          <button key={t} className={chip(filters.type === t)} onClick={() => set("type", t)}>
+          <button key={t} aria-pressed={selected(filters.type, t)} className={chip(selected(filters.type, t))} onClick={() => pick("type", t)}>
             {cap(t)}
           </button>
         ))}
@@ -49,8 +52,9 @@ export default function ListingFilters({ filters, setFilters, countries }) {
               {TREATMENTS.map((t) => (
                 <button
                   key={t}
-                  className={chip(filters.treatment === t)}
-                  onClick={() => set("treatment", filters.treatment === t ? "" : t)}
+                  className={chip(selected(filters.treatment, t))}
+                  aria-pressed={selected(filters.treatment, t)}
+                  onClick={() => pick("treatment", t)}
                 >
                   {cap(t)}
                 </button>
@@ -58,21 +62,9 @@ export default function ListingFilters({ filters, setFilters, countries }) {
             </div>
           </FilterSection>
 
-          {countries.length > 0 && (
-            <FilterSection label="Seller location">
-              <div className="flex flex-wrap gap-2 max-h-44 overflow-y-auto scrollbar-none p-1 -m-1">
-                {countries.map((c) => (
-                  <button
-                    key={c}
-                    className={chip(filters.country === c)}
-                    onClick={() => set("country", filters.country === c ? "" : c)}
-                  >
-                    {c}
-                  </button>
-                ))}
-              </div>
-            </FilterSection>
-          )}
+          <FilterSection label="Seller location">
+            <CountryFilter countries={countries} selected={values(filters.country)} onChange={(v) => set("country", v)} />
+          </FilterSection>
 
           <FilterSection label="Carat weight">
             <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">

@@ -11,7 +11,9 @@ import Spinner from "@/components/common/Spinner";
 import EmptyState from "@/components/common/EmptyState";
 import usePopularDefaults from "@/hooks/usePopularDefaults";
 import useOfflineEntity from "@/hooks/useOfflineEntity";
-import { tierRank } from "@/lib/gems";
+import { GEM_TYPES, tierRank } from "@/lib/gems";
+import useCountries from "@/hooks/useCountries";
+import { matches, values } from "@/components/common/filterValues";
 import Seo from "@/components/seo/Seo";
 import CategoryLinks from "@/components/seo/CategoryLinks";
 import { SITE, absolute } from "@/lib/seo";
@@ -29,34 +31,29 @@ export default function Gemstones() {
   );
   const listings = listingsQuery.rows;
   const traders = tradersQuery.rows;
-  const [stoneFilters, setStoneFilters] = useState({ q: "", type: "", treatment: "", country: "", minCt: "", maxCt: "" });
-  const [traderFilters, setTraderFilters] = useState({ specialty: "", tier: "", country: "" });
+  const [stoneFilters, setStoneFilters] = useState({ q: "", type: [], treatment: [], country: [], minCt: "", maxCt: "" });
+  const [traderFilters, setTraderFilters] = useState({ specialty: [], tier: [], country: [] });
+  const { countries } = useCountries();
   const [q, setQ] = useState("");
   const popular = usePopularDefaults();
 
   // Smart defaults: land on the most-searched stone type instead of a blank grid.
   useEffect(() => {
     if (!popular) return;
-    setStoneFilters((f) => (f.type ? f : { ...f, type: popular.gemstone_type }));
+    setStoneFilters((f) => (values(f.type).length ? f : { ...f, type: popular.gemstone_type ? [popular.gemstone_type] : [] }));
   }, [popular]);
 
-  const stoneCountries = useMemo(
-    () => [...new Set((listings || []).map((l) => l.trader_country).filter(Boolean))].sort().slice(0, 8),
-    [listings]
-  );
-  const traderCountries = useMemo(
-    () => [...new Set((traders || []).map((t) => t.country).filter(Boolean))].sort().slice(0, 8),
-    [traders]
-  );
+  const countryNames = useMemo(() => [...new Set([...countries.map((c) => c.name), ...(listings || []).map((l) => l.trader_country), ...(traders || []).map((t) => t.country)].filter(Boolean))].sort(), [countries, listings, traders]);
+  const specialties = useMemo(() => [...new Set([...GEM_TYPES, ...(traders || []).flatMap((t) => t.specialties || [])])], [traders]);
 
   const filteredStones = useMemo(() => {
     if (!listings) return [];
     const s = (q || stoneFilters.q).toLowerCase();
     return listings
       .filter((l) => l.status !== "sold")
-      .filter((l) => (stoneFilters.type ? l.gemstone_type === stoneFilters.type : true))
-      .filter((l) => (stoneFilters.treatment ? l.treatment === stoneFilters.treatment : true))
-      .filter((l) => (stoneFilters.country ? l.trader_country === stoneFilters.country : true))
+      .filter((l) => matches(stoneFilters.type, l.gemstone_type))
+      .filter((l) => matches(stoneFilters.treatment, l.treatment))
+      .filter((l) => matches(stoneFilters.country, l.trader_country))
       .filter((l) => (stoneFilters.minCt ? l.weight_carats >= Number(stoneFilters.minCt) : true))
       .filter((l) => (stoneFilters.maxCt ? l.weight_carats <= Number(stoneFilters.maxCt) : true))
       .filter((l) =>
@@ -73,9 +70,9 @@ export default function Gemstones() {
     if (!traders) return [];
     const s = q.toLowerCase();
     return traders
-      .filter((t) => (traderFilters.specialty ? t.specialties?.includes(traderFilters.specialty) : true))
-      .filter((t) => (traderFilters.tier ? t.subscription_tier === traderFilters.tier : true))
-      .filter((t) => (traderFilters.country ? t.country === traderFilters.country : true))
+      .filter((t) => !values(traderFilters.specialty).length || values(traderFilters.specialty).some((s) => t.specialties?.includes(s)))
+      .filter((t) => matches(traderFilters.tier, t.subscription_tier || "none"))
+      .filter((t) => matches(traderFilters.country, t.country))
       .filter((t) =>
         s ? [t.full_name, t.business_name].filter(Boolean).some((v) => v.toLowerCase().includes(s)) : true
       )
@@ -114,7 +111,7 @@ export default function Gemstones() {
         </TabsList>
 
         <TabsContent value="stones" className="mt-3 space-y-3">
-          <ListingFilters filters={stoneFilters} setFilters={setStoneFilters} countries={stoneCountries} />
+          <ListingFilters filters={stoneFilters} setFilters={setStoneFilters} countries={countryNames} />
           {listings === null ? (
             <Spinner />
           ) : filteredStones.length === 0 ? (
@@ -129,7 +126,7 @@ export default function Gemstones() {
         </TabsContent>
 
         <TabsContent value="traders" className="mt-3 space-y-3">
-          <TraderFilters filters={traderFilters} setFilters={setTraderFilters} countries={traderCountries} />
+          <TraderFilters filters={traderFilters} setFilters={setTraderFilters} countries={countryNames} specialties={specialties} />
           {traders === null ? (
             <Spinner />
           ) : filteredTraders.length === 0 ? (
