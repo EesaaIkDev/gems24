@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Switch } from "@/components/ui/switch";
+import PreferenceSwitch from "@/components/settings/PreferenceSwitch";
 import { Fingerprint, Smartphone } from "lucide-react";
 import {
   isNative,
@@ -33,7 +33,7 @@ export default function NativeSettings() {
           <p className="text-sm font-medium">Biometric app lock</p>
           <p className="text-xs text-muted-foreground">Require Face ID or fingerprint to open Gems24.</p>
         </div>
-        <Switch checked={lock} onCheckedChange={toggle} />
+        <PreferenceSwitch label="Biometric app lock" checked={lock} onSave={toggle} />
       </div>
       {version && (
         <div className="p-4 flex items-center gap-3">

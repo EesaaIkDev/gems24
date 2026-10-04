@@ -375,7 +375,7 @@
 [data-vaul-drawer] { animation: none; }
 .gem-loader-orbit {
   transform-box: view-box;
-  transform-origin: 50px 48px;
+  transform-origin: 44.5px 46.2px;
   animation: gem-loader-spin 1.6s linear infinite;
 }
 @keyframes gem-loader-spin { to { transform: rotate(360deg); } }

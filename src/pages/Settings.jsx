@@ -10,6 +10,7 @@ import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import TierBadge from "@/components/common/TierBadge";
 import NativeSettings from "@/components/settings/NativeSettings";
+import PreferenceSwitch from "@/components/settings/PreferenceSwitch";
 import useTheme from "@/hooks/useTheme";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { TIERS } from "@/lib/gems";
@@ -43,7 +44,7 @@ export default function Settings() {
           <p className="text-sm font-medium">Dark mode</p>
           <p className="text-xs text-muted-foreground">Easier on the eyes at the trade show.</p>
         </div>
-        <Switch checked={dark} onCheckedChange={setDark} />
+        <Switch aria-label="Dark mode" checked={dark} onCheckedChange={setDark} />
       </div>
 
       <NativeSettings />
@@ -89,11 +90,12 @@ export default function Settings() {
                 Let traders see when you've read their messages. If you turn this off, you also won't see theirs.
               </p>
             </div>
-            <Switch
+            <PreferenceSwitch
+              label="Read receipts"
               checked={trader.read_receipts !== false}
-              onCheckedChange={async (v) => {
+              onSave={async (v) => {
                 await base44.entities.Trader.update(trader.id, { read_receipts: v });
-                reload();
+                await reload();
               }}
             />
           </div>
