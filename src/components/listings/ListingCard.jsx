@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
 import { Gem, MapPin } from "lucide-react";
-import TierBadge from "@/components/common/TierBadge";
+import SellerVerification from "@/components/common/SellerVerification";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import { cap } from "@/lib/gems";
 import { listingAlt, listingPath } from "@/lib/seo";
@@ -33,19 +33,16 @@ export default function ListingCard({ listing }) {
             <Gem className="w-8 h-8 text-muted-foreground/40" />
           </div>
         )}
-        <div className="absolute top-2.5 left-2.5 flex gap-1.5">
-          <span className={`neu-raised-xs rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide bg-background ${STATUS[listing.status] || ""}`}>
-            {cap(listing.status)}
-          </span>
-        </div>
-        {listing.trader_tier && listing.trader_tier !== "none" && (
-          <div className="absolute top-2.5 right-2.5">
-            <TierBadge tier={listing.trader_tier} />
-          </div>
-        )}
       </div>
 
-      <div className="flex-1 flex flex-col p-3.5">
+      <div className="flex items-center justify-between gap-2 px-3.5 pt-3">
+        <span className={`text-[10px] font-bold uppercase tracking-wide ${STATUS[listing.status] || ""}`}>
+          {cap(listing.status)}
+        </span>
+        <SellerVerification verified={listing.trader_verified} />
+      </div>
+
+      <div className="flex-1 flex flex-col p-3.5 pt-1.5">
         <div className="flex items-baseline justify-between gap-2">
           <h3 className="font-semibold text-[15px] leading-tight">{cap(listing.gemstone_type)}</h3>
           <span className="text-sm font-bold text-primary whitespace-nowrap">{listing.weight_carats} ct</span>

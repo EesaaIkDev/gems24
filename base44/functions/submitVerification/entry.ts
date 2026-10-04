@@ -68,6 +68,13 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({ state: 'already_verified' });
     }
 
+    if (trader.account_type !== 'buyer' && (!trader.subscription_tier || trader.subscription_tier === 'none')) {
+      return Response.json(
+        { error: 'A trader plan is required before you can get verified.' },
+        { status: 403 }
+      );
+    }
+
     const existing = (
       await base44.asServiceRole.entities.Verification.filter({ trader_id: trader.id })
     )?.[0] ?? null;

@@ -54,7 +54,7 @@ export default function TraderFilters({ filters, setFilters, countries }) {
 
           {countries.length > 0 && (
             <FilterSection label="Location">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 max-h-44 overflow-y-auto scrollbar-none p-1 -m-1">
                 {countries.map((c) => (
                   <button key={c} className={chip(filters.country === c)} onClick={() => set("country", c)}>
                     {c}

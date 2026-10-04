@@ -10,7 +10,7 @@ export default function BottomSheet({ open, onOpenChange, title, description, ch
         <Drawer.Overlay className="fixed inset-0 z-50 bg-black/45" />
         <Drawer.Content
           className={cn(
-            "fixed bottom-0 inset-x-0 z-50 mt-24 flex max-h-[92vh] flex-col rounded-t-3xl border-t border-border bg-card outline-none",
+            "fixed bottom-0 inset-x-0 z-50 mt-24 flex max-h-[88dvh] flex-col rounded-t-3xl border-t border-border bg-card outline-none",
             className
           )}
         >
@@ -24,7 +24,7 @@ export default function BottomSheet({ open, onOpenChange, title, description, ch
             </div>
           )}
           <div
-            className="app-scroll px-5 pt-4"
+            className="app-scroll min-h-0 px-5 pt-4"
             style={{ paddingBottom: "calc(var(--safe-bottom) + 1.25rem)" }}
           >
             {children}

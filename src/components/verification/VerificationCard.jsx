@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BadgeCheck, Clock, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import SuccessSplash from "@/components/subscription/SuccessSplash";
 import { base44 } from "@/api/base44Client";
@@ -89,6 +90,7 @@ export default function VerificationCard({ trader, onVerified }) {
   }
 
   const waiting = isAwaitingDecision(status);
+  const needsPlan = !isBuyer && !waiting && (!trader.subscription_tier || trader.subscription_tier === "none");
 
   return (
     <>
@@ -121,9 +123,20 @@ export default function VerificationCard({ trader, onVerified }) {
             ))}
           </ul>
         )}
-        <Button className="mt-4 h-11 w-full" variant={waiting ? "outline" : "default"} onClick={() => setOpen(true)}>
-          {waiting ? "View status" : isBuyer ? "Verify my account" : "Verify my license"}
-        </Button>
+        {needsPlan ? (
+          <>
+            <p className="mt-3 text-xs font-medium text-foreground/80">
+              You need a trader plan before you can verify your Gem License.
+            </p>
+            <Button asChild className="mt-3 h-11 w-full">
+              <Link to="/subscription">Choose a plan</Link>
+            </Button>
+          </>
+        ) : (
+          <Button className="mt-4 h-11 w-full" variant={waiting ? "outline" : "default"} onClick={() => setOpen(true)}>
+            {waiting ? "View status" : isBuyer ? "Verify my account" : "Verify my license"}
+          </Button>
+        )}
       </div>
 
       <BottomSheet

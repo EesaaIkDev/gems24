@@ -6,7 +6,7 @@ import { ArrowLeft, FileCheck2, Gem, MapPin, User } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import LoadError from "@/components/common/LoadError";
 import useLoader from "@/hooks/useLoader";
-import TierBadge from "@/components/common/TierBadge";
+import SellerVerification from "@/components/common/SellerVerification";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
@@ -145,8 +145,8 @@ export default function ListingDetail() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold">{heading}</h1>
-            <TierBadge tier={listing.trader_tier} />
           </div>
+          <SellerVerification verified={owner ? owner.verified : listing.trader_verified} className="mt-1.5" />
           <p className="text-sm text-muted-foreground mt-1">
             {cap(listing.status)} • {cap(listing.treatment)}
             {listing.origin ? ` • ${listing.origin}` : ""}
@@ -204,7 +204,7 @@ export default function ListingDetail() {
                 {owner.country ? ` • ${owner.country}` : ""}
               </p>
             </div>
-            <TierBadge tier={owner.subscription_tier} className="ml-auto" />
+            <SellerVerification verified={owner.verified} className="ml-auto shrink-0" />
           </Link>
         )}
 

@@ -60,7 +60,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
 
           {countries.length > 0 && (
             <FilterSection label="Seller location">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 max-h-44 overflow-y-auto scrollbar-none p-1 -m-1">
                 {countries.map((c) => (
                   <button
                     key={c}
