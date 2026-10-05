@@ -64,7 +64,9 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({ error: 'No trader profile found' }, { status: 404 });
     }
 
-    if (trader.verified) {
+    // A badge granted for a different account type (e.g. a buyer who switched
+    // to trader) does not count — they must verify again with the new document.
+    if (trader.verified && (!trader.verified_as || trader.verified_as === trader.account_type)) {
       return Response.json({ state: 'already_verified' });
     }
 

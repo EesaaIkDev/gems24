@@ -4,6 +4,7 @@ import { Image } from "@/components/ui/image";
 import { User } from "lucide-react";
 import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
+import { isVerified } from "@/lib/verification";
 
 /** Horizontal discovery row of traders the viewer hasn't networked with yet. */
 export default function SuggestedTraders({ traders }) {
@@ -30,7 +31,7 @@ export default function SuggestedTraders({ traders }) {
             </div>
             <div className="mt-2 flex items-center justify-center gap-1">
               <p className="text-sm font-semibold truncate">{t.full_name}</p>
-              <VerifiedBadge verified={t.verified} />
+              <VerifiedBadge verified={isVerified(t)} />
             </div>
             <p className="text-xs text-muted-foreground truncate">{t.country || t.business_name || ""}</p>
             <div className="mt-2 flex justify-center">

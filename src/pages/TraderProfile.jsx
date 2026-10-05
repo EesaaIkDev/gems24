@@ -12,6 +12,7 @@ import ListingCard from "@/components/listings/ListingCard";
 import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { cap } from "@/lib/gems";
+import { isVerified } from "@/lib/verification";
 import {
   findConnection,
   isAwaitingMyApproval,
@@ -105,7 +106,7 @@ export default function TraderProfile() {
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold truncate">{trader.full_name}</h1>
-                <VerifiedBadge verified={trader.verified} />
+                <VerifiedBadge verified={isVerified(trader)} />
               </div>
               {trader.business_name && <p className="text-sm text-muted-foreground">{trader.business_name}</p>}
               <div className="mt-2 flex flex-wrap items-center gap-2">

@@ -15,6 +15,7 @@ import usePopularDefaults from "@/hooks/usePopularDefaults";
 import LimitChoice from "@/components/subscription/LimitChoice";
 import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
+import { isVerified } from "@/lib/verification";
 import { createRecord } from "@/lib/offlineSync";
 import useOnline from "@/hooks/useOnline";
 
@@ -78,7 +79,7 @@ export default function AddListing() {
       trader_name: trader.full_name,
       trader_country: trader.country || "",
       trader_tier: trader.subscription_tier || "none",
-      trader_verified: !!trader.verified,
+      trader_verified: isVerified(trader),
     });
     // A row created offline has no server id yet — send them to their listings.
     navigate(String(listing.id).startsWith("local-") ? "/profile" : `/listing/${listing.id}`, {
@@ -95,9 +96,9 @@ export default function AddListing() {
     return (
       <SignInPrompt
         title="Listings are for trader accounts"
-        description="Buyer accounts can browse stones and message traders, but can't post listings."
-        cta="Browse gemstones"
-        to="/gemstones"
+        description="Buyer accounts can browse and message traders. Switch to a trader account from your profile to start listing."
+        cta="Go to profile"
+        to="/profile"
         showLogin={false}
       />
     );

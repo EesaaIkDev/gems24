@@ -149,7 +149,10 @@ export default async function (req: Request): Promise<Response> {
 
     // Only an approval touches the public badge.
     if (status === 'approved') {
-      await base44.asServiceRole.entities.Trader.update(state.trader_id, { verified: true });
+      await base44.asServiceRole.entities.Trader.update(state.trader_id, {
+        verified: true,
+        verified_as: state.document_type === 'gem_license' ? 'trader' : 'buyer',
+      });
       console.log(`verificationWebhook: approved trader=${state.trader_id}`);
     } else {
       console.log(

@@ -12,6 +12,7 @@ import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { GEM_TYPES, TREATMENTS, cap, tierLimit } from "@/lib/gems";
+import { isVerified } from "@/lib/verification";
 import { createRecord, updateRecord } from "@/lib/offlineSync";
 import useOnline from "@/hooks/useOnline";
 
@@ -85,7 +86,7 @@ export default function ListingEditor() {
       trader_name: trader.full_name,
       trader_country: trader.country || "",
       trader_tier: trader.subscription_tier || "none",
-      trader_verified: !!trader.verified,
+      trader_verified: isVerified(trader),
     };
     // Optimistic write — queued in the outbox when the network is unavailable.
     if (id) await updateRecord("Listing", id, payload);

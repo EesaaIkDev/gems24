@@ -57,3 +57,11 @@ export const LIMITS = {
 };
 
 export const SUPPORT_EMAIL = "support@gems24.lk";
+
+/**
+ * The public badge is only valid when it was granted for the trader's current
+ * account type. Rows verified before `verified_as` existed are treated as
+ * valid for whatever account they sit on.
+ */
+export const isVerified = (t) =>
+  !!t?.verified && (!t.verified_as || t.verified_as === t.account_type);

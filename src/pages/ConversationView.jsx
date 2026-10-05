@@ -13,6 +13,7 @@ import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useChatPresence from "@/hooks/useChatPresence";
 import { isActive, markRead, otherIdOf, otherReadAt, sendMessage } from "@/lib/chat";
 import { canMessage, getConnection } from "@/lib/network";
+import { isVerified } from "@/lib/verification";
 
 export default function ConversationView() {
   const { id } = useParams();
@@ -112,7 +113,7 @@ export default function ConversationView() {
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
                 <p className="font-semibold truncate">{other?.full_name || "Trader"}</p>
-                <VerifiedBadge verified={other?.verified} />
+                <VerifiedBadge verified={isVerified(other)} />
               </div>
               <p className="flex items-center gap-1.5 text-[0.6875rem] text-muted-foreground truncate">
                 <span className={`h-2 w-2 shrink-0 rounded-full ${isActive(other) ? "bg-primary" : "bg-muted-foreground/40"}`} />

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import SuccessSplash from "@/components/subscription/SuccessSplash";
 import { base44 } from "@/api/base44Client";
-import { STATUS, isAwaitingDecision } from "@/lib/verification";
+import { STATUS, isAwaitingDecision, isVerified } from "@/lib/verification";
 import LicenseUpload from "./LicenseUpload";
 
 const POINTS = [
@@ -40,7 +40,7 @@ export default function VerificationCard({ trader, onVerified }) {
     return () => {
       cancelled = true;
     };
-  }, [trader.id, trader.verified]);
+  }, [trader.id, trader.verified, trader.verified_as, trader.account_type]);
 
   useEffect(() => {
     if (isAwaitingDecision(status)) {
@@ -49,17 +49,17 @@ export default function VerificationCard({ trader, onVerified }) {
       hadPendingDecision.current = false;
     }
 
-    if (status !== STATUS.APPROVED || !trader.verified || !hadPendingDecision.current) return;
+    if (status !== STATUS.APPROVED || !isVerified(trader) || !hadPendingDecision.current) return;
     hadPendingDecision.current = false;
     setSplash(true);
-  }, [status, trader.verified]);
+  }, [status, trader.verified, trader.verified_as, trader.account_type]);
 
   const finish = async () => {
     setOpen(false);
     await onVerified();
   };
 
-  if (trader.verified) {
+  if (isVerified(trader)) {
     return (
       <>
         <div className="rounded-2xl border border-primary/30 bg-card p-4">

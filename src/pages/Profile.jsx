@@ -11,12 +11,14 @@ import VerifiedBadge from "@/components/common/VerifiedBadge";
 import EmptyState from "@/components/common/EmptyState";
 import OwnListingsGrid from "@/components/listings/OwnListingsGrid";
 import ProfileProgress from "@/components/profile/ProfileProgress";
+import BecomeTrader from "@/components/profile/BecomeTrader";
 import VerificationCard from "@/components/verification/VerificationCard";
 import InvitePrompt from "@/components/referral/InvitePrompt";
 import ReferralStats from "@/components/referral/ReferralStats";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { TIERS, cap } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
+import { isVerified } from "@/lib/verification";
 
 export default function Profile() {
   const { user, trader, loading, reload } = useCurrentTrader();
@@ -69,7 +71,7 @@ export default function Profile() {
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
                 <h1 className="text-xl font-bold truncate">{trader.full_name}</h1>
-                <VerifiedBadge verified={trader.verified} />
+                <VerifiedBadge verified={isVerified(trader)} />
               </div>
               <p className="text-sm text-muted-foreground truncate">
                 {trader.business_name || cap(trader.account_type)}
@@ -90,6 +92,8 @@ export default function Profile() {
         </div>
 
         <VerificationCard trader={trader} onVerified={reload} />
+
+        {!isTrader && <BecomeTrader trader={trader} onUpgraded={reload} />}
 
         <ProfileProgress trader={trader} />
 

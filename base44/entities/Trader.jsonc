@@ -66,6 +66,23 @@
         }
       }
     },
+    "verified_as": {
+      "type": "string",
+      "enum": [
+        "",
+        "trader",
+        "buyer"
+      ],
+      "default": "",
+      "description": "Account type the verified badge was granted for, derived from the document checked. Set only by verificationWebhook; cleared by upgradeToTrader.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
     "phone": {
       "type": "string"
     },

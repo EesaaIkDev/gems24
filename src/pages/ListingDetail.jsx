@@ -11,6 +11,7 @@ import VerifiedBadge from "@/components/common/VerifiedBadge";
 import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { cap } from "@/lib/gems";
+import { isVerified } from "@/lib/verification";
 import Seo from "@/components/seo/Seo";
 import { SITE, absolute, listingAlt, listingPath, listingTitle } from "@/lib/seo";
 
@@ -197,7 +198,7 @@ export default function ListingDetail() {
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
                 <p className="font-semibold truncate">{owner.full_name}</p>
-                <VerifiedBadge verified={owner.verified} />
+                <VerifiedBadge verified={isVerified(owner)} />
               </div>
               <p className="text-xs text-muted-foreground truncate">
                 {owner.business_name}

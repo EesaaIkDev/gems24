@@ -5,6 +5,7 @@ import { MapPin, User } from "lucide-react";
 import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import { cap } from "@/lib/gems";
+import { isVerified } from "@/lib/verification";
 
 export default function TraderCard({ trader }) {
   const highlight = ["platinum", "gold"].includes(trader.subscription_tier);
@@ -28,7 +29,7 @@ export default function TraderCard({ trader }) {
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
                 <h3 className="font-semibold text-[15px] truncate">{trader.full_name}</h3>
-                <VerifiedBadge verified={trader.verified} />
+                <VerifiedBadge verified={isVerified(trader)} />
               </div>
               {trader.business_name && (
                 <p className="text-xs text-muted-foreground truncate">{trader.business_name}</p>

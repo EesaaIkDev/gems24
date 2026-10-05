@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Crown, Settings2 } from "lucide-react";
@@ -88,7 +89,12 @@ export default function Subscription() {
       <EmptyState
         icon={Crown}
         title="Subscriptions are for trader accounts"
-        description="Buyer accounts can browse and message traders for free — there's no plan to buy."
+        description="Buyer accounts can browse and message traders for free — there's no plan to buy. Switch to a trader account from your profile to start listing."
+        action={
+          <Button asChild className="h-11 px-6 font-semibold">
+            <Link to="/profile">Switch to trader</Link>
+          </Button>
+        }
       />
     );
 
