@@ -1,12 +1,21 @@
 import { createClientFromRequest } from "npm:@base44/sdk@0.8.52";
 import { sendPushNotification, userIdForTrader } from "../../shared/onesignal.ts";
 
+// Pushes go out once per message and only while it's fresh, so calling this
+// endpoint by hand can't be used to spam a trader.
+const FRESH_MS = 5 * 60 * 1000;
+
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
     const { message_id } = await req.json();
-    const msg = await base44.asServiceRole.entities.Message.get(message_id);
+    const msg = (await base44.asServiceRole.entities.Message.filter({ id: String(message_id || "") }))?.[0];
     if (!msg) return Response.json({ error: "Not found" }, { status: 404 });
+    if (msg.push_sent) return Response.json({ ok: true, skipped: "already sent" });
+    if (Date.now() - new Date(msg.created_date).getTime() > FRESH_MS) {
+      return Response.json({ ok: true, skipped: "stale" });
+    }
+    await base44.asServiceRole.entities.Message.update(msg.id, { push_sent: true });
     const convo = await base44.asServiceRole.entities.Conversation.get(msg.conversation_id);
     const recipientId = convo.participant_a_id === msg.sender_id ? convo.participant_b_id : convo.participant_a_id;
     const sender = await userIdForTrader(base44, msg.sender_id);
@@ -23,6 +32,7 @@ export default async function (req) {
     });
     return Response.json({ ok: true, result });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error("pushNewMessage failed", error);
+    return Response.json({ error: "Push failed" }, { status: 500 });
   }
 }

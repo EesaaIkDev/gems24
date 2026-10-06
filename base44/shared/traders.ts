@@ -34,6 +34,79 @@ export const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
 export const tierRank = (tier: string) => TIER_KEYS.indexOf(String(tier || '')) + 1;
 
+/** Stones on the market at once per grade. Mirrors TIERS in src/lib/gems.js. */
+export const TIER_LIMIT: Record<string, number> = {
+  none: 0,
+  bronze: 25,
+  silver: 40,
+  gold: 80,
+  platinum: 300,
+};
+
+/**
+ * Listing capacity right now. While a downgrade is scheduled the lower grade's
+ * limit already applies, so a trader who trimmed down can't refill before the
+ * switch lands.
+ */
+export function effectiveLimit(trader: any) {
+  if (trader?.account_type !== 'trader') return 0;
+  const tiers = [trader.subscription_tier, trader.pending_tier].filter(Boolean);
+  const base = Math.min(...tiers.map((t: string) => TIER_LIMIT[t] ?? 0));
+  if (!base) return 0;
+  return (
+    base +
+    (trader.referral_bonus_listings || 0) +
+    (trader.purchased_listings || 0) +
+    (trader.loyalty_bonus_listings || 0)
+  );
+}
+
+export const isActiveListing = (l: any) => l?.status !== 'sold';
+
+/** Verified badge only counts for the account type it was granted for. */
+export const isVerified = (t: any) =>
+  !!t?.verified && (!t.verified_as || t.verified_as === t.account_type);
+
+/** The fields a listing mirrors from its trader — always written server-side. */
+export const listingStamp = (t: any) => ({
+  trader_name: t?.full_name || '',
+  trader_country: t?.country || '',
+  trader_tier: t?.subscription_tier || 'none',
+  trader_verified: isVerified(t),
+});
+
+/** Re-copies a trader's public details onto every listing they own. */
+export async function restampListings(base44: any, trader: any) {
+  const stamp = listingStamp(trader);
+  const rows = await base44.asServiceRole.entities.Listing.filter({ trader_id: trader.id });
+  for (const l of rows || []) {
+    if (Object.entries(stamp).some(([k, v]) => l[k] !== v)) {
+      await base44.asServiceRole.entities.Listing.update(l.id, stamp);
+    }
+  }
+}
+
+/** The caller's trader row from the authenticated session, or null. */
+export async function sessionTrader(base44: any) {
+  let user: any = null;
+  try {
+    user = await base44.auth.me();
+  } catch {
+    user = null;
+  }
+  if (!user?.email) return { user: null, trader: null };
+  return { user, trader: await callerTrader(base44, user.email) };
+}
+
+/** The accepted (or any) connection row between two traders, if one exists. */
+export async function connectionBetween(base44: any, a: string, b: string) {
+  const [x, y] = await Promise.all([
+    base44.asServiceRole.entities.Connection.filter({ requester_id: a, recipient_id: b }),
+    base44.asServiceRole.entities.Connection.filter({ requester_id: b, recipient_id: a }),
+  ]);
+  return [...(x || []), ...(y || [])][0] ?? null;
+}
+
 /**
  * The caller's own trader row, resolved from the authenticated session. The
  * client never supplies a trader id — that is what let a browser grant

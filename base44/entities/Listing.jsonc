@@ -6,10 +6,26 @@
       "type": "string"
     },
     "trader_name": {
-      "type": "string"
+      "type": "string",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "description": "Copied from the trader by the stampListing backend function. Never written by the client."
     },
     "trader_country": {
-      "type": "string"
+      "type": "string",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "description": "Copied from the trader by the stampListing backend function. Never written by the client."
     },
     "trader_tier": {
       "type": "string",
@@ -20,11 +36,27 @@
         "gold",
         "platinum"
       ],
-      "default": "none"
+      "default": "none",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "description": "Copied from the trader by the stampListing backend function. Never written by the client."
     },
     "trader_verified": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "description": "Copied from the trader by the stampListing backend function. Never written by the client."
     },
     "photos": {
       "type": "array",

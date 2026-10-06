@@ -8,6 +8,7 @@ import EmptyState from "@/components/common/EmptyState";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
+import { respondToRequest } from "@/lib/network";
 
 export default function Connections() {
   const { user, trader, loading } = useCurrentTrader();
@@ -42,7 +43,7 @@ export default function Connections() {
   }, [load]);
 
   const respond = async (c, status) => {
-    await base44.entities.Connection.update(c.id, { status });
+    await respondToRequest(c.id, status);
     load();
   };
 

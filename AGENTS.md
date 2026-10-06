@@ -32,3 +32,5 @@ npx skills add base44/skills
 - Prefer the existing Base44 CLI workflow over adding new npm scripts for Base44-specific tasks.
 - Reuse the existing SDK client and Vite plugin patterns before adding new Base44 integration paths.
 - Run the relevant checks from `package.json` before finishing code changes.
+- Backend function tests run the real `base44/functions/*/entry.ts` handlers against an in-memory SDK mock: `deno test --allow-env --allow-read --config tests/backend/deno.json tests/backend`. Add a case there when changing permissions, the store webhook, listings, chat or connections.
+- Security model: plan, referral, verification and listing-badge fields are server-only (FLS `write: admin`); chats, messages and connections are created only by backend functions and readable only by their participants (stamped user ids); phone/contact email/presence are owner-only and shared with accepted connections via `connectedProfile`.

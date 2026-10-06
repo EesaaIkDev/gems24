@@ -38,11 +38,9 @@ export async function getConnection(viewerId, otherId) {
 export async function networkWith(viewerId, otherTrader) {
   const existing = await getConnection(viewerId, otherTrader.id);
   if (existing) return existing;
-  return base44.entities.Connection.create({
-    requester_id: viewerId,
-    recipient_id: otherTrader.id,
-    status: "pending",
-  });
+  // Created server-side so the requester can't be spoofed.
+  const { data } = await base44.functions.invoke("requestConnection", { trader_id: otherTrader.id });
+  return data?.connection ?? null;
 }
 
 /** True when the viewer sent a request that the other trader hasn't answered. */
@@ -59,8 +57,25 @@ export const isAwaitingMyApproval = (connection, viewerId) =>
  * from the requester's side with no negative signal.
  */
 export async function respondToRequest(connectionId, status) {
-  if (status === "declined") return base44.entities.Connection.delete(connectionId);
-  return base44.entities.Connection.update(connectionId, { status: "accepted" });
+  const { data } = await base44.functions.invoke("respondConnection", {
+    connection_id: connectionId,
+    accept: status === "accepted",
+  });
+  return data?.connection ?? null;
+}
+
+/**
+ * Contact email and Active/Away presence for an accepted connection. Those
+ * fields are private on the profile itself, so the server hands them out only
+ * once the two traders are connected.
+ */
+export async function getConnectedProfile(traderId) {
+  try {
+    const { data } = await base44.functions.invoke("connectedProfile", { trader_id: traderId });
+    return data?.connected ? data : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function listIncomingRequests(viewerId) {

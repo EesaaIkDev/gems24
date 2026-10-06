@@ -35,8 +35,12 @@ export default function NetworkButton({ viewerId, other, connection, context, cl
 
   const openChat = async () => {
     setBusy(true);
-    const conversation = await findOrCreateConversation(viewerId, other.id, context);
-    navigate(`/messages/${conversation.id}`);
+    try {
+      const conversation = await findOrCreateConversation(other.id, context);
+      navigate(`/messages/${conversation.id}`);
+    } catch {
+      setBusy(false);
+    }
   };
 
   const onClick = async () => {

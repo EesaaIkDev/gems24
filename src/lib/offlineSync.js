@@ -27,6 +27,20 @@ export function strip(row) {
   return clean;
 }
 
+/**
+ * Fields the server writes itself. They're kept on the local row so the UI can
+ * render straight away, but never sent — the backend rejects client writes.
+ */
+const SERVER_FIELDS = {
+  Listing: ["trader_name", "trader_country", "trader_tier", "trader_verified"],
+};
+
+const serverSafe = (entity, data) => {
+  const clean = { ...data };
+  for (const f of SERVER_FIELDS[entity] || []) delete clean[f];
+  return clean;
+};
+
 /** Rows safe to render: tombstones hidden. */
 export const visible = (rows) => (rows || []).filter((r) => !r._deleted);
 
@@ -92,12 +106,12 @@ export async function flushOutbox() {
       }
       try {
         if (job.op === "create") {
-          const saved = await api.create(job.data);
+          const saved = await api.create(serverSafe(job.entity, job.data));
           // Temp row goes away so the record can never show up twice.
           await removeRow(job.entity, job.localId);
           if (saved?.id) await putRow(job.entity, saved);
         } else if (job.op === "update") {
-          const saved = await api.update(job.id, job.data);
+          const saved = await api.update(job.id, serverSafe(job.entity, job.data));
           if (saved?.id) await putRow(job.entity, saved);
           else await putRow(job.entity, { ...job.prev, ...job.data, id: job.id });
         } else if (job.op === "delete") {

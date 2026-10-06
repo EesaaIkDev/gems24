@@ -40,6 +40,8 @@ export default async function (req: Request): Promise<Response> {
       verified: false,
       verified_as: '',
       subscription_tier: 'none',
+      pending_tier: '',
+      pending_tier_at: null,
     });
 
     const state = (

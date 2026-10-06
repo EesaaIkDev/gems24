@@ -24,11 +24,9 @@ const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 export const generateReferralCode = () =>
   Array.from({ length: 6 }, () => ALPHABET[Math.floor(Math.random() * ALPHABET.length)]).join("");
 
-/** Fields every newly created trader gets, so a code exists from signup. */
+/** Fields every newly created trader gets, so a code exists from signup. Counters are server-owned. */
 export const newTraderReferralFields = () => ({
   referral_code: generateReferralCode(),
-  referral_count: 0,
-  referral_bonus_listings: 0,
 });
 
 export const referralLink = (code) => `${window.location.origin}/join?code=${code}`;
@@ -36,9 +34,15 @@ export const referralLink = (code) => `${window.location.origin}/join?code=${cod
 export const referralMessage = (code) =>
   `I've been trading gemstones on Gems24 — join with my code ${code} and we can connect: ${referralLink(code)}`;
 
-/** Tier capacity plus referral bonuses and any slots bought outright. */
-export function effectiveLimit(trader) {
-  const base = tierLimit(trader?.subscription_tier);
+/**
+ * Tier capacity plus referral bonuses and any slots bought outright. While a
+ * downgrade is scheduled the lower grade's limit already applies. Mirrors
+ * effectiveLimit in base44/shared/traders.ts, which is what's enforced.
+ */
+export function effectiveLimit(trader, tier) {
+  const base = tier
+    ? tierLimit(tier)
+    : Math.min(tierLimit(trader?.subscription_tier), trader?.pending_tier ? tierLimit(trader.pending_tier) : Infinity);
   if (base === Infinity) return Infinity;
   return (
     base +

@@ -87,9 +87,9 @@ export default function Onboarding() {
       ...newTraderReferralFields(),
       account_type: accountType,
       user_email: email,
-      subscription_tier: "none",
-      // `verified` is deliberately not sent: it is backend-write-only now, so
-      // including it here would be rejected. The entity default is already false.
+      // `verified`, `subscription_tier` and the referral counters are
+      // deliberately not sent: they are backend-write-only, so including them
+      // would be rejected. The entity defaults already apply.
       signup_source: attribution?.source || ""
     });
     // Email is verified by this point, so the referrer's bonus lands now.

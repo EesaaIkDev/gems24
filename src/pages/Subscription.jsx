@@ -1,8 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
-import { Crown, Settings2 } from "lucide-react";
+import { CalendarClock, Crown, Settings2, TriangleAlert } from "lucide-react";
+import DowngradeSheet from "@/components/subscription/DowngradeSheet";
+import { base44 } from "@/api/base44Client";
+import { effectiveLimit } from "@/lib/referral";
+import { renewalLabel } from "@/lib/plan";
 import TierRow from "@/components/subscription/TierRow";
 import RedeemCode from "@/components/subscription/RedeemCode";
 import BuyListings from "@/components/subscription/BuyListings";
@@ -46,7 +50,20 @@ export default function Subscription() {
   const [selected, setSelected] = useState(null);
   const [discount, setDiscount] = useState(null);
   const [splash, setSplash] = useState(null);
+  const [downgrade, setDowngrade] = useState(null);
+  const [trimOnly, setTrimOnly] = useState(false);
+  const [listings, setListings] = useState([]);
   const lastRank = useRef(null);
+
+  const loadListings = useCallback(async () => {
+    if (!trader?.id) return;
+    const rows = await base44.entities.Listing.filter({ trader_id: trader.id }, "created_date", 500).catch(() => []);
+    setListings(rows.filter((l) => l.status !== "sold"));
+  }, [trader?.id]);
+
+  useEffect(() => {
+    loadListings();
+  }, [loadListings]);
 
   // A completed purchase surfaces as a higher grade coming back from the store.
   useEffect(() => {
@@ -61,9 +78,20 @@ export default function Subscription() {
     lastRank.current = rank;
   }, [trader?.subscription_tier, trader]);
 
+  // Lower grades wait for the end of the plan year (and need the listings to
+  // fit); higher grades go straight to billing and apply once paid.
   const openTier = (t) => {
+    if (tierRank(trader?.subscription_tier) > 0 && tierRank(t) < tierRank(trader.subscription_tier)) {
+      setTrimOnly(false);
+      return setDowngrade(t);
+    }
     setDiscount(null);
     setSelected(t);
+  };
+
+  const onListingsChanged = async () => {
+    await loadListings();
+    await reload();
   };
 
   const closeSheet = () => {
@@ -99,6 +127,9 @@ export default function Subscription() {
     );
 
   const tier = trader?.subscription_tier || "none";
+  const pending = trader?.pending_tier || "";
+  const overBy = pending ? Math.max(0, listings.length - effectiveLimit(trader)) : 0;
+  const isUpgrade = selected && tierRank(tier) > 0 && tierRank(selected) > tierRank(tier);
 
   return (
     <div className="px-4 pb-14 pt-8">
@@ -117,7 +148,56 @@ export default function Subscription() {
             <TierBadge tier={tier} />
           )}
         </div>
+        {tier !== "none" && !pending && trader?.plan_renews_at && (
+          <p className="mt-2 text-xs text-muted-foreground">Renews on {renewalLabel(trader)}</p>
+        )}
       </div>
+
+      {pending && (
+        <div className="mx-auto mt-6 max-w-lg space-y-3">
+          <div className="rounded-2xl border border-border bg-card p-4">
+            <div className="flex items-center gap-2">
+              <CalendarClock className="h-4 w-4 text-primary" />
+              <p className="text-sm font-semibold">
+                Switching to {TIERS[pending].label} on {renewalLabel(trader)}
+              </p>
+            </div>
+            <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+              You keep {TIERS[tier].label} until then. Changed your mind? Cancel the switch from Manage
+              subscription before that date.
+            </p>
+            {isNative && (
+              <Button variant="outline" className="mt-3 w-full" onClick={() => openCustomerCenter(trader.id)}>
+                Keep {TIERS[tier].label}
+              </Button>
+            )}
+          </div>
+          {overBy > 0 && (
+            <div className="rounded-2xl border border-destructive/40 bg-card p-4">
+              <div className="flex items-center gap-2">
+                <TriangleAlert className="h-4 w-4 text-destructive" />
+                <p className="text-sm font-semibold">
+                  Delete {overBy} {overBy === 1 ? "listing" : "listings"} before {renewalLabel(trader)}
+                </p>
+              </div>
+              <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                {TIERS[pending].label} allows fewer active listings than you have. You can't add new ones until
+                you're within the limit.
+              </p>
+              <Button
+                variant="destructive"
+                className="mt-3 w-full"
+                onClick={() => {
+                  setTrimOnly(true);
+                  setDowngrade(pending);
+                }}
+              >
+                Choose listings to delete
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="mx-auto mt-9 grid max-w-lg grid-cols-1 gap-4 sm:max-w-3xl sm:grid-cols-2">
         {TIER_ORDER.map((t) => (
@@ -188,7 +268,9 @@ export default function Subscription() {
               </Button>
               {online && (
                 <p className="text-center text-xs text-muted-foreground">
-                  Your annual total is shown on the next screen before you confirm.
+                  {isUpgrade
+                    ? `Upgrades apply as soon as your app store confirms payment, and your plan year restarts from that day. Your unused ${TIERS[tier].label} time is credited by the store.`
+                    : "Your annual total is shown on the next screen before you confirm."}
                 </p>
               )}
               {!online && (
@@ -200,6 +282,17 @@ export default function Subscription() {
           )}
         </div>
       </BottomSheet>
+
+      {trader && (
+        <DowngradeSheet
+          trader={trader}
+          tier={downgrade}
+          listings={listings}
+          scheduled={trimOnly}
+          onClose={() => setDowngrade(null)}
+          onChanged={onListingsChanged}
+        />
+      )}
 
       {splash && (
         <SuccessSplash title={splash.title} subtitle={splash.subtitle} onDone={() => setSplash(null)} />

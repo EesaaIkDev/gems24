@@ -1,0 +1,39 @@
+{
+  "name": "Trader listing sync",
+  "description": "Keeps the trader details copied onto listings in step with the trader's profile, grade and badge",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "Trader",
+      "events": [
+        "update"
+      ]
+    },
+    "condition": "${ .trigger.data.full_name != .trigger.old_data.full_name or .trigger.data.country != .trigger.old_data.country or .trigger.data.subscription_tier != .trigger.old_data.subscription_tier or .trigger.data.verified != .trigger.old_data.verified or .trigger.data.verified_as != .trigger.old_data.verified_as or .trigger.data.account_type != .trigger.old_data.account_type }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "trader_listing_sync",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "sync_listings": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "syncTraderListings",
+            "args": {
+              "trader_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Sync listings"
+          }
+        }
+      }
+    ]
+  }
+}

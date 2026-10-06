@@ -4,29 +4,100 @@
   "properties": {
     "participant_a_id": {
       "type": "string",
-      "description": "Trader id, lexicographically smaller of the pair"
+      "description": "Trader id, lexicographically smaller of the pair",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "participant_b_id": {
       "type": "string",
-      "description": "Trader id, lexicographically larger of the pair"
+      "description": "Trader id, lexicographically larger of the pair",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "participant_a_user_id": {
+      "type": "string",
+      "description": "App user id owning participant A. Set only by openConversation.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "participant_b_user_id": {
+      "type": "string",
+      "description": "App user id owning participant B. Set only by openConversation.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "context_label": {
       "type": "string",
-      "description": "Where the chat was started from, e.g. '5.2 ct Sapphire'"
+      "description": "Where the chat was started from, e.g. '5.2 ct Sapphire'",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "context_path": {
       "type": "string",
-      "description": "App path back to the listing or profile"
+      "description": "App path back to the listing or profile",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "last_message": {
-      "type": "string"
+      "type": "string",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "last_message_at": {
       "type": "string",
-      "format": "date-time"
+      "format": "date-time",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "last_sender_id": {
-      "type": "string"
+      "type": "string",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "unread_a": {
       "type": "number",
@@ -53,14 +124,47 @@
   ],
   "rls": {
     "create": {
-      "created_by_id": "{{user.id}}"
+      "user_condition": {
+        "role": "admin"
+      }
     },
-    "read": null,
-    "update": null,
+    "read": {
+      "$or": [
+        {
+          "data.participant_a_user_id": "{{user.id}}"
+        },
+        {
+          "data.participant_b_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.participant_a_user_id": "{{user.id}}"
+        },
+        {
+          "data.participant_b_user_id": "{{user.id}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
     "delete": {
       "$or": [
         {
-          "created_by_id": "{{user.id}}"
+          "data.participant_a_user_id": "{{user.id}}"
+        },
+        {
+          "data.participant_b_user_id": "{{user.id}}"
         },
         {
           "user_condition": {

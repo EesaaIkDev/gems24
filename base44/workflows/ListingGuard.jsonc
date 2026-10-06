@@ -1,0 +1,41 @@
+{
+  "name": "Listing guard",
+  "description": "Checks ownership and plan capacity, and copies the trader's public details onto the listing",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "Listing",
+      "events": [
+        "create",
+        "update"
+      ]
+    },
+    "condition": "${ .trigger.event_type == \"create\" or .trigger.data.status != .trigger.old_data.status or .trigger.data.trader_id != .trigger.old_data.trader_id }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "listing_guard",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "check_listing": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "stampListing",
+            "args": {
+              "listing_id": "${ .trigger.entity_id }",
+              "event_type": "${ .trigger.event_type }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Check listing"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -15,6 +15,7 @@ import { cap } from "@/lib/gems";
 import { isVerified } from "@/lib/verification";
 import {
   findConnection,
+  getConnectedProfile,
   isAwaitingMyApproval,
   isAwaitingTheirApproval,
   listMyConnections,
@@ -26,12 +27,17 @@ export default function TraderProfile() {
   const { id } = useParams();
   const { trader: viewer, loading: viewerLoading } = useCurrentTrader();
   const [connection, setConnection] = useState(undefined);
+  const [privateDetails, setPrivateDetails] = useState(null);
 
   const isSelf = viewer?.id === id;
 
   const loadConnection = async (viewerId) => {
     const rows = await listMyConnections(viewerId);
-    setConnection(findConnection(rows, viewerId, id));
+    const c = findConnection(rows, viewerId, id);
+    setConnection(c);
+    // Contact details are private on the profile row; the server shares them
+    // with accepted connections only.
+    setPrivateDetails(c?.status === "accepted" ? await getConnectedProfile(id) : null);
   };
 
   const { data, loading, error, reload } = useLoader(async () => {
@@ -53,6 +59,7 @@ export default function TraderProfile() {
   const { trader, listings } = data;
   const connected = connection?.status === "accepted";
   const showContact = isSelf || connected;
+  const contactEmail = isSelf ? viewer?.contact_email : privateDetails?.contact_email;
   const requestSent = isAwaitingTheirApproval(connection, viewer?.id);
   const needsMyReply = isAwaitingMyApproval(connection, viewer?.id);
   const active = listings.filter((l) => l.status !== "sold");
@@ -157,13 +164,13 @@ export default function TraderProfile() {
             <p className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground font-semibold">Contact details</p>
             {showContact ? (
               <div className="mt-2 space-y-1.5">
-                {trader.contact_email && (
-                  <a href={`mailto:${trader.contact_email}`} className="flex items-center gap-2 text-sm hover:text-primary">
-                    <Mail className="w-4 h-4 text-primary" /> {trader.contact_email}
+                {contactEmail && (
+                  <a href={`mailto:${contactEmail}`} className="flex items-center gap-2 text-sm hover:text-primary">
+                    <Mail className="w-4 h-4 text-primary" /> {contactEmail}
                   </a>
                 )}
                 {/* Phone numbers stay private — never shown to other users. */}
-                {!trader.contact_email && (
+                {!contactEmail && (
                   <p className="text-sm text-muted-foreground">No contact details added yet.</p>
                 )}
               </div>

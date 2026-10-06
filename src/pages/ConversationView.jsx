@@ -12,7 +12,7 @@ import useKeyboardInset from "@/components/chat/useKeyboardInset";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useChatPresence from "@/hooks/useChatPresence";
 import { isActive, markRead, otherIdOf, otherReadAt, sendMessage } from "@/lib/chat";
-import { canMessage, getConnection } from "@/lib/network";
+import { canMessage, getConnectedProfile, getConnection } from "@/lib/network";
 import { isVerified } from "@/lib/verification";
 
 export default function ConversationView() {
@@ -36,9 +36,14 @@ export default function ConversationView() {
       setConversation(c);
       markRead(c, trader.id, trader.read_receipts !== false);
       const otherId = otherIdOf(c, trader.id);
-      setOther(await base44.entities.Trader.get(otherId).catch(() => null));
-      const connection = await getConnection(trader.id, otherId).catch(() => null);
-      if (!cancelled) setNetworked(canMessage(connection));
+      const [profile, connection, extra] = await Promise.all([
+        base44.entities.Trader.get(otherId).catch(() => null),
+        getConnection(trader.id, otherId).catch(() => null),
+        getConnectedProfile(otherId),
+      ]);
+      if (cancelled) return;
+      setOther(profile && { ...profile, active_at: extra?.active_at || null });
+      setNetworked(canMessage(connection));
     };
     load();
     return () => {
@@ -64,10 +69,16 @@ export default function ConversationView() {
     });
   }, [id, trader?.id, trader?.read_receipts]);
 
-  // Refresh the other trader's Active/Away status.
+  // Refresh the other trader's Active/Away status (private; served to connections only).
   useEffect(() => {
     if (!other?.id) return;
-    const t = setInterval(() => base44.entities.Trader.get(other.id).then(setOther).catch(() => {}), 60000);
+    const t = setInterval(
+      () =>
+        getConnectedProfile(other.id).then((extra) =>
+          setOther((o) => o && { ...o, active_at: extra?.active_at || null })
+        ),
+      60000
+    );
     return () => clearInterval(t);
   }, [other?.id]);
 
@@ -81,8 +92,8 @@ export default function ConversationView() {
   const receiptsOn = other && trader.read_receipts !== false && other.read_receipts !== false;
   const readAt = receiptsOn ? otherReadAt(conversation, trader, other) || "" : null;
   const send = async (text) => {
-    await sendMessage(conversation, trader.id, text);
-    setConversation(await base44.entities.Conversation.get(id));
+    const sent = await sendMessage(conversation, text);
+    if (sent?.conversation) setConversation(sent.conversation);
   };
 
   return (

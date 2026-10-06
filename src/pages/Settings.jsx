@@ -14,6 +14,7 @@ import PreferenceSwitch from "@/components/settings/PreferenceSwitch";
 import useTheme from "@/hooks/useTheme";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { TIERS } from "@/lib/gems";
+import { renewalLabel } from "@/lib/plan";
 
 export default function Settings() {
   const { dark, setDark } = useTheme();
@@ -75,7 +76,9 @@ export default function Settings() {
             <p className="mt-1.5 text-xs text-muted-foreground">
               {trader.subscription_tier === "none"
                 ? "No active plan — you can browse and enquire, but not publish listings."
-                : `${TIERS[trader.subscription_tier].label} plan active.`}
+                : trader.pending_tier
+                  ? `${TIERS[trader.subscription_tier].label} plan active — switching to ${TIERS[trader.pending_tier].label} on ${renewalLabel(trader)}.`
+                  : `${TIERS[trader.subscription_tier].label} plan active${trader.plan_renews_at ? ` — renews on ${renewalLabel(trader)}` : ""}.`}
             </p>
             <Button asChild variant="outline" className="mt-3 w-full h-11">
               <Link to="/subscription">{trader.subscription_tier === "none" ? "View plans" : "Change plan"}</Link>

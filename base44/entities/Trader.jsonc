@@ -4,7 +4,24 @@
   "properties": {
     "user_email": {
       "type": "string",
-      "description": "Email of the owning app user"
+      "description": "Email of the owning app user",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "data.user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "account_type": {
       "type": "string",
@@ -12,7 +29,20 @@
         "trader",
         "buyer"
       ],
-      "default": "trader"
+      "default": "trader",
+      "rls": {
+        "update": {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        "delete": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      },
+      "description": "Chosen at signup. Afterwards only upgradeToTrader may change it (buyer -> trader, one way)."
     },
     "full_name": {
       "type": "string"
@@ -52,7 +82,57 @@
         "gold",
         "platinum"
       ],
-      "default": "none"
+      "default": "none",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "plan_renews_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "End of the current paid plan year, as reported by the store. Set only by storeWebhook.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "pending_tier": {
+      "type": "string",
+      "enum": [
+        "",
+        "bronze",
+        "silver",
+        "gold",
+        "platinum"
+      ],
+      "default": "",
+      "description": "Lower grade the trader has switched to in the store; takes effect at plan_renews_at. Set only by storeWebhook.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "pending_tier_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When pending_tier takes effect. Set only by storeWebhook.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "verified": {
       "type": "boolean",
@@ -84,10 +164,46 @@
       }
     },
     "phone": {
-      "type": "string"
+      "type": "string",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "data.user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      },
+      "description": "Private: readable by the owner only. Never shown to other users."
     },
     "contact_email": {
-      "type": "string"
+      "type": "string",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "data.user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      },
+      "description": "Private: owner only. Shared with accepted connections through connectedProfile."
     },
     "require_message_approval": {
       "type": "boolean",
@@ -104,41 +220,117 @@
     },
     "referred_by_code": {
       "type": "string",
-      "description": "Referral code this trader signed up with"
+      "description": "Referral code this trader signed up with",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "referral_count": {
       "type": "number",
       "default": 0,
-      "description": "Confirmed signups attributed to this trader, all time"
+      "description": "Confirmed signups attributed to this trader, all time",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "referral_bonus_listings": {
       "type": "number",
       "default": 0,
-      "description": "Extra active listing slots earned from referrals"
+      "description": "Extra active listing slots earned from referrals",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "referral_count_year": {
       "type": "number",
       "default": 0,
-      "description": "Referrals used in the current 12-month window"
+      "description": "Referrals used in the current 12-month window",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "referral_year_start": {
       "type": "string",
       "format": "date-time",
-      "description": "Start of the current 12-month referral window"
+      "description": "Start of the current 12-month referral window",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "purchased_listings": {
       "type": "number",
       "default": 0,
-      "description": "Extra listing slots bought individually \u2014 never expire or reset"
+      "description": "Extra listing slots bought individually \u2014 never expire or reset",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "active_conversation_id": {
       "type": "string",
-      "description": "Conversation the trader is currently viewing; used to mute pushes"
+      "description": "Conversation the trader is currently viewing; used to mute pushes",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "data.user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "active_at": {
       "type": "string",
       "format": "date-time",
-      "description": "Last presence heartbeat"
+      "description": "Last presence heartbeat. Owner only; accepted connections read it through connectedProfile.",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "data.user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
     },
     "read_receipts": {
       "type": "boolean",

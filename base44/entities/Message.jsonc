@@ -11,6 +11,29 @@
     },
     "text": {
       "type": "string"
+    },
+    "recipient_user_id": {
+      "type": "string",
+      "description": "App user id of the recipient. Set only by sendChatMessage.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "push_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Set by pushNewMessage so a message is pushed at most once.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     }
   },
   "required": [
@@ -20,13 +43,17 @@
   ],
   "rls": {
     "create": {
-      "created_by_id": "{{user.id}}"
+      "user_condition": {
+        "role": "admin"
+      }
     },
-    "read": null,
-    "update": {
+    "read": {
       "$or": [
         {
           "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.recipient_user_id": "{{user.id}}"
         },
         {
           "user_condition": {
@@ -35,10 +62,18 @@
         }
       ]
     },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
     "delete": {
       "$or": [
         {
           "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.recipient_user_id": "{{user.id}}"
         },
         {
           "user_condition": {

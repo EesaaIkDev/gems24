@@ -11,7 +11,8 @@ import PhotoUploader from "@/components/listings/PhotoUploader";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
-import { GEM_TYPES, TREATMENTS, cap, tierLimit } from "@/lib/gems";
+import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
+import { effectiveLimit } from "@/lib/referral";
 import { isVerified } from "@/lib/verification";
 import { createRecord, updateRecord } from "@/lib/offlineSync";
 import useOnline from "@/hooks/useOnline";
@@ -50,9 +51,9 @@ export default function ListingEditor() {
     if (!trader?.id || id) return;
     base44.entities.Listing.filter({ trader_id: trader.id }).then((rows) => {
       const active = rows.filter((l) => l.status !== "sold").length;
-      setBlocked(active >= tierLimit(trader.subscription_tier));
+      setBlocked(active >= effectiveLimit(trader));
     });
-  }, [trader?.id, trader?.subscription_tier, id]);
+  }, [trader?.id, trader?.subscription_tier, trader?.pending_tier, id]);
 
   const uploadCert = async (e) => {
     const file = e.target.files?.[0];
