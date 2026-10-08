@@ -3,6 +3,8 @@ import { base44 } from "@/api/base44Client";
 import Spinner from "@/components/common/Spinner";
 import LoadError from "@/components/common/LoadError";
 import useOfflineEntity from "@/hooks/useOfflineEntity";
+import usePagedListings, { ON_MARKET } from "@/hooks/usePagedListings";
+import LoadMore from "@/components/common/LoadMore";
 import EmptyState from "@/components/common/EmptyState";
 import FeedPost from "@/components/feed/FeedPost";
 import ActivityStrip from "@/components/feed/ActivityStrip";
@@ -15,50 +17,56 @@ import { Gem } from "lucide-react";
 
 export default function Home() {
   const { trader: viewer, loading } = useCurrentTrader();
-  const [connections, setConnections] = useState([]);
+  const [connections, setConnections] = useState(null);
+  const [networkEmpty, setNetworkEmpty] = useState(false);
   const [q, setQ] = useState("");
 
-  // Local-first: the IndexedDB mirror paints instantly, the network refreshes it.
-  const listingsQuery = useOfflineEntity(
-    "Listing",
-    () => base44.entities.Listing.list("-created_date", 200),
-    []
-  );
   const tradersQuery = useOfflineEntity(
     "Trader",
     () => base44.entities.Trader.filter({ account_type: "trader" }, "-created_date", 200),
     []
   );
-
-  const listings = listingsQuery.rows;
   const traders = tradersQuery.rows || [];
-  const feedLoading = listings === null && listingsQuery.syncing;
-  const error = listings === null && listingsQuery.stale;
-  const reload = listingsQuery.refresh;
 
   useEffect(() => {
-    if (viewer?.id) listMyConnections(viewer.id).then(setConnections).catch(() => setConnections([]));
-  }, [viewer?.id]);
+    if (loading) return;
+    if (!viewer?.id) return setConnections([]);
+    listMyConnections(viewer.id).then(setConnections).catch(() => setConnections([]));
+  }, [viewer?.id, loading]);
 
   const tradersById = useMemo(() => Object.fromEntries(traders.map((t) => [t.id, t])), [traders]);
   const networkIds = useMemo(
-    () => (viewer?.id ? feedTraderIds(connections, viewer.id) : []),
+    () => (viewer?.id && connections ? feedTraderIds(connections, viewer.id) : []),
     [connections, viewer?.id]
   );
+  const networkKey = networkIds.join(",");
+  useEffect(() => setNetworkEmpty(false), [networkKey]);
 
+  // Network traders' stones, newest first, filtered on the server. With no
+  // network (or nothing listed by it yet) fall back to everyone else's newest.
+  const useNetwork = networkIds.length > 0 && !networkEmpty;
+  const feedQuery = useNetwork
+    ? { ...ON_MARKET, trader_id: { $in: networkIds } }
+    : { ...ON_MARKET, ...(viewer?.id ? { trader_id: { $ne: viewer.id } } : {}) };
+  const feed = usePagedListings({ query: feedQuery, sort: "-created_date", enabled: connections !== null });
+  const listings = feed.items;
+  const error = feed.error;
+  const reload = feed.refresh;
+
+  useEffect(() => {
+    if (useNetwork && listings && listings.length === 0 && !feed.hasMore) setNetworkEmpty(true);
+  }, [useNetwork, listings, feed.hasMore]);
+
+  // Free-text search over the pages loaded so far; LoadMore keeps fetching while it runs.
   const posts = useMemo(() => {
-    const available = (listings || []).filter((l) => l.status !== "sold" && l.trader_id !== viewer?.id);
-    const mine = available.filter((l) => networkIds.includes(l.trader_id));
-    // Nothing networked yet — show the newest stones so the feed is never empty.
-    const base = mine.length ? mine : available;
     const s = q.trim().toLowerCase();
-    if (!s) return base;
-    return base.filter((l) =>
+    if (!s) return listings || [];
+    return (listings || []).filter((l) =>
       [l.gemstone_type, l.origin, l.color, String(l.weight_carats)]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(s))
     );
-  }, [listings, networkIds, viewer?.id, q]);
+  }, [listings, q]);
 
   const activity = useMemo(
     () =>
@@ -84,8 +92,8 @@ export default function Home() {
     [traders, networkIds, viewer?.id]
   );
 
-  if (listings === null && (loading || feedLoading)) return <Spinner />;
   if (error) return <LoadError title="Couldn't load your feed" onRetry={reload} />;
+  if (listings === null) return <Spinner />;
 
   return (
     <div className="pb-4">
@@ -105,7 +113,7 @@ export default function Home() {
 
       <ActivityStrip items={activity} />
 
-      {posts.length === 0 ? (
+      {posts.length === 0 && !feed.hasMore ? (
         <EmptyState
           icon={Gem}
           title={q ? "No stones match your search" : "Nothing here yet"}
@@ -123,13 +131,15 @@ export default function Home() {
               trader={tradersById[l.trader_id]}
               viewerId={viewer?.id}
               connection={
-                viewer?.id ? findConnection(connections, viewer.id, l.trader_id) || null : null
+                viewer?.id ? findConnection(connections || [], viewer.id, l.trader_id) || null : null
               }
             />
             {i === 2 && <SuggestedTraders traders={suggested} />}
           </React.Fragment>
         ))
       )}
+
+      <LoadMore hasMore={feed.hasMore} loading={feed.loadingMore} onLoad={feed.loadMore} watch={listings.length} />
 
       {posts.length <= 2 && <SuggestedTraders traders={suggested} />}
     </div>

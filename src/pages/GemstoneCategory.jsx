@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Gem } from "lucide-react";
@@ -7,23 +7,32 @@ import Spinner from "@/components/common/Spinner";
 import EmptyState from "@/components/common/EmptyState";
 import Seo from "@/components/seo/Seo";
 import CategoryLinks from "@/components/seo/CategoryLinks";
-import useOfflineEntity from "@/hooks/useOfflineEntity";
-import { tierRank } from "@/lib/gems";
+import usePagedListings, { ON_MARKET } from "@/hooks/usePagedListings";
+import LoadMore from "@/components/common/LoadMore";
 import { CATEGORIES, SITE, absolute, categoryBySlug, listingTitle, listingPath } from "@/lib/seo";
 
 /** Indexable landing page for one gemstone variety. */
 export default function GemstoneCategory() {
   const { slug } = useParams();
   const category = categoryBySlug(slug);
-  const { rows: listings } = useOfflineEntity("Listing", () => base44.entities.Listing.list("-created_date", 200), []);
+  // Only this variety, on the market, grade-first — all decided on the server.
+  const query = { ...ON_MARKET, gemstone_type: category?.type ?? "" };
+  const page = usePagedListings({ query, sort: "-placement", enabled: !!category });
+  const listings = page.items;
+  const stones = listings || [];
+  const [total, setTotal] = useState(null);
 
-  const stones = useMemo(
-    () =>
-      (listings || [])
-        .filter((l) => l.gemstone_type === category?.type && l.status !== "sold")
-        .sort((a, b) => tierRank(b.trader_tier) - tierRank(a.trader_tier)),
-    [listings, category]
-  );
+  useEffect(() => {
+    if (!category) return;
+    let alive = true;
+    base44.entities.Listing.aggregate({ query: { ...ON_MARKET, gemstone_type: category.type } })
+      .then(({ rows }) => alive && setTotal(rows?.[0]?.count ?? null))
+      .catch(() => alive && setTotal(null));
+    return () => {
+      alive = false;
+    };
+  }, [category]);
+  const count = total ?? stones.length;
 
   if (!category)
     return (
@@ -49,7 +58,7 @@ export default function GemstoneCategory() {
           "@context": "https://schema.org",
           "@type": "ItemList",
           name: `${category.name} listings on Gems24`,
-          numberOfItems: stones.length,
+          numberOfItems: count,
           itemListElement: stones.slice(0, 25).map((l, i) => ({
             "@type": "ListItem",
             position: i + 1,
@@ -84,7 +93,7 @@ export default function GemstoneCategory() {
 
       <section aria-labelledby="cat-listings" className="space-y-3">
         <h2 id="cat-listings" className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-          Available {category.name.toLowerCase()} listings ({stones.length})
+          Available {category.name.toLowerCase()} listings ({count})
         </h2>
         {listings === null ? (
           <Spinner />
@@ -101,6 +110,7 @@ export default function GemstoneCategory() {
             ))}
           </div>
         )}
+        <LoadMore hasMore={page.hasMore} loading={page.loadingMore} onLoad={page.loadMore} watch={stones.length} />
       </section>
 
       <CategoryLinks exclude={category.slug} />

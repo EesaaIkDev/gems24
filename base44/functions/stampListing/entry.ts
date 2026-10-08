@@ -50,7 +50,7 @@ export default async function (req: Request): Promise<Response> {
       }
     }
 
-    const stamp = listingStamp(trader);
+    const stamp = listingStamp(trader, listing);
     if (Object.entries(stamp).some(([k, v]) => listing[k] !== v)) {
       await base44.asServiceRole.entities.Listing.update(listing.id, stamp);
     }

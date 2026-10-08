@@ -1,15 +1,16 @@
 import { useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { HEARTBEAT_MS, writePresence } from "@/lib/presence";
 
-/** Keeps the trader's "Active" status fresh while the app is open and visible. */
+/**
+ * Keeps the trader's "Active" status fresh while the app is open and visible:
+ * one write when the app comes to the foreground, then one every few minutes.
+ */
 export default function useActivityHeartbeat(traderId) {
   useEffect(() => {
     if (!traderId) return;
-    const beat = () =>
-      document.visibilityState === "visible" &&
-      base44.entities.Trader.update(traderId, { active_at: new Date().toISOString() }).catch(() => {});
+    const beat = () => document.visibilityState === "visible" && writePresence(traderId);
     beat();
-    const t = setInterval(beat, 60000);
+    const t = setInterval(beat, HEARTBEAT_MS);
     document.addEventListener("visibilitychange", beat);
     return () => {
       clearInterval(t);

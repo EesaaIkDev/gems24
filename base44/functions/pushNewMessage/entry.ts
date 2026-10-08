@@ -5,6 +5,11 @@ import { sendPushNotification, userIdForTrader } from "../../shared/onesignal.ts
 // endpoint by hand can't be used to spam a trader.
 const FRESH_MS = 5 * 60 * 1000;
 
+// The app writes presence every few minutes (src/lib/presence.js), and clears
+// active_conversation_id when the chat closes or the app is backgrounded, so a
+// matching id within this window means the recipient has the chat open.
+const VIEWING_MS = 5 * 60 * 1000;
+
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
@@ -22,7 +27,7 @@ export default async function (req) {
     const recipient = await userIdForTrader(base44, recipientId);
     const t = recipient.trader;
     const viewing = t?.active_conversation_id === msg.conversation_id &&
-      t?.active_at && Date.now() - new Date(t.active_at).getTime() < 60000;
+      t?.active_at && Date.now() - new Date(t.active_at).getTime() < VIEWING_MS;
     if (viewing) return Response.json({ ok: true, skipped: "recipient viewing chat" });
     const text = msg.text.length > 140 ? msg.text.slice(0, 137) + "..." : msg.text;
     const result = await sendPushNotification(recipient.userId, `New message from ${sender.name}`, text, {

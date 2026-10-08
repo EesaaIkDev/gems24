@@ -26,7 +26,7 @@ Deno.test('Trader: private fields are owner-only to read', () => {
 
 Deno.test('Listing: trader details are server-only', () => {
   const p = load('Listing').properties;
-  for (const f of ['trader_name', 'trader_country', 'trader_tier', 'trader_verified']) {
+  for (const f of ['trader_name', 'trader_country', 'trader_tier', 'trader_verified', 'placement']) {
     assert(serverOnly(p[f]), `${f} must be server-only`);
   }
 });

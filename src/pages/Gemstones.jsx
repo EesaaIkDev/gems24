@@ -11,6 +11,8 @@ import Spinner from "@/components/common/Spinner";
 import EmptyState from "@/components/common/EmptyState";
 import usePopularDefaults from "@/hooks/usePopularDefaults";
 import useOfflineEntity from "@/hooks/useOfflineEntity";
+import usePagedListings, { ON_MARKET } from "@/hooks/usePagedListings";
+import LoadMore from "@/components/common/LoadMore";
 import { GEM_TYPES, tierRank } from "@/lib/gems";
 import useCountries from "@/hooks/useCountries";
 import { matches, values } from "@/components/common/filterValues";
@@ -18,53 +20,65 @@ import Seo from "@/components/seo/Seo";
 import CategoryLinks from "@/components/seo/CategoryLinks";
 import { SITE, absolute } from "@/lib/seo";
 
+/** The structured stone filters as a server query — type, status, treatment, country and carats. */
+// Multi-value filters use an explicit $in: the array shorthand drops results
+// when combined with cursor pages on the live backend.
+function stoneQuery(f) {
+  const query = { ...ON_MARKET };
+  if (values(f.type).length) query.gemstone_type = { $in: values(f.type) };
+  if (values(f.treatment).length) query.treatment = { $in: values(f.treatment) };
+  if (values(f.country).length) query.trader_country = { $in: values(f.country) };
+  const min = f.minCt === "" ? null : Number(f.minCt);
+  const max = f.maxCt === "" ? null : Number(f.maxCt);
+  if (Number.isFinite(min) || Number.isFinite(max)) {
+    query.weight_carats = {
+      ...(Number.isFinite(min) ? { $gte: min } : {}),
+      ...(Number.isFinite(max) ? { $lte: max } : {}),
+    };
+  }
+  return query;
+}
+
 export default function Gemstones() {
-  const listingsQuery = useOfflineEntity(
-    "Listing",
-    () => base44.entities.Listing.list("-created_date", 200),
-    []
-  );
   const tradersQuery = useOfflineEntity(
     "Trader",
     () => base44.entities.Trader.filter({ account_type: "trader" }, "-created_date", 200),
     []
   );
-  const listings = listingsQuery.rows;
   const traders = tradersQuery.rows;
   const [stoneFilters, setStoneFilters] = useState({ q: "", type: [], treatment: [], country: [], minCt: "", maxCt: "" });
+  const [defaultsApplied, setDefaultsApplied] = useState(false);
   const [traderFilters, setTraderFilters] = useState({ specialty: [], tier: [], country: [] });
   const { countries } = useCountries();
   const [q, setQ] = useState("");
   const popular = usePopularDefaults();
 
-  // Smart defaults: land on the most-searched stone type instead of a blank grid.
+  // Smart defaults: land on the most-listed stone type instead of a blank grid.
   useEffect(() => {
     if (!popular) return;
     setStoneFilters((f) => (values(f.type).length ? f : { ...f, type: popular.gemstone_type ? [popular.gemstone_type] : [] }));
+    setDefaultsApplied(true);
   }, [popular]);
+
+  // Waits for the default type so the first request is the one actually shown.
+  const stones = usePagedListings({ query: stoneQuery(stoneFilters), sort: "-placement", enabled: defaultsApplied });
+  const listings = stones.items;
 
   const countryNames = useMemo(() => [...new Set([...countries.map((c) => c.name), ...(listings || []).map((l) => l.trader_country), ...(traders || []).map((t) => t.country)].filter(Boolean))].sort(), [countries, listings, traders]);
   const specialties = useMemo(() => [...new Set([...GEM_TYPES, ...(traders || []).flatMap((t) => t.specialties || [])])], [traders]);
 
+  // Filtering and grade-first order happen on the server; only free-text search
+  // runs here, over the pages loaded so far (LoadMore keeps fetching while searching).
   const filteredStones = useMemo(() => {
     if (!listings) return [];
     const s = (q || stoneFilters.q).toLowerCase();
-    return listings
-      .filter((l) => l.status !== "sold")
-      .filter((l) => matches(stoneFilters.type, l.gemstone_type))
-      .filter((l) => matches(stoneFilters.treatment, l.treatment))
-      .filter((l) => matches(stoneFilters.country, l.trader_country))
-      .filter((l) => (stoneFilters.minCt ? l.weight_carats >= Number(stoneFilters.minCt) : true))
-      .filter((l) => (stoneFilters.maxCt ? l.weight_carats <= Number(stoneFilters.maxCt) : true))
-      .filter((l) =>
-        s
-          ? [l.gemstone_type, l.color, l.origin, l.description, l.trader_name]
-              .filter(Boolean)
-              .some((v) => String(v).toLowerCase().includes(s))
-          : true
-      )
-      .sort((a, b) => tierRank(b.trader_tier) - tierRank(a.trader_tier));
-  }, [listings, stoneFilters, q]);
+    if (!s) return listings;
+    return listings.filter((l) =>
+      [l.gemstone_type, l.color, l.origin, l.description, l.trader_name]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(s))
+    );
+  }, [listings, stoneFilters.q, q]);
 
   const filteredTraders = useMemo(() => {
     if (!traders) return [];
@@ -114,7 +128,7 @@ export default function Gemstones() {
           <ListingFilters filters={stoneFilters} setFilters={setStoneFilters} countries={countryNames} />
           {listings === null ? (
             <Spinner />
-          ) : filteredStones.length === 0 ? (
+          ) : filteredStones.length === 0 && !stones.hasMore ? (
             <EmptyState icon={Gem} title="No stones match" description="Try clearing a filter or widening the carat range." />
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
@@ -123,6 +137,7 @@ export default function Gemstones() {
               ))}
             </div>
           )}
+          <LoadMore hasMore={stones.hasMore} loading={stones.loadingMore} onLoad={stones.loadMore} watch={listings?.length} />
         </TabsContent>
 
         <TabsContent value="traders" className="mt-3 space-y-3">

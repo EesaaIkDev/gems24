@@ -11,6 +11,7 @@ import connectedProfile from '../../base44/functions/connectedProfile/entry.ts';
 import pushNewMessage from '../../base44/functions/pushNewMessage/entry.ts';
 import pushConnection from '../../base44/functions/pushConnection/entry.ts';
 import backfillPrivacy from '../../base44/functions/backfillPrivacy/entry.ts';
+import syncTraderListings from '../../base44/functions/syncTraderListings/entry.ts';
 
 Deno.env.set('STORE_WEBHOOK_SECRET', 'shh');
 
@@ -134,6 +135,29 @@ Deno.test('listings: forged badge and grade are overwritten from the trader', as
   assertEquals(db.Listing[0].trader_name, 'Alice');
 });
 
+Deno.test('listings: placement sorts higher grades first, then newest', async () => {
+  reset(); seedPeople();
+  db.Listing = [
+    listing('GOLD_OLD', { created_date: '2026-01-01T00:00:00Z' }),
+    listing('GOLD_NEW', { created_date: '2026-06-01T00:00:00Z' }),
+    { id: 'BRONZE_NEWEST', trader_id: 'E', created_by_id: EVE.id, status: 'available', created_date: '2026-09-01T00:00:00Z' },
+  ];
+  for (const l of [...db.Listing]) await call(stampListing, { listing_id: l.id, event_type: 'create' });
+  const order = [...db.Listing].sort((a, b) => b.placement - a.placement).map((l) => l.id);
+  assertEquals(order, ['GOLD_NEW', 'GOLD_OLD', 'BRONZE_NEWEST']);
+});
+
+Deno.test('listings: a grade change re-sorts the trader\'s listings', async () => {
+  reset(); seedPeople();
+  db.Listing = [listing('L', { created_date: '2026-01-01T00:00:00Z' })];
+  await call(stampListing, { listing_id: 'L', event_type: 'create' });
+  const before = db.Listing[0].placement;
+  db.Trader[0].subscription_tier = 'platinum';
+  await call(syncTraderListings, { trader_id: 'A' });
+  assert(db.Listing[0].placement > before);
+  assertEquals(db.Listing[0].trader_tier, 'platinum');
+});
+
 Deno.test('listings: over capacity — new listing removed, reactivated one goes back to sold', async () => {
   reset(); seedPeople();
   db.Trader[0].subscription_tier = 'bronze'; // 25
@@ -245,6 +269,22 @@ Deno.test('push: each message and each connection status is pushed once', async 
   await call(pushConnection, { connection_id: 'K' });
   await call(pushConnection, { connection_id: 'K' });
   assertEquals(state.pushes.length, 2);
+});
+
+Deno.test('push: muted while the recipient has the chat open, even between heartbeats', async () => {
+  reset(); seedPeople();
+  db.Conversation = [{ id: 'C', participant_a_id: 'A', participant_b_id: 'B' }];
+  // Bob opened the chat 3 minutes ago — presence is only rewritten every few minutes now.
+  Object.assign(db.Trader[1], { active_conversation_id: 'C', active_at: new Date(Date.now() - 3 * 60e3).toISOString() });
+  db.Message = [{ id: 'M', conversation_id: 'C', sender_id: 'A', text: 'hi', created_date: new Date().toISOString() }];
+  await call(pushNewMessage, { message_id: 'M' });
+  assertEquals(state.pushes.length, 0);
+
+  // Left the chat (id cleared): pushed.
+  db.Trader[1].active_conversation_id = '';
+  db.Message.push({ id: 'M2', conversation_id: 'C', sender_id: 'A', text: 'hi', created_date: new Date().toISOString() });
+  await call(pushNewMessage, { message_id: 'M2' });
+  assertEquals(state.pushes.length, 1);
 });
 
 // ---------------------------------------------------------------- migration

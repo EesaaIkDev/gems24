@@ -67,19 +67,27 @@ export const isActiveListing = (l: any) => l?.status !== 'sold';
 export const isVerified = (t: any) =>
   !!t?.verified && (!t.verified_as || t.verified_as === t.account_type);
 
+/**
+ * Sort key for marketplace order: higher grade first, newest first within a
+ * grade. One number so the server can sort and paginate on it directly.
+ */
+export const placementScore = (tier: string, createdDate?: string) =>
+  tierRank(tier) * 1e13 + (Date.parse(createdDate || '') || 0);
+
 /** The fields a listing mirrors from its trader — always written server-side. */
-export const listingStamp = (t: any) => ({
+export const listingStamp = (t: any, listing?: any) => ({
   trader_name: t?.full_name || '',
   trader_country: t?.country || '',
   trader_tier: t?.subscription_tier || 'none',
   trader_verified: isVerified(t),
+  placement: placementScore(t?.subscription_tier, listing?.created_date),
 });
 
 /** Re-copies a trader's public details onto every listing they own. */
 export async function restampListings(base44: any, trader: any) {
-  const stamp = listingStamp(trader);
   const rows = await base44.asServiceRole.entities.Listing.filter({ trader_id: trader.id });
   for (const l of rows || []) {
+    const stamp = listingStamp(trader, l);
     if (Object.entries(stamp).some(([k, v]) => l[k] !== v)) {
       await base44.asServiceRole.entities.Listing.update(l.id, stamp);
     }

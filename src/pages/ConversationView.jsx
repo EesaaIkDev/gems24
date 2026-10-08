@@ -11,7 +11,16 @@ import MessageComposer from "@/components/chat/MessageComposer";
 import useKeyboardInset from "@/components/chat/useKeyboardInset";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useChatPresence from "@/hooks/useChatPresence";
-import { isActive, markRead, otherIdOf, otherReadAt, sendMessage } from "@/lib/chat";
+import {
+  isActive,
+  loadMessagePage,
+  markRead,
+  otherIdOf,
+  otherReadAt,
+  sendMessage,
+  upsertMessages,
+} from "@/lib/chat";
+import { HEARTBEAT_MS } from "@/lib/presence";
 import { canMessage, getConnectedProfile, getConnection } from "@/lib/network";
 import { isVerified } from "@/lib/verification";
 
@@ -21,6 +30,8 @@ export default function ConversationView() {
   const [conversation, setConversation] = useState(null);
   const [other, setOther] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [earlierCursor, setEarlierCursor] = useState(null);
+  const [loadingEarlier, setLoadingEarlier] = useState(false);
   const [networked, setNetworked] = useState(true);
   const keyboardInset = useKeyboardInset();
   const bottomRef = useRef(null);
@@ -51,13 +62,47 @@ export default function ConversationView() {
     };
   }, [id, trader?.id]);
 
+  // Latest page once, then apply realtime events for this chat in place —
+  // never refetch the whole history on every event.
   useEffect(() => {
-    const loadMessages = () =>
-      base44.entities.Message.filter({ conversation_id: id }, "created_date", 500).then(setMessages);
-    loadMessages();
-    const unsubscribe = base44.entities.Message.subscribe(loadMessages);
-    return unsubscribe;
+    let cancelled = false;
+    setMessages([]);
+    setEarlierCursor(null);
+    loadMessagePage(id)
+      .then(({ items, cursor }) => {
+        if (cancelled) return;
+        setMessages((current) => upsertMessages(items, current));
+        setEarlierCursor(cursor);
+      })
+      .catch(() => {});
+    const unsubscribe = base44.entities.Message.subscribe((e) => {
+      if (e.type === "delete") return setMessages((list) => list.filter((m) => m.id !== e.id));
+      if (e.data?.conversation_id !== id) return;
+      setMessages((list) => upsertMessages(list, [{ id: e.id, ...e.data }]));
+    });
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, [id]);
+
+  const loadEarlier = async () => {
+    if (!earlierCursor || loadingEarlier) return;
+    setLoadingEarlier(true);
+    const el = listRef.current;
+    const fromBottom = el ? el.scrollHeight - el.scrollTop : 0;
+    try {
+      const { items, cursor } = await loadMessagePage(id, earlierCursor);
+      setMessages((list) => upsertMessages(list, items));
+      setEarlierCursor(cursor);
+      // Keep the reader's place instead of jumping when older messages land above.
+      requestAnimationFrame(() => {
+        if (el) el.scrollTop = el.scrollHeight - fromBottom;
+      });
+    } finally {
+      setLoadingEarlier(false);
+    }
+  };
 
   // Live conversation updates: mark incoming messages read, pick up the other side's read receipt.
   useEffect(() => {
@@ -77,15 +122,17 @@ export default function ConversationView() {
         getConnectedProfile(other.id).then((extra) =>
           setOther((o) => o && { ...o, active_at: extra?.active_at || null })
         ),
-      60000
+      HEARTBEAT_MS / 2
     );
     return () => clearInterval(t);
   }, [other?.id]);
 
+  // Follow the conversation only when a newer message arrives, not when older pages load above.
+  const latestId = messages[messages.length - 1]?.id;
   useEffect(() => {
     const el = listRef.current;
-    if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [messages.length]);
+    if (el && latestId) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+  }, [latestId]);
 
   if (loading || !conversation || !trader) return <Spinner />;
 
@@ -93,6 +140,7 @@ export default function ConversationView() {
   const readAt = receiptsOn ? otherReadAt(conversation, trader, other) || "" : null;
   const send = async (text) => {
     const sent = await sendMessage(conversation, text);
+    if (sent?.message) setMessages((list) => upsertMessages(list, [sent.message]));
     if (sent?.conversation) setConversation(sent.conversation);
   };
 
@@ -145,6 +193,16 @@ export default function ConversationView() {
       </div>
 
       <div ref={listRef} className="app-scroll min-h-0 px-4 pt-4 pb-6 space-y-2">
+        {earlierCursor && (
+          <button
+            type="button"
+            onClick={loadEarlier}
+            disabled={loadingEarlier}
+            className="mx-auto block py-1 text-xs font-medium text-primary disabled:text-muted-foreground"
+          >
+            {loadingEarlier ? "Loading…" : "Show earlier messages"}
+          </button>
+        )}
         {messages.length === 0 && (
           <p className="text-center text-sm text-muted-foreground py-10">
             No messages yet — say hello and start the conversation.

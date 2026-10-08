@@ -1,23 +1,20 @@
 import { useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { writePresence } from "@/lib/presence";
 
-/** Marks this trader as actively viewing a chat so pushes for it are muted. */
+/**
+ * Marks this trader as viewing a chat so pushes for it are muted. Writes only
+ * when that changes — opening the chat, leaving it, or the app going to the
+ * background and back. Staying "Active" in between is the app-wide heartbeat's job.
+ */
 export default function useChatPresence(traderId, conversationId) {
   useEffect(() => {
     if (!traderId || !conversationId) return;
-    const set = (active) =>
-      base44.entities.Trader.update(traderId, {
-        active_conversation_id: active ? conversationId : "",
-        active_at: new Date().toISOString(),
-      }).catch(() => {});
-    const sync = () => set(document.visibilityState === "visible");
+    const sync = () => writePresence(traderId, document.visibilityState === "visible" ? conversationId : "");
     sync();
-    const beat = setInterval(() => document.visibilityState === "visible" && set(true), 30000);
     document.addEventListener("visibilitychange", sync);
     return () => {
-      clearInterval(beat);
       document.removeEventListener("visibilitychange", sync);
-      set(false);
+      writePresence(traderId, "");
     };
   }, [traderId, conversationId]);
 }

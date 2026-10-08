@@ -58,6 +58,18 @@
       },
       "description": "Copied from the trader by the stampListing backend function. Never written by the client."
     },
+    "placement": {
+      "type": "number",
+      "default": 0,
+      "description": "Marketplace sort key: grade first, then newest. Set by the stampListing backend function.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
     "photos": {
       "type": "array",
       "items": {
