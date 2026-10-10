@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import { Check, CheckCheck } from "lucide-react";
 
-export default function MessageBubble({ message, mine, read }) {
+export default function MessageBubble({ message, mine, deliveryStatus = "sent" }) {
   return (
     <div className={`flex ${mine ? "justify-end" : "justify-start"}`}>
       <div
@@ -18,7 +18,11 @@ export default function MessageBubble({ message, mine, read }) {
         </div>
         <p className={`mt-1 flex items-center justify-end gap-1 text-[0.625rem] ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
           {format(new Date(message.created_date), "HH:mm")}
-          {mine && read !== undefined && (read ? <CheckCheck className="w-3 h-3" aria-label="Read" /> : <Check className="w-3 h-3" aria-label="Sent" />)}
+          {mine && (deliveryStatus === "read"
+            ? <CheckCheck className="w-3.5 h-3.5 text-emerald-300" role="img" aria-label="Read" />
+            : deliveryStatus === "delivered"
+              ? <CheckCheck className="w-3.5 h-3.5" role="img" aria-label="Delivered" />
+              : <Check className="w-3.5 h-3.5" role="img" aria-label="Sent, not delivered" />)}
         </p>
       </div>
     </div>

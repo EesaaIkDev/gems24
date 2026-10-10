@@ -12,11 +12,11 @@ import useKeyboardInset from "@/components/chat/useKeyboardInset";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useChatPresence from "@/hooks/useChatPresence";
 import {
+  acknowledgeMessage,
   isActive,
   loadMessagePage,
-  markRead,
+  messageDeliveryStatus,
   otherIdOf,
-  otherReadAt,
   sendMessage,
   upsertMessages,
 } from "@/lib/chat";
@@ -36,7 +36,37 @@ export default function ConversationView() {
   const keyboardInset = useKeyboardInset();
   const bottomRef = useRef(null);
   const listRef = useRef(null);
+  const latestIncoming = useRef(null);
+  const lastAcknowledged = useRef({ delivered: null, read: null });
   useChatPresence(trader?.id, id);
+
+  const acknowledge = async (message, read = false) => {
+    if (!message || message.sender_id === trader?.id) return;
+    const mode = read && document.visibilityState === "visible" && document.hasFocus() ? "read" : "delivered";
+    if (lastAcknowledged.current[mode] === message.id) return;
+    lastAcknowledged.current[mode] = message.id;
+    try {
+      const updated = await acknowledgeMessage(id, message.id, mode === "read");
+      setConversation((prev) => {
+        if (!prev || prev.id !== id) return prev;
+        const side = prev.participant_a_id === trader.id ? "a" : "b";
+        const patch = {};
+        for (const kind of ["delivered", "read"]) {
+          const at = `${kind}_at_${side}`;
+          const marker = `${kind}_message_id_${side}`;
+          if (updated[marker] && (!prev[at] || Date.parse(updated[at]) > Date.parse(prev[at]) ||
+            (updated[at] === prev[at] && updated[marker] === prev[marker]))) {
+            patch[at] = updated[at];
+            patch[marker] = updated[marker];
+          }
+        }
+        if (mode === "read" && prev.last_message_id === updated.last_message_id) patch[`unread_${side}`] = updated[`unread_${side}`];
+        return { ...prev, ...patch };
+      });
+    } catch {
+      lastAcknowledged.current[mode] = null;
+    }
+  };
 
   useEffect(() => {
     if (!trader?.id) return;
@@ -45,7 +75,6 @@ export default function ConversationView() {
       const c = await base44.entities.Conversation.get(id);
       if (cancelled) return;
       setConversation(c);
-      markRead(c, trader.id, trader.read_receipts !== false);
       const otherId = otherIdOf(c, trader.id);
       const [profile, connection, extra] = await Promise.all([
         base44.entities.Trader.get(otherId).catch(() => null),
@@ -68,23 +97,40 @@ export default function ConversationView() {
     let cancelled = false;
     setMessages([]);
     setEarlierCursor(null);
+    latestIncoming.current = null;
+    lastAcknowledged.current = { delivered: null, read: null };
+    if (!trader?.id) return;
     loadMessagePage(id)
       .then(({ items, cursor }) => {
         if (cancelled) return;
         setMessages((current) => upsertMessages(items, current));
         setEarlierCursor(cursor);
+        const incoming = [...items].reverse().find((m) => m.sender_id !== trader.id);
+        if (incoming && (!latestIncoming.current ||
+          Date.parse(incoming.created_date) >= Date.parse(latestIncoming.current.created_date))) {
+          latestIncoming.current = incoming;
+          acknowledge(incoming, true);
+        }
       })
       .catch(() => {});
     const unsubscribe = base44.entities.Message.subscribe((e) => {
-      if (e.type === "delete") return setMessages((list) => list.filter((m) => m.id !== e.id));
+      if (e.type === "delete") {
+        if (e.id === latestIncoming.current?.id) latestIncoming.current = null;
+        return setMessages((list) => list.filter((m) => m.id !== e.id));
+      }
       if (e.data?.conversation_id !== id) return;
-      setMessages((list) => upsertMessages(list, [{ id: e.id, ...e.data }]));
+      const message = { id: e.id, ...e.data };
+      setMessages((list) => upsertMessages(list, [message]));
+      if (message.sender_id !== trader.id && e.type === "create") {
+        latestIncoming.current = message;
+        acknowledge(message, true);
+      }
     });
     return () => {
       cancelled = true;
       unsubscribe();
     };
-  }, [id]);
+  }, [id, trader?.id]);
 
   const loadEarlier = async () => {
     if (!earlierCursor || loadingEarlier) return;
@@ -95,6 +141,12 @@ export default function ConversationView() {
       const { items, cursor } = await loadMessagePage(id, earlierCursor);
       setMessages((list) => upsertMessages(list, items));
       setEarlierCursor(cursor);
+      const incoming = [...items].reverse().find((m) => m.sender_id !== trader.id);
+      if (incoming && (!latestIncoming.current ||
+        Date.parse(incoming.created_date) >= Date.parse(latestIncoming.current.created_date))) {
+        latestIncoming.current = incoming;
+        acknowledge(incoming, true);
+      }
       // Keep the reader's place instead of jumping when older messages land above.
       requestAnimationFrame(() => {
         if (el) el.scrollTop = el.scrollHeight - fromBottom;
@@ -110,9 +162,31 @@ export default function ConversationView() {
     return base44.entities.Conversation.subscribe((e) => {
       if (e.id !== id || !e.data) return;
       setConversation(e.data);
-      if (document.visibilityState === "visible") markRead(e.data, trader.id, trader.read_receipts !== false);
+      if (e.data.last_sender_id !== trader.id && e.data.last_message_id &&
+        e.data.last_message_id !== latestIncoming.current?.id) {
+        base44.entities.Message.get(e.data.last_message_id).then((message) => {
+          if (message.conversation_id !== id) return;
+          setMessages((list) => upsertMessages(list, [message]));
+          if (!latestIncoming.current ||
+            Date.parse(message.created_date) >= Date.parse(latestIncoming.current.created_date)) {
+            latestIncoming.current = message;
+            acknowledge(message, true);
+          }
+        }).catch(() => {});
+      }
     });
-  }, [id, trader?.id, trader?.read_receipts]);
+  }, [id, trader?.id]);
+
+  useEffect(() => {
+    if (!trader?.id) return;
+    const onFocus = () => acknowledge(latestIncoming.current, true);
+    document.addEventListener("visibilitychange", onFocus);
+    window.addEventListener("focus", onFocus);
+    return () => {
+      document.removeEventListener("visibilitychange", onFocus);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [id, trader?.id]);
 
   // Refresh the other trader's Active/Away status (private; served to connections only).
   useEffect(() => {
@@ -136,12 +210,15 @@ export default function ConversationView() {
 
   if (loading || !conversation || !trader) return <Spinner />;
 
-  const receiptsOn = other && trader.read_receipts !== false && other.read_receipts !== false;
-  const readAt = receiptsOn ? otherReadAt(conversation, trader, other) || "" : null;
   const send = async (text) => {
     const sent = await sendMessage(conversation, text);
     if (sent?.message) setMessages((list) => upsertMessages(list, [sent.message]));
-    if (sent?.conversation) setConversation(sent.conversation);
+    if (sent?.conversation) setConversation((prev) => ({
+      ...sent.conversation,
+      ...Object.fromEntries(Object.entries(prev || {}).filter(([key]) =>
+        /^(delivered_at_|delivered_message_id_|read_at_|read_message_id_)/.test(key)
+      )),
+    }));
   };
 
   return (
@@ -213,7 +290,7 @@ export default function ConversationView() {
             key={m.id}
             message={m}
             mine={m.sender_id === trader.id}
-            read={readAt === null ? undefined : !!readAt && new Date(readAt) >= new Date(m.created_date)}
+            deliveryStatus={messageDeliveryStatus(m, conversation, trader, other)}
           />
         ))}
         <div ref={bottomRef} />

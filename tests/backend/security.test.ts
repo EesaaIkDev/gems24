@@ -12,6 +12,7 @@ import pushNewMessage from '../../base44/functions/pushNewMessage/entry.ts';
 import pushConnection from '../../base44/functions/pushConnection/entry.ts';
 import backfillPrivacy from '../../base44/functions/backfillPrivacy/entry.ts';
 import syncTraderListings from '../../base44/functions/syncTraderListings/entry.ts';
+import acknowledgeMessage from '../../base44/functions/acknowledgeMessage/entry.ts';
 
 Deno.env.set('STORE_WEBHOOK_SECRET', 'shh');
 
@@ -223,6 +224,7 @@ Deno.test('chat: needs an accepted connection; outsiders cannot post', async () 
   state.user = ALICE;
   const sent = await call(sendChatMessage, { conversation_id: convo.id, text: '  hello  ' });
   assertEquals(sent.body.message.sender_id, 'A');
+  assertEquals(sent.body.message.sender_user_id, ALICE.id);
   assertEquals(sent.body.message.recipient_user_id, BOB.id);
   assertEquals(sent.body.message.text, 'hello');
   assertEquals(db.Conversation[0].unread_b, 1);
@@ -233,6 +235,85 @@ Deno.test('chat: messaging stops if the connection is removed', async () => {
   db.Conversation = [{ id: 'C', participant_a_id: 'A', participant_b_id: 'B', participant_a_user_id: ALICE.id, participant_b_user_id: BOB.id }];
   state.user = ALICE;
   assertEquals((await call(sendChatMessage, { conversation_id: 'C', text: 'hi' })).status, 403);
+});
+
+Deno.test('chat receipts: single tick until recipient acknowledges delivery, read only when seen', async () => {
+  reset(); seedPeople();
+  db.Connection = [{ id: 'K', requester_id: 'A', recipient_id: 'B', status: 'accepted' }];
+  db.Conversation = [{ id: 'C', participant_a_id: 'A', participant_b_id: 'B', participant_a_user_id: ALICE.id, participant_b_user_id: BOB.id, unread_b: 0 }];
+  state.user = ALICE;
+  const sent = await call(sendChatMessage, { conversation_id: 'C', text: 'hello' });
+  const message = sent.body.message;
+  assertEquals(db.Conversation[0].delivered_at_b, undefined);
+  assertEquals(db.Conversation[0].read_at_b, undefined);
+  assertEquals(db.Conversation[0].unread_b, 1);
+
+  state.user = BOB;
+  const delivery = await call(acknowledgeMessage, { conversation_id: 'C', message_id: message.id, read: false });
+  assertEquals(delivery.status, 200);
+  assertEquals(db.Conversation[0].delivered_at_b, message.created_date);
+  assertEquals(db.Conversation[0].read_at_b, undefined);
+  assertEquals(db.Conversation[0].unread_b, 1);
+  await call(acknowledgeMessage, { conversation_id: 'C', message_id: message.id, read: true });
+  assertEquals(db.Conversation[0].read_at_b, message.created_date);
+  assertEquals(db.Conversation[0].read_message_id_b, message.id);
+  assertEquals(db.Conversation[0].unread_b, 0);
+});
+
+Deno.test('chat receipts: reject forged acknowledgements; never regress an earlier watermark', async () => {
+  reset(); seedPeople();
+  db.Conversation = [{ id: 'C', participant_a_id: 'A', participant_b_id: 'B', unread_b: 2 }];
+  db.Message = [
+    { id: 'M1', conversation_id: 'C', sender_id: 'A', recipient_user_id: BOB.id, created_date: '2026-01-01T00:00:00Z' },
+    { id: 'M2', conversation_id: 'C', sender_id: 'A', recipient_user_id: BOB.id, created_date: '2026-01-02T00:00:00Z' },
+  ];
+  state.user = ALICE;
+  assertEquals((await call(acknowledgeMessage, { conversation_id: 'C', message_id: 'M2', read: true })).status, 404);
+  state.user = EVE;
+  assertEquals((await call(acknowledgeMessage, { conversation_id: 'C', message_id: 'M2', read: true })).status, 404);
+  state.user = BOB;
+  assertEquals((await call(acknowledgeMessage, { conversation_id: 'C', message_id: 'M1', read: true })).status, 200);
+  assertEquals(db.Conversation[0].unread_b, 2, 'older read must not clear newer unread messages');
+  assertEquals((await call(acknowledgeMessage, { conversation_id: 'C', message_id: 'M2', read: true })).status, 200);
+  assertEquals((await call(acknowledgeMessage, { conversation_id: 'C', message_id: 'M1', read: true })).status, 200);
+  assertEquals(db.Conversation[0].read_at_b, db.Message[1].created_date);
+  assertEquals(db.Conversation[0].read_message_id_b, 'M2');
+});
+
+Deno.test('chat receipts: cannot acknowledge a message in another chat or from yourself', async () => {
+  reset(); seedPeople();
+  db.Conversation = [
+    { id: 'C', participant_a_id: 'A', participant_b_id: 'B' },
+    { id: 'D', participant_a_id: 'A', participant_b_id: 'B' },
+  ];
+  db.Message = [{ id: 'M', conversation_id: 'C', sender_id: 'A', recipient_user_id: BOB.id, created_date: '2026-01-01T00:00:00Z' }];
+  state.user = BOB;
+  assertEquals((await call(acknowledgeMessage, { conversation_id: 'D', message_id: 'M', read: true })).status, 404);
+  state.user = ALICE;
+  assertEquals((await call(acknowledgeMessage, { conversation_id: 'C', message_id: 'M', read: true })).status, 404);
+  assertEquals(db.Conversation[0].read_at_b, undefined);
+});
+
+Deno.test('chat receipts: legacy device-clock read time is replaced with a server message watermark', async () => {
+  reset(); seedPeople();
+  db.Conversation = [{ id: 'C', participant_a_id: 'A', participant_b_id: 'B', read_at_b: '2099-01-01T00:00:00Z', unread_b: 1 }];
+  db.Message = [{ id: 'M', conversation_id: 'C', sender_id: 'A', recipient_user_id: BOB.id, created_date: '2026-01-01T00:00:00Z' }];
+  state.user = BOB;
+  await call(acknowledgeMessage, { conversation_id: 'C', message_id: 'M', read: true });
+  assertEquals(db.Conversation[0].read_at_b, db.Message[0].created_date);
+  assertEquals(db.Conversation[0].read_message_id_b, 'M');
+});
+
+Deno.test('chat receipts: read disabled still clears unread and confirms delivery, but hides read watermark', async () => {
+  reset(); seedPeople();
+  db.Trader[1].read_receipts = false;
+  db.Conversation = [{ id: 'C', participant_a_id: 'A', participant_b_id: 'B', unread_b: 1 }];
+  db.Message = [{ id: 'M', conversation_id: 'C', sender_id: 'A', recipient_user_id: BOB.id, created_date: '2026-01-02T00:00:00Z' }];
+  state.user = BOB;
+  await call(acknowledgeMessage, { conversation_id: 'C', message_id: 'M', read: true });
+  assertEquals(db.Conversation[0].delivered_at_b, db.Message[0].created_date);
+  assertEquals(db.Conversation[0].read_at_b, undefined);
+  assertEquals(db.Conversation[0].unread_b, 0);
 });
 
 Deno.test('contact details: shared with accepted connections only, never the phone', async () => {
@@ -302,6 +383,7 @@ Deno.test('backfill: admin only; stamps owners onto existing chats and connectio
   state.user = { id: 'admin', email: 'admin@x.com', role: 'admin' };
   await call(backfillPrivacy, {});
   assertEquals([db.Conversation[0].participant_a_user_id, db.Conversation[0].participant_b_user_id], [ALICE.id, BOB.id]);
+  assertEquals(db.Message[0].sender_user_id, BOB.id);
   assertEquals(db.Message[0].recipient_user_id, ALICE.id);
   assertEquals(db.Message[0].push_sent, true);
   assertEquals([db.Connection[0].requester_user_id, db.Connection[0].recipient_user_id], [ALICE.id, BOB.id]);

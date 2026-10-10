@@ -1,5 +1,6 @@
 import { base44 } from "@/api/base44Client";
 import { ACTIVE_WINDOW_MS } from "@/lib/presence";
+import { deliveryStatus } from "@/lib/messageDelivery";
 
 export const otherIdOf = (c, viewerId) =>
   c.participant_a_id === viewerId ? c.participant_b_id : c.participant_a_id;
@@ -63,13 +64,13 @@ export async function sendMessage(conversation, text) {
   return data;
 }
 
-export async function markRead(conversation, viewerId, shareReceipt = true) {
-  if (unreadFor(conversation, viewerId) === 0) return;
-  const isA = conversation.participant_a_id === viewerId;
-  await base44.entities.Conversation.update(conversation.id, {
-    [isA ? "unread_a" : "unread_b"]: 0,
-    ...(shareReceipt ? { [isA ? "read_at_a" : "read_at_b"]: new Date().toISOString() } : {}),
+export async function acknowledgeMessage(conversationId, messageId, read = false) {
+  const { data } = await base44.functions.invoke("acknowledgeMessage", {
+    conversation_id: conversationId,
+    message_id: messageId,
+    read,
   });
+  return data.conversation;
 }
 
 /** When the other participant last read the chat, or null if receipts are hidden either way. */
@@ -77,6 +78,11 @@ export const otherReadAt = (c, viewer, other) => {
   if (viewer?.read_receipts === false || other?.read_receipts === false) return null;
   return c.participant_a_id === viewer.id ? c.read_at_b : c.read_at_a;
 };
+
+export function messageDeliveryStatus(message, conversation, viewer, other) {
+  return deliveryStatus(message, conversation, viewer?.id,
+    !!otherReadAt(conversation, viewer, other));
+}
 
 /** Professional presence: Active if the last heartbeat is recent, otherwise Away. */
 export const isActive = (trader) =>

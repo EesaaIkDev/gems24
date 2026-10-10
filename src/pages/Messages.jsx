@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Spinner from "@/components/common/Spinner";
@@ -7,7 +7,7 @@ import SignInPrompt from "@/components/common/SignInPrompt";
 import ConversationRow from "@/components/chat/ConversationRow";
 import RequestsList from "@/components/chat/RequestsList";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
-import { listConversations, otherIdOf, unreadFor } from "@/lib/chat";
+import { acknowledgeMessage, listConversations, otherIdOf, unreadFor } from "@/lib/chat";
 import { listIncomingRequests, respondToRequest } from "@/lib/network";
 import { MessageCircle } from "lucide-react";
 
@@ -16,6 +16,7 @@ export default function Messages() {
   const [rows, setRows] = useState(null);
   const [people, setPeople] = useState({});
   const [requests, setRequests] = useState([]);
+  const delivered = useRef(new Set());
 
   const loadRequests = useCallback(async () => {
     if (!trader?.id) return;
@@ -33,6 +34,11 @@ export default function Messages() {
       const conversations = await listConversations(trader.id).catch(() => []);
       if (cancelled) return;
       setRows(conversations);
+      for (const c of conversations) {
+        if (c.last_sender_id === trader.id || !c.last_message_id || delivered.current.has(c.last_message_id)) continue;
+        delivered.current.add(c.last_message_id);
+        acknowledgeMessage(c.id, c.last_message_id).catch(() => delivered.current.delete(c.last_message_id));
+      }
       const ids = [...new Set(conversations.map((c) => otherIdOf(c, trader.id)))];
       const traders = await Promise.all(ids.map((i) => base44.entities.Trader.get(i).catch(() => null)));
       if (!cancelled) setPeople(Object.fromEntries(ids.map((i, n) => [i, traders[n]])));

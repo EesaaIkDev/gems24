@@ -36,12 +36,14 @@ export default async function (req: Request): Promise<Response> {
     const message = await base44.asServiceRole.entities.Message.create({
       conversation_id: c.id,
       sender_id: trader.id,
+      sender_user_id: user.id,
       text: body,
       recipient_user_id: isA ? c.participant_b_user_id : c.participant_a_user_id,
     });
     const conversation = await base44.asServiceRole.entities.Conversation.update(c.id, {
       last_message: body,
-      last_message_at: new Date().toISOString(),
+      last_message_at: message.created_date,
+      last_message_id: message.id,
       last_sender_id: trader.id,
       [isA ? 'unread_b' : 'unread_a']: ((isA ? c.unread_b : c.unread_a) || 0) + 1,
     });

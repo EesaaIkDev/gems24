@@ -15,8 +15,10 @@ const matches = (row: Row, q: Row = {}) => Object.entries(q).every(([k, v]) => r
 function entity(name: string) {
   const rows = () => (db[name] ??= []);
   return {
-    async filter(q: Row = {}) {
-      return rows().filter((r) => matches(r, q)).map((r) => ({ ...r }));
+    async filter(q: Row = {}, sort?: string, limit?: number) {
+      const found = rows().filter((r) => matches(r, q)).map((r) => ({ ...r }));
+      if (sort?.startsWith('-')) found.sort((a, b) => String(b[sort.slice(1)] || '').localeCompare(String(a[sort.slice(1)] || '')));
+      return limit ? found.slice(0, limit) : found;
     },
     async list(_sort?: string, limit = 1000, skip = 0) {
       return rows().slice(skip, skip + limit).map((r) => ({ ...r }));

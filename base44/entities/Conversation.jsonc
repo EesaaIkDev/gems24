@@ -89,6 +89,16 @@
         }
       }
     },
+    "last_message_id": {
+      "type": "string",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
     "last_sender_id": {
       "type": "string",
       "rls": {
@@ -101,21 +111,111 @@
     },
     "unread_a": {
       "type": "number",
-      "default": 0
+      "default": 0,
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "unread_b": {
       "type": "number",
-      "default": 0
+      "default": 0,
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "delivered_at_a": {
+      "type": "string",
+      "format": "date-time",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "delivered_at_b": {
+      "type": "string",
+      "format": "date-time",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "delivered_message_id_a": {
+      "type": "string",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "delivered_message_id_b": {
+      "type": "string",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "read_at_a": {
       "type": "string",
       "format": "date-time",
-      "description": "When participant A last read the chat (only if they share read receipts)"
+      "description": "Created date of the newest message participant A has read (only if they share read receipts)",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "read_at_b": {
       "type": "string",
       "format": "date-time",
-      "description": "When participant B last read the chat (only if they share read receipts)"
+      "description": "Created date of the newest message participant B has read (only if they share read receipts)",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "read_message_id_a": {
+      "type": "string",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "read_message_id_b": {
+      "type": "string",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     }
   },
   "required": [

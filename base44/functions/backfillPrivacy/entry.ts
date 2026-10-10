@@ -50,9 +50,10 @@ export default async function (req: Request): Promise<Response> {
     for (const m of await all(svc.Message)) {
       const c = convById[m.conversation_id];
       if (!c) continue;
+      const sender = c.participant_a_id === m.sender_id ? c.participant_a_user_id : c.participant_b_user_id;
       const recipient = c.participant_a_id === m.sender_id ? c.participant_b_user_id : c.participant_a_user_id;
-      if (m.recipient_user_id !== recipient || !m.push_sent) {
-        await svc.Message.update(m.id, { recipient_user_id: recipient, push_sent: true });
+      if (m.sender_user_id !== sender || m.recipient_user_id !== recipient || !m.push_sent) {
+        await svc.Message.update(m.id, { sender_user_id: sender, recipient_user_id: recipient, push_sent: true });
         counts.messages++;
       }
     }

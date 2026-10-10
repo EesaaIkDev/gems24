@@ -39,4 +39,16 @@ Deno.test('Chats and connections: participants only, created by the server', () 
   }
   assertEquals(load('Connection').rls.update, ADMIN);
   assertEquals(load('Message').rls.update, ADMIN);
+  const message = load('Message');
+  assert(serverOnly(message.properties.sender_user_id));
+  assert(JSON.stringify(message.rls.read).includes('data.sender_user_id'));
+});
+
+Deno.test('receipts: delivery and read markers are server-owned', () => {
+  const p = load('Conversation').properties;
+  for (const field of [
+    'last_message_id', 'delivered_at_a', 'delivered_at_b', 'delivered_message_id_a',
+    'delivered_message_id_b', 'read_at_a', 'read_at_b', 'read_message_id_a', 'read_message_id_b',
+    'unread_a', 'unread_b',
+  ]) assert(serverOnly(p[field]), `${field} must be written only by the server`);
 });
