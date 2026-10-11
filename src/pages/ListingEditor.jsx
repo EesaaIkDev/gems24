@@ -13,7 +13,7 @@ import SignInPrompt from "@/components/common/SignInPrompt";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
-import { isVerified } from "@/lib/verification";
+import { CERTIFICATE_NOTICE, heldLevel, isVerified } from "@/lib/verification";
 import { createRecord, updateRecord } from "@/lib/offlineSync";
 import useOnline from "@/hooks/useOnline";
 
@@ -88,6 +88,7 @@ export default function ListingEditor() {
       trader_country: trader.country || "",
       trader_tier: trader.subscription_tier || "none",
       trader_verified: isVerified(trader),
+      trader_verified_level: heldLevel(trader),
     };
     // Optimistic write — queued in the outbox when the network is unavailable.
     if (id) await updateRecord("Listing", id, payload);
@@ -192,6 +193,7 @@ export default function ListingEditor() {
               disabled={uploadingCert || !online}
             />
           </label>
+          <p className="text-[0.6875rem] text-muted-foreground">Buyers will see: "{CERTIFICATE_NOTICE}".</p>
         </div>
 
         <div className="space-y-1.5">

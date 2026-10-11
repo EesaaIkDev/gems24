@@ -32,7 +32,7 @@ export function strip(row) {
  * render straight away, but never sent — the backend rejects client writes.
  */
 const SERVER_FIELDS = {
-  Listing: ["trader_name", "trader_country", "trader_tier", "trader_verified", "placement"],
+  Listing: ["trader_name", "trader_country", "trader_tier", "trader_verified", "trader_verified_level", "placement"],
 };
 
 const serverSafe = (entity, data) => {

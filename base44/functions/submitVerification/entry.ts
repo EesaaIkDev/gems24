@@ -1,21 +1,26 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.52';
+import {
+  CHECKS,
+  LINK_TTL_MIN,
+  heldLevel,
+  levelRank,
+  requiredLevel,
+  secret,
+  startVerification,
+  verificationRequest,
+} from '../../shared/shufti.ts';
 
 /**
- * Accepts a verification submission from the calling trader and puts it in the
- * pending queue.
+ * Starts (or resumes) a Shufti Pro hosted verification for the calling user
+ * and returns the link to send them to. Nothing here grants a badge — only
+ * shuftiCallback does, after confirming the result with Shufti.
  *
- * All limits are enforced here rather than in the client: a browser can call
- * this endpoint directly, so the UI copy about remaining attempts is a
- * courtesy, not a control. Identity checks are expected to cost roughly $1.30
- * each once a paid provider is wired in, so the caps guard real spend.
+ *   Buyers   → optional KYC (ID + selfie)              → Verified Buyer
+ *   Traders  → KYC + AML screening                     → Verified Trader
+ *   Platinum → KYB + KYC of the submitter + AML        → Verified Business
  *
- * Provider is deliberately not chosen yet. Everything below is provider
- * agnostic; the single hand-off point is marked PROVIDER SEAM. Until a provider
- * is connected, submissions land as 'pending' for manual review.
- *
- * Documents are referenced by private-storage URI only. The client uploads via
- * UploadPrivateFile, which requires a signed URL to read — never UploadFile,
- * which is public.
+ * Each Shufti request is billed, so the limits below are enforced here, not in
+ * the client, and an unexpired link is reused instead of opening a new request.
  */
 
 const PER_DAY = 3;
@@ -28,163 +33,119 @@ const minutesUntil = (target: number) => Math.max(1, Math.ceil((target - Date.no
 export default async function (req: Request): Promise<Response> {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user?.email) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const user = await base44.auth.me();
-    if (!user?.email) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    let body: any = {};
-    try {
-      body = await req.json();
-    } catch {
-      return Response.json({ error: 'Invalid request' }, { status: 400 });
-    }
-
-    // Only private-storage URIs are accepted. A public https URL here would mean
-    // the client used the wrong upload integration and the document is exposed.
-    const documents: string[] = Array.isArray(body?.documents)
-      ? body.documents.filter((d: unknown) => typeof d === 'string' && d.length > 0).slice(0, 5)
-      : [];
-    if (documents.length === 0) {
-      return Response.json({ error: 'No documents supplied' }, { status: 400 });
-    }
-    if (documents.some((d) => /^https?:\/\//i.test(d))) {
-      return Response.json(
-        { error: 'Documents must be uploaded to private storage' },
-        { status: 400 }
-      );
-    }
-
-    // Resolve the caller's own trader row. The client does not choose which
-    // trader it is verifying.
-    const traders = await base44.asServiceRole.entities.Trader.filter({ user_email: user.email });
-    const trader = traders?.[0];
-    if (!trader) {
-      return Response.json({ error: 'No trader profile found' }, { status: 404 });
-    }
-
-    // A badge granted for a different account type (e.g. a buyer who switched
-    // to trader) does not count — they must verify again with the new document.
-    if (trader.verified && (!trader.verified_as || trader.verified_as === trader.account_type)) {
-      return Response.json({ state: 'already_verified' });
-    }
+    const trader = (await base44.asServiceRole.entities.Trader.filter({ user_email: user.email }))?.[0];
+    if (!trader) return Response.json({ error: 'No profile found' }, { status: 404 });
 
     if (trader.account_type !== 'buyer' && (!trader.subscription_tier || trader.subscription_tier === 'none')) {
-      return Response.json(
-        { error: 'A trader plan is required before you can get verified.' },
-        { status: 403 }
-      );
+      return Response.json({ error: 'A trader plan is required before you can get verified.' }, { status: 403 });
     }
 
-    const existing = (
-      await base44.asServiceRole.entities.Verification.filter({ trader_id: trader.id })
-    )?.[0] ?? null;
-
-    if (existing?.blocked) {
-      return Response.json({
-        state: 'blocked',
-        reason: 'Maximum verification attempts reached. Please contact support.',
-      });
+    const level = requiredLevel(trader);
+    const held = heldLevel(trader);
+    if (held && levelRank(held) >= levelRank(level)) {
+      return Response.json({ state: 'already_verified', level: held });
     }
 
-    // One submission in flight at a time — stops double-taps creating duplicate work.
-    if (existing && (existing.status === 'pending' || existing.status === 'review')) {
-      return Response.json({ state: 'already_pending', status: existing.status });
-    }
+    const existing = (await base44.asServiceRole.entities.Verification.filter({ trader_id: trader.id }))?.[0] ?? null;
+    const blocked = { state: 'blocked', reason: 'Maximum verification attempts reached. Please contact support.' };
+    if (existing?.blocked) return Response.json(blocked);
+    if (existing?.status === 'review') return Response.json({ state: 'under_review' });
+
+    // Resume the open Shufti journey rather than paying for a second one.
+    const linkLive =
+      existing?.provider === 'shufti' &&
+      existing.status === 'pending' &&
+      existing.level === level &&
+      existing.verification_url &&
+      Date.parse(existing.verification_url_expires_at || '') > Date.now() + 60_000;
+    if (linkLive) return Response.json({ state: 'redirect', url: existing.verification_url, level });
 
     const attemptCount = existing?.attempt_count || 0;
     if (attemptCount >= LIFETIME) {
-      if (existing) {
-        await base44.asServiceRole.entities.Verification.update(existing.id, { blocked: true });
-      }
-      return Response.json({
-        state: 'blocked',
-        reason: 'Maximum verification attempts reached. Please contact support.',
-      });
+      if (existing) await base44.asServiceRole.entities.Verification.update(existing.id, { blocked: true });
+      return Response.json(blocked);
     }
-
-    const lastAt = existing?.last_attempt_at ? new Date(existing.last_attempt_at).getTime() : 0;
+    const lastAt = existing?.last_attempt_at ? Date.parse(existing.last_attempt_at) : 0;
     if (lastAt && Date.now() - lastAt < COOLDOWN_MS) {
-      return Response.json({
-        state: 'cooldown',
-        retryInMinutes: minutesUntil(lastAt + COOLDOWN_MS),
-      });
+      return Response.json({ state: 'cooldown', retryInMinutes: minutesUntil(lastAt + COOLDOWN_MS) });
     }
-
-    // Rolling 24h window, counted from the audit log rather than a stored
-    // counter so it cannot drift.
-    const history = await base44.asServiceRole.entities.VerificationAttempt.filter({
-      trader_id: trader.id,
-    });
+    const history = await base44.asServiceRole.entities.VerificationAttempt.filter({ trader_id: trader.id });
     const inLastDay = (history || []).filter(
-      (a: any) => Date.now() - new Date(a.requested_at || a.created_date || 0).getTime() < DAY_MS
+      (a: any) => Date.now() - Date.parse(a.requested_at || a.created_date || 0) < DAY_MS
     );
     if (inLastDay.length >= PER_DAY) {
-      const oldest = Math.min(
-        ...inLastDay.map((a: any) => new Date(a.requested_at || a.created_date).getTime())
-      );
-      return Response.json({
-        state: 'rate_limited',
-        retryInMinutes: minutesUntil(oldest + DAY_MS),
-      });
+      const oldest = Math.min(...inLastDay.map((a: any) => Date.parse(a.requested_at || a.created_date)));
+      return Response.json({ state: 'rate_limited', retryInMinutes: minutesUntil(oldest + DAY_MS) });
     }
 
-    const documentType = trader.account_type === 'buyer' ? 'government_id' : 'gem_license';
+    if (!secret('SHUFTI_CLIENT_ID') || !secret('SHUFTI_SECRET_KEY')) {
+      console.error('submitVerification: SHUFTI_CLIENT_ID / SHUFTI_SECRET_KEY are not set');
+      return Response.json({ error: 'Verification is temporarily unavailable.' }, { status: 503 });
+    }
+
+    // Opaque reference: no personal data travels to Shufti in the id.
+    const reference = `g24_${crypto.randomUUID()}`;
+    let started: any;
+    try {
+      started = await startVerification(verificationRequest(reference, level, trader));
+    } catch (error) {
+      // Our or Shufti's fault — no attempt is charged.
+      console.error('submitVerification: Shufti request failed', error);
+      return Response.json({ error: 'Verification is temporarily unavailable.' }, { status: 502 });
+    }
+    if (started?.event !== 'request.pending' || !started?.verification_url) {
+      console.error(`submitVerification: unexpected Shufti event=${started?.event}`, started?.error);
+      return Response.json({ error: 'Verification could not be started. Please try again.' }, { status: 502 });
+    }
+
     const now = new Date().toISOString();
-
-    // PROVIDER SEAM
-    // When a provider is chosen, call it here with `documents` and capture its
-    // reference. Keep the failure path as-is: if the provider call throws,
-    // return before writing the attempt so the trader is not charged an attempt
-    // for our outage.
-    const provider = 'manual';
-    const providerRef = '';
-
-    // Audit row first: if the state write fails we still have a record of the attempt.
-    const attempt = await base44.asServiceRole.entities.VerificationAttempt.create({
+    const checks = CHECKS[level];
+    await base44.asServiceRole.entities.VerificationAttempt.create({
       trader_id: trader.id,
       user_email: trader.user_email || user.email,
-      document_type: documentType,
-      document_uris: documents,
-      provider,
-      provider_ref: providerRef,
+      document_type: level,
+      document_uris: [],
+      provider: 'shufti',
+      provider_ref: reference,
       requested_at: now,
       outcome: 'submitted',
     });
-
     const state = {
       trader_id: trader.id,
       user_email: trader.user_email || user.email,
       status: 'pending',
-      document_type: documentType,
-      provider,
-      provider_ref: providerRef || attempt.id,
+      level,
+      kyc_status: 'pending',
+      aml_status: checks.aml ? 'pending' : 'none',
+      kyb_status: checks.kyb ? 'pending' : 'none',
+      document_type: level,
+      provider: 'shufti',
+      provider_ref: reference,
+      verification_url: started.verification_url,
+      verification_url_expires_at: new Date(Date.now() + LINK_TTL_MIN * 60_000).toISOString(),
       submitted_at: now,
       attempt_count: attemptCount + 1,
       last_attempt_at: now,
       first_attempt_at: existing?.first_attempt_at || now,
       decline_reason: '',
       decline_reason_code: null,
+      review_reason: '',
     };
+    if (existing) await base44.asServiceRole.entities.Verification.update(existing.id, state);
+    else await base44.asServiceRole.entities.Verification.create(state);
 
-    if (existing) {
-      await base44.asServiceRole.entities.Verification.update(existing.id, state);
-    } else {
-      await base44.asServiceRole.entities.Verification.create(state);
-    }
-
-    console.log(
-      `verification submitted trader=${trader.id} attempt=${attemptCount + 1}/${LIFETIME} docs=${documents.length}`
-    );
-
+    console.log(`verification started trader=${trader.id} level=${level} attempt=${attemptCount + 1}/${LIFETIME}`);
     return Response.json({
-      state: 'submitted',
-      status: 'pending',
+      state: 'redirect',
+      url: started.verification_url,
+      level,
       attemptsRemaining: LIFETIME - (attemptCount + 1),
     });
   } catch (error: any) {
     console.error('submitVerification failed', error);
-    return Response.json({ error: 'Could not submit verification.' }, { status: 500 });
+    return Response.json({ error: 'Could not start verification.' }, { status: 500 });
   }
 }

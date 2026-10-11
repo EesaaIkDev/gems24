@@ -11,7 +11,7 @@ import VerifiedBadge from "@/components/common/VerifiedBadge";
 import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { cap } from "@/lib/gems";
-import { isVerified } from "@/lib/verification";
+import { CERTIFICATE_NOTICE, heldLevel, isVerified } from "@/lib/verification";
 import Seo from "@/components/seo/Seo";
 import { SITE, absolute, listingAlt, listingPath, listingTitle } from "@/lib/seo";
 
@@ -147,7 +147,11 @@ export default function ListingDetail() {
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold">{heading}</h1>
           </div>
-          <SellerVerification verified={owner ? owner.verified : listing.trader_verified} className="mt-1.5" />
+          <SellerVerification
+            verified={owner ? isVerified(owner) : listing.trader_verified}
+            level={owner ? heldLevel(owner) : listing.trader_verified_level}
+            className="mt-1.5"
+          />
           <p className="text-sm text-muted-foreground mt-1">
             {cap(listing.status)} • {cap(listing.treatment)}
             {listing.origin ? ` • ${listing.origin}` : ""}
@@ -172,6 +176,9 @@ export default function ListingDetail() {
           >
             <FileCheck2 className="w-4 h-4 text-primary" /> View certificate
           </a>
+        )}
+        {(listing.certificate_url || listing.certificate_lab) && (
+          <p className="-mt-3 text-[0.6875rem] text-muted-foreground">{CERTIFICATE_NOTICE}</p>
         )}
 
         {listing.description && (
@@ -205,7 +212,7 @@ export default function ListingDetail() {
                 {owner.country ? ` • ${owner.country}` : ""}
               </p>
             </div>
-            <SellerVerification verified={owner.verified} className="ml-auto shrink-0" />
+            <SellerVerification verified={isVerified(owner)} level={heldLevel(owner)} className="ml-auto shrink-0" />
           </Link>
         )}
 

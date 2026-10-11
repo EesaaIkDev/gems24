@@ -32,6 +32,7 @@ import Join from '@/pages/Join';
 import GemstoneCategory from '@/pages/GemstoneCategory';
 import About from '@/pages/About';
 import OAuthConsent from '@/pages/OAuthConsent';
+import AdminVerifications from '@/pages/AdminVerifications';
 import RouteSeo from '@/components/seo/RouteSeo';
 import PushInit from '@/components/native/PushInit';
 import Spinner from '@/components/common/Spinner';
@@ -85,6 +86,7 @@ const AuthenticatedApp = () => {
         <Route path="/connections" element={<Connections />} />
         <Route path="/subscription" element={<Subscription />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/admin/verifications" element={<AdminVerifications />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/terms" element={<Terms />} />

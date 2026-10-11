@@ -39,7 +39,7 @@ export default function ListingCard({ listing }) {
         <span className={`text-[10px] font-bold uppercase tracking-wide ${STATUS[listing.status] || ""}`}>
           {cap(listing.status)}
         </span>
-        <SellerVerification verified={listing.trader_verified} />
+        <SellerVerification verified={listing.trader_verified} level={listing.trader_verified_level} />
       </div>
 
       <div className="flex-1 flex flex-col p-3.5 pt-1.5">

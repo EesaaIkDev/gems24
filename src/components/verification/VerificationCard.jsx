@@ -1,87 +1,115 @@
-import React, { useEffect, useRef, useState } from "react";
-import { BadgeCheck, Clock, ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import BottomSheet from "@/components/ui/bottom-sheet";
+import { AlertCircle, BadgeCheck, Clock, Loader2, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import SuccessSplash from "@/components/subscription/SuccessSplash";
 import { base44 } from "@/api/base44Client";
-import { STATUS, isAwaitingDecision, isVerified } from "@/lib/verification";
-import LicenseUpload from "./LicenseUpload";
+import { haptic } from "@/lib/despia";
+import {
+  LEVEL_CHECKS,
+  LEVEL_LABEL,
+  LIMITS,
+  STATUS,
+  SUPPORT_EMAIL,
+  coversRequired,
+  heldLevel,
+  isAwaitingDecision,
+  requiredLevel,
+} from "@/lib/verification";
 
-const POINTS = [
-  "A verified badge on your profile and on every stone you list",
-  "Buyers and traders open verified profiles first",
-  "Only your license is checked — it is never stored or shared",
-];
+const BENEFIT = {
+  buyer: "Optional — traders answer verified buyers first.",
+  trader: "A verified badge on your profile and on every stone you list.",
+  business: "The Verified Business badge on your profile and every stone you list.",
+};
 
-const BUYER_POINTS = [
-  "A verified badge on your buyer profile",
-  "Traders prioritise enquiries from verified buyers",
-  "Only your document is checked — it is never stored or shared",
-];
-
-/** Gem License verification, given its own standing on the profile. */
+/**
+ * Identity verification through Shufti Pro's hosted page. Starting hands the
+ * user to Shufti (ID, selfie, and AML/KYB as required); the badge is set only
+ * by the shuftiCallback backend function once Shufti confirms the result.
+ */
 export default function VerificationCard({ trader, onVerified }) {
-  const [open, setOpen] = useState(false);
+  const [state, setState] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState(null);
   const [splash, setSplash] = useState(false);
-  const [status, setStatus] = useState(null);
-  const hadPendingDecision = useRef(false);
+  const sawPending = useRef(false);
+
   const isBuyer = trader.account_type === "buyer";
+  const level = requiredLevel(trader);
+  const held = heldLevel(trader);
+  const covered = coversRequired(trader);
+
+  const load = useCallback(async () => {
+    const rows = await base44.entities.Verification.filter({ trader_id: trader.id }).catch(() => []);
+    setState(rows?.[0] || { status: STATUS.NONE });
+  }, [trader.id]);
 
   useEffect(() => {
-    let cancelled = false;
-    base44.entities.Verification.filter({ trader_id: trader.id })
-      .then((rows) => {
-        if (!cancelled) setStatus(rows?.[0]?.status || STATUS.NONE);
-      })
-      .catch(() => {
-        if (!cancelled) setStatus(STATUS.NONE);
-      });
+    load();
+  }, [load, trader.verified, trader.verified_level, trader.account_type]);
+
+  // Returning from Shufti (or coming back to the app): refresh until the result lands.
+  useEffect(() => {
+    if (!isAwaitingDecision(state?.status)) return;
+    const refresh = () => document.visibilityState === "visible" && (load(), onVerified?.());
+    const t = setInterval(refresh, 15000);
+    document.addEventListener("visibilitychange", refresh);
     return () => {
-      cancelled = true;
+      clearInterval(t);
+      document.removeEventListener("visibilitychange", refresh);
     };
-  }, [trader.id, trader.verified, trader.verified_as, trader.account_type]);
+  }, [state?.status, load, onVerified]);
 
+  // Celebrate only a real pending → approved transition seen in this session.
   useEffect(() => {
-    if (isAwaitingDecision(status)) {
-      hadPendingDecision.current = true;
-    } else if (status !== STATUS.APPROVED) {
-      hadPendingDecision.current = false;
+    if (isAwaitingDecision(state?.status)) sawPending.current = true;
+    else if (state?.status === STATUS.APPROVED && covered && sawPending.current) {
+      sawPending.current = false;
+      setSplash(true);
     }
+  }, [state?.status, covered]);
 
-    if (status !== STATUS.APPROVED || !isVerified(trader) || !hadPendingDecision.current) return;
-    hadPendingDecision.current = false;
-    setSplash(true);
-  }, [status, trader.verified, trader.verified_as, trader.account_type]);
-
-  const finish = async () => {
-    setOpen(false);
-    await onVerified();
+  const start = async () => {
+    setBusy(true);
+    setNotice(null);
+    haptic("light");
+    try {
+      const { data } = await base44.functions.invoke("submitVerification", {});
+      if (data?.state === "redirect" && data.url) {
+        // Shufti's hosted page handles document capture and the liveness scan.
+        window.location.assign(data.url);
+        return;
+      }
+      if (data?.state === "already_verified") await onVerified?.();
+      else setNotice(data);
+      await load();
+    } catch (err) {
+      setNotice({ error: err?.response?.data?.error || "Verification couldn't be started. Please try again." });
+    }
+    setBusy(false);
   };
 
-  if (isVerified(trader)) {
+  if (!state) return null;
+
+  if (covered) {
     return (
       <>
         <div className="rounded-2xl border border-primary/30 bg-card p-4">
           <div className="flex items-center gap-2.5">
             <BadgeCheck className="h-[18px] w-[18px] text-primary" />
-            <p className="text-sm font-semibold">{isBuyer ? "Verified buyer" : "Verified trader"}</p>
+            <p className="text-sm font-semibold">{LEVEL_LABEL[held]}</p>
           </div>
           <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-            {isBuyer
-              ? "Your identity has been checked. The verified badge travels with your buyer profile."
-              : "Your Gem License has been checked. The verified badge travels with your profile and every stone you list."}
+            {held === "buyer"
+              ? "Your identity has been checked by our verification partner, Shufti Pro."
+              : "Checked by our verification partner, Shufti Pro. Your badge shows on your profile and every stone you list."}
           </p>
         </div>
-
         {splash && (
           <SuccessSplash
-            title={isBuyer ? "You're a verified buyer" : "You're a verified trader"}
-            subtitle={
-              isBuyer
-                ? "Your badge is live across the network — traders can see you're a genuine buyer."
-                : "Your badge is live across the network — on your profile and on every stone you list."
-            }
+            title={`You're a ${LEVEL_LABEL[held]}`}
+            subtitle="Your badge is live across the network."
             onDone={() => setSplash(false)}
           />
         )}
@@ -89,63 +117,106 @@ export default function VerificationCard({ trader, onVerified }) {
     );
   }
 
-  const waiting = isAwaitingDecision(status);
-  const needsPlan = !isBuyer && !waiting && (!trader.subscription_tier || trader.subscription_tier === "none");
+  const status = state.status || STATUS.NONE;
+  const needsPlan = !isBuyer && (!trader.subscription_tier || trader.subscription_tier === "none");
+  const attemptsLeft = Math.max(0, LIMITS.lifetime - (state.attempt_count || 0));
+  const upgrading = !!held; // e.g. a Verified Trader who moved to Platinum
+
+  if (state.blocked || notice?.state === "blocked") {
+    return (
+      <Card icon={AlertCircle} tone="destructive" title="Verification locked">
+        <p>You've used all {LIMITS.lifetime} verification attempts. Our team can review your account and unlock it.</p>
+        <Button asChild variant="outline" className="mt-3 h-11 w-full">
+          <a href={`mailto:${SUPPORT_EMAIL}?subject=Verification%20help`}>Contact support</a>
+        </Button>
+      </Card>
+    );
+  }
+
+  if (status === STATUS.REVIEW || notice?.state === "under_review") {
+    return (
+      <Card icon={Clock} title="Under review">
+        <p>Your checks are with the Gems24 team for a final review. Your profile updates automatically once it's done.</p>
+      </Card>
+    );
+  }
+
+  const pending = status === STATUS.PENDING;
+  const declined = status === STATUS.DECLINED;
+  const lapsed = status === STATUS.ABANDONED || status === STATUS.EXPIRED;
 
   return (
     <>
-      <div className="rounded-2xl border border-primary/30 bg-card p-5">
-        <div className="flex items-center gap-2.5">
-          {waiting ? (
-            <Clock className="h-[18px] w-[18px] text-primary" />
-          ) : (
-            <ShieldCheck className="h-[18px] w-[18px] text-primary" />
-          )}
-          <h2 className="text-sm font-semibold">{waiting ? "Verification in progress" : "Get verified"}</h2>
-          <span className="ml-auto text-[0.625rem] font-bold uppercase tracking-wider text-primary">
-            {waiting ? "Checking" : "Not verified"}
-          </span>
-        </div>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          {waiting
-            ? "Your documents are with our verification partner. Your badge appears here automatically once the check clears."
-            : isBuyer
-              ? "Trusted buyers get answered first. Verify your identity once and traders know they're dealing with a genuine buyer."
-              : "This trade runs on proof. Verify your Gem License once and the network knows you're the real thing."}
-        </p>
-        {!waiting && (
-          <ul className="mt-3 space-y-1.5">
-            {(isBuyer ? BUYER_POINTS : POINTS).map((p) => (
-              <li key={p} className="flex gap-2 text-xs leading-relaxed text-foreground/80">
-                <BadgeCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                {p}
-              </li>
-            ))}
-          </ul>
+      <Card
+        icon={pending ? Clock : ShieldCheck}
+        title={pending ? "Verification in progress" : upgrading ? `Get ${LEVEL_LABEL[level]}` : "Get verified"}
+        badge={pending ? "Checking" : isBuyer ? "Optional" : "Not verified"}
+      >
+        {pending ? (
+          <p>
+            If you've finished on Shufti's page, your result is being processed and your profile updates automatically.
+            Not finished? Continue where you left off.
+          </p>
+        ) : (
+          <>
+            {declined && (
+              <p className="mb-2 text-destructive">
+                {state.decline_reason || "That check didn't pass."} {attemptsLeft} attempt{attemptsLeft === 1 ? "" : "s"} left.
+              </p>
+            )}
+            {lapsed && <p className="mb-2">Your last verification wasn't finished in time. You can start again.</p>}
+            <p>{BENEFIT[level]}</p>
+            <ul className="mt-3 space-y-1.5">
+              {LEVEL_CHECKS[level].map((c) => (
+                <li key={c} className="flex gap-2 text-xs leading-relaxed text-foreground/80">
+                  <BadgeCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                  {c}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-[0.6875rem]">
+              Handled securely by Shufti Pro, our verification partner. Gems24 never stores your ID images.
+            </p>
+          </>
         )}
+
+        {notice?.state === "cooldown" || notice?.state === "rate_limited" ? (
+          <p className="mt-3 text-xs font-medium text-foreground/80">
+            Please try again in about {notice.retryInMinutes} minute{notice.retryInMinutes === 1 ? "" : "s"}.
+          </p>
+        ) : notice?.error ? (
+          <p className="mt-3 text-xs text-destructive">{notice.error}</p>
+        ) : null}
+
         {needsPlan ? (
           <>
-            <p className="mt-3 text-xs font-medium text-foreground/80">
-              You need a trader plan before you can verify your Gem License.
-            </p>
+            <p className="mt-3 text-xs font-medium text-foreground/80">Choose a trader plan to get verified.</p>
             <Button asChild className="mt-3 h-11 w-full">
               <Link to="/subscription">Choose a plan</Link>
             </Button>
           </>
         ) : (
-          <Button className="mt-4 h-11 w-full" variant={waiting ? "outline" : "default"} onClick={() => setOpen(true)}>
-            {waiting ? "View status" : isBuyer ? "Verify my account" : "Verify my license"}
+          <Button className="mt-4 h-11 w-full" variant={pending ? "outline" : "default"} onClick={start} disabled={busy}>
+            {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+            {pending ? "Continue verification" : declined || lapsed ? "Try again" : isBuyer ? "Verify my identity" : `Get ${LEVEL_LABEL[level]}`}
           </Button>
         )}
-      </div>
-
-      <BottomSheet
-        open={open}
-        onOpenChange={setOpen}
-        title={isBuyer ? "Identity verification" : "Gem License verification"}
-      >
-        <LicenseUpload trader={trader} onDone={finish} />
-      </BottomSheet>
+      </Card>
     </>
+  );
+}
+
+function Card({ icon: Icon, title, badge, tone, children }) {
+  return (
+    <div className={`rounded-2xl border bg-card p-5 ${tone === "destructive" ? "border-destructive/30" : "border-primary/30"}`}>
+      <div className="flex items-center gap-2.5">
+        <Icon className={`h-[18px] w-[18px] ${tone === "destructive" ? "text-destructive" : "text-primary"}`} />
+        <h2 className="text-sm font-semibold">{title}</h2>
+        {badge && (
+          <span className="ml-auto text-[0.625rem] font-bold uppercase tracking-wider text-primary">{badge}</span>
+        )}
+      </div>
+      <div className="mt-2 text-sm leading-relaxed text-muted-foreground">{children}</div>
+    </div>
   );
 }

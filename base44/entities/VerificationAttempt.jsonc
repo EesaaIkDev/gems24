@@ -12,7 +12,7 @@
     },
     "document_type": {
       "type": "string",
-      "description": "Document requested for this attempt"
+      "description": "Badge level requested (buyer, trader, business); legacy rows hold the old document type"
     },
     "document_uris": {
       "type": "array",

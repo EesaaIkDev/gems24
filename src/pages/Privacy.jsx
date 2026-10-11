@@ -22,6 +22,13 @@ export default function Privacy() {
         browsing Gems24. Your phone number and contact email are shown only to traders whose
         connection request you have accepted.
       </LegalSection>
+      <LegalSection title="Identity verification">
+        [PLACEHOLDER TEXT — confirm with counsel] Identity, business (KYB) and anti-money-laundering
+        checks are carried out by our verification partner, Shufti Pro, on its own secure page. Shufti
+        Pro processes your ID document, a selfie for a liveness check and, for business accounts,
+        company registry details. Gems24 does not store your ID images; we keep only the outcome of
+        each check. Verification is optional for buyers.
+      </LegalSection>
       <LegalSection title="5. Your rights">
         You can view and edit every piece of personal data we hold about you from Settings → Edit
         profile, and you can permanently delete your account and personal data from Settings →

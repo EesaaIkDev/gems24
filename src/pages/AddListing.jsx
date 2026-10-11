@@ -15,7 +15,7 @@ import usePopularDefaults from "@/hooks/usePopularDefaults";
 import LimitChoice from "@/components/subscription/LimitChoice";
 import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
-import { isVerified } from "@/lib/verification";
+import { CERTIFICATE_NOTICE, heldLevel, isVerified } from "@/lib/verification";
 import { createRecord } from "@/lib/offlineSync";
 import useOnline from "@/hooks/useOnline";
 
@@ -80,6 +80,7 @@ export default function AddListing() {
       trader_country: trader.country || "",
       trader_tier: trader.subscription_tier || "none",
       trader_verified: isVerified(trader),
+      trader_verified_level: heldLevel(trader),
     });
     // A row created offline has no server id yet — send them to their listings.
     navigate(String(listing.id).startsWith("local-") ? "/profile" : `/listing/${listing.id}`, {
@@ -220,6 +221,9 @@ export default function AddListing() {
             disabled={uploadingCert || !online}
           />
         </label>
+        <p className="text-[0.6875rem] text-muted-foreground">
+          Buyers will see: "{CERTIFICATE_NOTICE}".
+        </p>
       </div>
       <div className="space-y-1.5">
         <Label>Status</Label>

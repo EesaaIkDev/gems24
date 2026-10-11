@@ -137,7 +137,7 @@
     "verified": {
       "type": "boolean",
       "default": false,
-      "description": "Public verified badge. Set only by the verificationWebhook backend function on an approved decision \u2014 never writable by the client.",
+      "description": "Public verified badge. Set only by shuftiCallback / reviewVerification on an approved decision \u2014 never writable by the client.",
       "rls": {
         "write": {
           "user_condition": {
@@ -154,8 +154,43 @@
         "buyer"
       ],
       "default": "",
-      "description": "Account type the verified badge was granted for, derived from the document checked. Set only by verificationWebhook; cleared by upgradeToTrader.",
+      "description": "Account type the badge was granted for. Set only by the verification backend; cleared by upgradeToTrader.",
       "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "verified_level": {
+      "type": "string",
+      "enum": [
+        "",
+        "buyer",
+        "trader",
+        "business"
+      ],
+      "default": "",
+      "description": "Which badge the verification earned: buyer (KYC), trader (KYC + AML), business (KYB + KYC + AML). Set only by shuftiCallback / reviewVerification.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "aml_flagged": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ongoing AML monitoring reported a match after approval. Badge is kept until an admin decides. Admin only.",
+      "rls": {
+        "read": {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
         "write": {
           "user_condition": {
             "role": "admin"

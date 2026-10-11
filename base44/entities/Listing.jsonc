@@ -58,6 +58,18 @@
       },
       "description": "Copied from the trader by the stampListing backend function. Never written by the client."
     },
+    "trader_verified_level": {
+      "type": "string",
+      "default": "",
+      "description": "Copied from the trader by the stampListing backend function. Never written by the client.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
     "placement": {
       "type": "number",
       "default": 0,

@@ -6,7 +6,18 @@
 type Row = Record<string, any>;
 
 export const db: Record<string, Row[]> = {};
-export const state: { user: Row | null; pushes: Row[] } = { user: null, pushes: [] };
+export const state: {
+  user: Row | null;
+  pushes: Row[];
+  shufti: { requests: Row[]; respond: (path: string, body: Row) => Row; badSignature?: boolean };
+} = { user: null, pushes: [], shufti: { requests: [], respond: () => ({}) } };
+
+export const SHUFTI_SECRET = 'shufti-test-secret';
+const sha256 = async (s: string) =>
+  Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s))))
+    .map((b) => b.toString(16).padStart(2, '0')).join('');
+/** Signs a body the way Shufti does: sha256(body + sha256(secret)). */
+export const shuftiSign = async (raw: string, key = SHUFTI_SECRET) => sha256(raw + (await sha256(key)));
 
 let seq = 0;
 const now = () => new Date().toISOString();
@@ -65,12 +76,25 @@ export function reset() {
   for (const k of Object.keys(db)) delete db[k];
   state.user = null;
   state.pushes = [];
+  state.shufti = { requests: [], respond: () => ({}) };
 }
 
-export const secrets = { get: (_k: string) => 'test-key' };
+export const SECRETS: Record<string, string> = {
+  SHUFTI_CLIENT_ID: 'shufti-client',
+  SHUFTI_SECRET_KEY: SHUFTI_SECRET,
+};
+export const secrets = { get: (k: string) => (k in SECRETS ? SECRETS[k] : 'test-key') };
 
-// OneSignal is reached through fetch — record instead of calling out.
-globalThis.fetch = (async (_url: string, init: RequestInit) => {
-  state.pushes.push(JSON.parse(String(init.body)));
+// Shufti and OneSignal are reached through fetch — answer/record instead of calling out.
+globalThis.fetch = (async (url: string, init: RequestInit) => {
+  const body = JSON.parse(String(init.body));
+  if (String(url).startsWith('https://api.shuftipro.com')) {
+    const path = new URL(String(url)).pathname;
+    state.shufti.requests.push({ path, body, auth: (init.headers as Row)?.Authorization });
+    const raw = JSON.stringify(state.shufti.respond(path, body));
+    const signature = state.shufti.badSignature ? 'forged' : await shuftiSign(raw);
+    return new Response(raw, { headers: { signature } });
+  }
+  state.pushes.push(body);
   return new Response(JSON.stringify({ id: 'push' }));
 }) as typeof fetch;

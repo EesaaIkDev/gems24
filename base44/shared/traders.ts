@@ -80,6 +80,7 @@ export const listingStamp = (t: any, listing?: any) => ({
   trader_country: t?.country || '',
   trader_tier: t?.subscription_tier || 'none',
   trader_verified: isVerified(t),
+  trader_verified_level: isVerified(t) ? t.verified_level || (t.account_type === 'buyer' ? 'buyer' : 'trader') : '',
   placement: placementScore(t?.subscription_tier, listing?.created_date),
 });
 

@@ -50,6 +50,16 @@ export default function Settings() {
 
       <NativeSettings />
 
+      {user?.role === "admin" && (
+        <Link to="/admin/verifications" className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3 hover:border-primary/40">
+          <ShieldCheck className="w-[18px] h-[18px] text-primary" />
+          <div className="flex-1">
+            <p className="text-sm font-medium">Verification review</p>
+            <p className="text-xs text-muted-foreground">AML matches waiting on an admin decision.</p>
+          </div>
+        </Link>
+      )}
+
       <div className="rounded-2xl bg-card border border-border p-4">
         <div className="flex items-center gap-2">
           <FileText className="w-[18px] h-[18px] text-primary" />

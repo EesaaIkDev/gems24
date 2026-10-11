@@ -70,7 +70,7 @@ export default function BecomeTrader({ trader, onUpgraded }) {
 
           {isVerified(trader) && (
             <p className="text-xs leading-relaxed text-muted-foreground">
-              Your verified badge will be removed — trader accounts verify with a Gem License instead.
+              Your Verified Buyer badge will be removed — trader accounts verify again with an anti-money-laundering screening.
             </p>
           )}
 

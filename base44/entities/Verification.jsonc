@@ -1,7 +1,7 @@
 {
   "name": "Verification",
   "type": "object",
-  "description": "Per-trader identity verification state. Written only by backend functions; the owner may read their own row. Document images are never stored here \u2014 only private storage references on the attempt, which are cleared once a decision lands.",
+  "description": "Per-trader identity verification state (Shufti Pro: KYC, KYB, AML). Written only by backend functions; the owner may read their own row. No document images are stored by Gems24.",
   "properties": {
     "trader_id": {
       "type": "string",
@@ -24,19 +24,19 @@
         "abandoned"
       ],
       "default": "none",
-      "description": "'pending' means a submission is awaiting a decision from the verification provider or a reviewer"
+      "description": "Overall state. 'pending' = waiting on Shufti, 'review' = waiting on a Gems24 admin (e.g. an AML match), 'approved' = badge granted"
     },
     "document_type": {
       "type": "string",
-      "description": "Which document was requested, e.g. gem_license or government_id"
+      "description": "Legacy: document requested by the pre-Shufti manual flow"
     },
     "provider": {
       "type": "string",
-      "description": "Verification provider that handled the current attempt, e.g. manual. Set by the backend when a provider is wired in."
+      "description": "Verification provider for the current attempt: shufti (or manual for legacy rows)"
     },
     "provider_ref": {
       "type": "string",
-      "description": "Provider's own identifier for the current check, used to match incoming webhooks"
+      "description": "Shufti reference for the current attempt, used to match callbacks"
     },
     "submitted_at": {
       "type": "string",
@@ -79,6 +79,90 @@
       "type": "boolean",
       "default": false,
       "description": "True once the lifetime attempt cap is reached; only support can lift it"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "",
+        "buyer",
+        "trader",
+        "business"
+      ],
+      "default": "",
+      "description": "Badge level the current attempt is for: buyer (KYC), trader (KYC + AML), business (KYB + KYC + AML)"
+    },
+    "kyc_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "pending",
+        "passed",
+        "failed",
+        "review",
+        "flagged"
+      ],
+      "default": "none"
+    },
+    "kyb_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "pending",
+        "passed",
+        "failed",
+        "review",
+        "flagged"
+      ],
+      "default": "none"
+    },
+    "aml_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "pending",
+        "passed",
+        "failed",
+        "review",
+        "flagged"
+      ],
+      "default": "none",
+      "description": "'review' = match on the first screening, 'flagged' = match from ongoing monitoring after approval; both wait for an admin"
+    },
+    "verification_url": {
+      "type": "string",
+      "description": "Shufti hosted verification link for the pending attempt, so it can be resumed without a new (paid) request"
+    },
+    "verification_url_expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "review_reason": {
+      "type": "string",
+      "description": "Why the account is waiting on an admin"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "rls": {
+        "read": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "review_note": {
+      "type": "string",
+      "rls": {
+        "read": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     }
   },
   "required": [

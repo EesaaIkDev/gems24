@@ -44,6 +44,17 @@ Deno.test('Chats and connections: participants only, created by the server', () 
   assert(JSON.stringify(message.rls.read).includes('data.sender_user_id'));
 });
 
+Deno.test('verification: badge level and AML flag are server-only; the flag is hidden from users', () => {
+  const t = load('Trader').properties;
+  assert(serverOnly(t.verified_level));
+  assert(serverOnly(t.aml_flagged));
+  assertEquals(t.aml_flagged.rls.read, ADMIN);
+  assert(serverOnly(load('Listing').properties.trader_verified_level));
+  const v = load('Verification');
+  assertEquals([v.rls.create, v.rls.update, v.rls.delete], [ADMIN, ADMIN, ADMIN]);
+  assertEquals(v.properties.review_note.rls.read, ADMIN);
+});
+
 Deno.test('receipts: delivery and read markers are server-owned', () => {
   const p = load('Conversation').properties;
   for (const field of [
