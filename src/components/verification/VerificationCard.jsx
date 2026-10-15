@@ -4,7 +4,8 @@ import { AlertCircle, BadgeCheck, Clock, Loader2, ShieldCheck } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import SuccessSplash from "@/components/subscription/SuccessSplash";
 import { base44 } from "@/api/base44Client";
-import { haptic } from "@/lib/despia";
+import { haptic, isNative } from "@/lib/despia";
+import { openExternal } from "@/lib/openExternal";
 import {
   LEVEL_CHECKS,
   LEVEL_LABEL,
@@ -78,10 +79,12 @@ export default function VerificationCard({ trader, onVerified }) {
       const { data } = await base44.functions.invoke("submitVerification", {});
       if (data?.state === "redirect" && data.url) {
         // Shufti's hosted page handles document capture and the liveness scan.
-        window.location.assign(data.url);
-        return;
-      }
-      if (data?.state === "already_verified") await onVerified?.();
+        // In the app this opens Despia's in-app browser; the card keeps polling
+        // and picks up the result when the user comes back.
+        if (openExternal(data.url, { native: isNative }) === "invalid") {
+          setNotice({ error: "Verification link was invalid. Please try again." });
+        }
+      } else if (data?.state === "already_verified") await onVerified?.();
       else setNotice(data);
       await load();
     } catch (err) {

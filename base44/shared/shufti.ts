@@ -14,7 +14,8 @@ import { secrets } from 'base44:runtime';
 export const API = 'https://api.shuftipro.com';
 const APP_ID = '6a661583e07cf311ecceee39';
 export const DEFAULT_CALLBACK = `https://base44.app/api/apps/${APP_ID}/functions/shuftiCallback`;
-export const DEFAULT_REDIRECT = 'https://gems24.lk/profile?verification=done';
+/** Static page: in the app Shufti runs in Despia's in-app browser, which the user just closes. */
+export const DEFAULT_REDIRECT = 'https://gems24.lk/verification-complete.html';
 /** Minutes a hosted verification link stays valid (Shufti onsite default is 60). */
 export const LINK_TTL_MIN = 60;
 
