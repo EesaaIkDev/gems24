@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { AlertCircle, BadgeCheck, Clock, Loader2, ShieldCheck } from "lucide-react";
+import { AlertCircle, BadgeCheck, Clock, Copy, ExternalLink, Loader2, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SuccessSplash from "@/components/subscription/SuccessSplash";
 import { base44 } from "@/api/base44Client";
 import { haptic, isNative } from "@/lib/despia";
-import { openExternal } from "@/lib/openExternal";
+import { isShuftiUrl, openExternal, openInSecureBrowser } from "@/lib/openExternal";
 import {
   LEVEL_CHECKS,
   LEVEL_LABEL,
@@ -34,6 +34,9 @@ export default function VerificationCard({ trader, onVerified }) {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState(null);
   const [splash, setSplash] = useState(false);
+  const [fresh, setFresh] = useState(false);
+  const [opened, setOpened] = useState(false);
+  const [copied, setCopied] = useState("");
   const sawPending = useRef(false);
 
   const isBuyer = trader.account_type === "buyer";
@@ -71,26 +74,61 @@ export default function VerificationCard({ trader, onVerified }) {
     }
   }, [state?.status, covered]);
 
+  // The open Shufti link lives on the user's own Verification row, so it can be
+  // opened straight from a tap — iOS blocks window.open once a tap has waited
+  // on the network.
+  const link =
+    state?.status === STATUS.PENDING &&
+    isShuftiUrl(state.verification_url) &&
+    Date.parse(state.verification_url_expires_at || "") > Date.now() + 60_000
+      ? state.verification_url
+      : "";
+
+  const openLink = (url) => {
+    haptic("light");
+    setNotice(null);
+    setOpened(true);
+    // Shufti's hosted page handles document capture and the liveness scan.
+    // The card keeps polling and picks up the result when the user comes back.
+    if (openExternal(url, { native: isNative }) === "invalid") {
+      setNotice({ error: "Verification link was invalid. Please try again." });
+    }
+  };
+
   const start = async () => {
     setBusy(true);
     setNotice(null);
     haptic("light");
     try {
       const { data } = await base44.functions.invoke("submitVerification", {});
-      if (data?.state === "redirect" && data.url) {
-        // Shufti's hosted page handles document capture and the liveness scan.
-        // In the app this opens Despia's in-app browser; the card keeps polling
-        // and picks up the result when the user comes back.
-        if (openExternal(data.url, { native: isNative }) === "invalid") {
-          setNotice({ error: "Verification link was invalid. Please try again." });
-        }
-      } else if (data?.state === "already_verified") await onVerified?.();
-      else setNotice(data);
-      await load();
+      if (data?.state === "redirect" && isShuftiUrl(data.url)) {
+        await load();
+        setFresh(true);
+        // On the web a delayed open still works (same-tab fallback); in the
+        // app it would be dropped, so the button turns into "Open Shufti".
+        if (!isNative) openLink(data.url);
+      } else if (data?.state === "redirect") {
+        setNotice({ error: "Verification link was invalid. Please try again." });
+      } else if (data?.state === "already_verified") {
+        await onVerified?.();
+        await load();
+      } else {
+        setNotice(data);
+        await load();
+      }
     } catch (err) {
       setNotice({ error: err?.response?.data?.error || "Verification couldn't be started. Please try again." });
     }
     setBusy(false);
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied("Link copied — paste it into Safari.");
+    } catch {
+      setCopied(link);
+    }
   };
 
   if (!state) return null;
@@ -197,6 +235,27 @@ export default function VerificationCard({ trader, onVerified }) {
             <Button asChild className="mt-3 h-11 w-full">
               <Link to="/subscription">Choose a plan</Link>
             </Button>
+          </>
+        ) : link ? (
+          <>
+            <Button className="mt-4 h-11 w-full" variant={fresh ? "default" : "outline"} onClick={() => openLink(link)}>
+              <ExternalLink className="h-4 w-4" />
+              {fresh ? "Open Shufti" : "Continue verification"}
+            </Button>
+            {opened && isNative && (
+              <div className="mt-3 space-y-2">
+                <p className="text-xs text-muted-foreground">Didn't open?</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button variant="outline" className="h-10 text-xs" onClick={() => openInSecureBrowser(link)}>
+                    Secure browser
+                  </Button>
+                  <Button variant="outline" className="h-10 text-xs" onClick={copyLink}>
+                    <Copy className="h-3.5 w-3.5" /> Copy link
+                  </Button>
+                </div>
+                {copied && <p className="break-all text-[0.6875rem] text-muted-foreground selectable">{copied}</p>}
+              </div>
+            )}
           </>
         ) : (
           <Button className="mt-4 h-11 w-full" variant={pending ? "outline" : "default"} onClick={start} disabled={busy}>

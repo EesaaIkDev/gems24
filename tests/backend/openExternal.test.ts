@@ -1,5 +1,5 @@
 import { assertEquals } from 'jsr:@std/assert@1';
-import { openExternal } from '../../src/lib/openExternal.js';
+import { isShuftiUrl, openExternal, openInSecureBrowser } from '../../src/lib/openExternal.js';
 
 const fakeWindow = (opens: boolean) => {
   const calls: string[] = [];
@@ -32,4 +32,21 @@ Deno.test('openExternal: refuses non-https or malformed links', () => {
   assertEquals(openExternal('not a url', { win }), 'invalid');
   assertEquals(openExternal('http://insecure.example', { win }), 'invalid');
   assertEquals(calls.length, 0);
+});
+
+Deno.test('isShuftiUrl: only https Shufti hosts', () => {
+  assertEquals(isShuftiUrl('https://app.shuftipro.com/verification/abc'), true);
+  assertEquals(isShuftiUrl('https://shuftipro.com/x'), true);
+  assertEquals(isShuftiUrl('http://app.shuftipro.com/x'), false);
+  assertEquals(isShuftiUrl('https://shuftipro.com.evil.example/x'), false);
+  assertEquals(isShuftiUrl('https://evilshuftipro.com/x'), false);
+  assertEquals(isShuftiUrl(''), false);
+});
+
+Deno.test('openInSecureBrowser: sends Despia oauth:// for Shufti links only', () => {
+  const sent: string[] = [];
+  assertEquals(openInSecureBrowser('https://app.shuftipro.com/v?a=1&b=2', (c: string) => sent.push(c)), true);
+  assertEquals(sent, ['oauth://?url=https%3A%2F%2Fapp.shuftipro.com%2Fv%3Fa%3D1%26b%3D2']);
+  assertEquals(openInSecureBrowser('https://evil.example', (c: string) => sent.push(c)), false);
+  assertEquals(sent.length, 1);
 });
