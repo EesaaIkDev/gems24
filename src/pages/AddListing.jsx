@@ -17,6 +17,7 @@ import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
 import { CERTIFICATE_NOTICE, heldLevel, isVerified } from "@/lib/verification";
 import { createRecord } from "@/lib/offlineSync";
+import { haptic } from "@/lib/despia";
 import useOnline from "@/hooks/useOnline";
 
 const EMPTY = {
@@ -70,6 +71,7 @@ export default function AddListing() {
   };
 
   const publish = async () => {
+    haptic("heavy");
     setSaving(true);
     // Optimistic: saved locally now, pushed to Base44 by the outbox.
     const listing = await createRecord("Listing", {
@@ -82,6 +84,7 @@ export default function AddListing() {
       trader_verified: isVerified(trader),
       trader_verified_level: heldLevel(trader),
     });
+    haptic("success");
     // A row created offline has no server id yet — send them to their listings.
     navigate(String(listing.id).startsWith("local-") ? "/profile" : `/listing/${listing.id}`, {
       replace: true,

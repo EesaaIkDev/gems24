@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TIERS } from "@/lib/gems";
 import { haptic } from "@/lib/despia";
+import useErrorHaptic from "@/hooks/useErrorHaptic";
 
 // Codes are validated and applied entirely on the server (redeemDiscountCode):
 // the client never reads a DiscountCode row or writes a grade itself.
@@ -11,6 +12,7 @@ export default function RedeemCode({ tier, trader, onGranted, onDiscount, discou
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  useErrorHaptic(error);
 
   const apply = async () => {
     const value = code.trim().toUpperCase();
@@ -24,12 +26,12 @@ export default function RedeemCode({ tier, trader, onGranted, onDiscount, discou
     setBusy(false);
 
     if (data?.state === "granted") {
-      haptic("light");
+      haptic("success");
       onGranted();
       return;
     }
     if (data?.state === "discount") {
-      haptic("light");
+      haptic("success");
       onDiscount({ code: value, percent_off: data.percentOff });
       return;
     }

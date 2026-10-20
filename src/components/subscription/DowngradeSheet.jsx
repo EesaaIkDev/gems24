@@ -8,6 +8,7 @@ import { base44 } from "@/api/base44Client";
 import { removeRow } from "@/lib/localdb";
 import { launchPaywall } from "@/lib/revenuecat";
 import { isNative, haptic } from "@/lib/despia";
+import useErrorHaptic from "@/hooks/useErrorHaptic";
 import { TIERS, cap } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
 import { renewalLabel } from "@/lib/plan";
@@ -26,6 +27,7 @@ export default function DowngradeSheet({ trader, tier, listings, scheduled = fal
   const [error, setError] = useState("");
 
   useEffect(() => setSelected([]), [tier]);
+  useErrorHaptic(error);
 
   if (!tier) return null;
   const current = TIERS[trader.subscription_tier || "none"].label;
@@ -38,12 +40,13 @@ export default function DowngradeSheet({ trader, tier, listings, scheduled = fal
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
 
   const removeSelected = async () => {
+    haptic("heavy");
     setBusy(true);
     setError("");
     try {
       await Promise.all(selected.map((id) => base44.entities.Listing.delete(id)));
       await Promise.all(selected.map((id) => removeRow("Listing", id)));
-      haptic("light");
+      haptic("success");
       setSelected([]);
       await onChanged?.();
     } catch {
@@ -54,7 +57,7 @@ export default function DowngradeSheet({ trader, tier, listings, scheduled = fal
   };
 
   const continueToStore = () => {
-    haptic("light");
+    haptic("heavy");
     launchPaywall(tier, trader.id);
     onClose();
   };

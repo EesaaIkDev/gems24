@@ -8,6 +8,7 @@ import EmptyState from "@/components/common/EmptyState";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
+import { haptic } from "@/lib/despia";
 import { respondToRequest } from "@/lib/network";
 
 export default function Connections() {
@@ -58,7 +59,7 @@ export default function Connections() {
         Once a connection is accepted, you can both see each other's contact details.
       </p>
 
-      <Tabs defaultValue="accepted" className="mt-5">
+      <Tabs defaultValue="accepted" className="mt-5" onValueChange={() => haptic("light")}>
         <TabsList className="grid grid-cols-3 w-full h-11 rounded-xl">
           <TabsTrigger value="accepted" className="rounded-lg">Connected</TabsTrigger>
           <TabsTrigger value="incoming" className="rounded-lg">Requests ({data.incoming.length})</TabsTrigger>

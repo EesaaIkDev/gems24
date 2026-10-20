@@ -6,6 +6,8 @@ import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
 import { Loader2, Trash2 } from "lucide-react";
+import { haptic } from "@/lib/despia";
+import useErrorHaptic from "@/hooks/useErrorHaptic";
 
 /** Permanently removes the trader's personal data, listings, chats and connections. */
 export default function DeleteAccount({ trader }) {
@@ -13,8 +15,10 @@ export default function DeleteAccount({ trader }) {
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  useErrorHaptic(error);
 
   const runDelete = async () => {
+    haptic("heavy");
     setBusy(true);
     setError("");
     try {

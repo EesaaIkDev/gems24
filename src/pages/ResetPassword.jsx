@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Lock, Loader2, AlertTriangle } from "lucide-react";
+import useErrorHaptic from "@/hooks/useErrorHaptic";
 import AuthLayout from "@/components/AuthLayout";
 
 export default function ResetPassword() {
@@ -15,6 +16,7 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  useErrorHaptic(error);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

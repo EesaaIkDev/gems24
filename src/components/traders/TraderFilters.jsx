@@ -6,20 +6,29 @@ import { GEM_TYPES, TIER_ORDER, TIERS, cap } from "@/lib/gems";
 import { chipClass as chip } from "@/components/common/filterChip";
 import CountryFilter from "@/components/common/CountryFilter";
 import { values, selected, toggle } from "@/components/common/filterValues";
+import { haptic } from "@/lib/despia";
 
 export default function TraderFilters({ filters, setFilters, countries, specialties = GEM_TYPES }) {
   const [open, setOpen] = useState(false);
-  const set = (k, v) => setFilters((f) => ({ ...f, [k]: toggle(f[k], v) }));
+  // Every control here is a toggle, so each change ticks.
+  const update = (fn) => {
+    haptic("light");
+    setFilters(fn);
+  };
+  const set = (k, v) => update((f) => ({ ...f, [k]: toggle(f[k], v) }));
   const secondaryCount = values(filters.tier).length + values(filters.country).length;
 
-  const clearAll = () => setFilters({ specialty: [], tier: [], country: [] });
+  const clearAll = () => update(() => ({ specialty: [], tier: [], country: [] }));
 
   return (
     <>
       <div className="flex gap-1.5 overflow-x-auto -mx-3.5 px-3.5 pb-1 scrollbar-none">
         <button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={() => {
+            haptic("light");
+            setOpen(true);
+          }}
           className={`gem-chip shrink-0 flex items-center gap-1.5 px-3 py-1 text-[0.6875rem] font-semibold ${
             secondaryCount ? "neu-inset text-primary" : "neu-raised-xs text-muted-foreground"
           }`}
@@ -27,7 +36,7 @@ export default function TraderFilters({ filters, setFilters, countries, specialt
           <SlidersHorizontal className="h-3.5 w-3.5" />
           Filters{secondaryCount ? ` · ${secondaryCount}` : ""}
         </button>
-        <button aria-pressed={!values(filters.specialty).length} className={chip(!values(filters.specialty).length)} onClick={() => setFilters((f) => ({ ...f, specialty: [] }))}>
+        <button aria-pressed={!values(filters.specialty).length} className={chip(!values(filters.specialty).length)} onClick={() => update((f) => ({ ...f, specialty: [] }))}>
           All
         </button>
         {specialties.map((g) => (
@@ -55,7 +64,7 @@ export default function TraderFilters({ filters, setFilters, countries, specialt
           </FilterSection>
 
           <FilterSection label="Location">
-            <CountryFilter countries={countries} selected={values(filters.country)} onChange={(v) => setFilters((f) => ({ ...f, country: v }))} />
+            <CountryFilter countries={countries} selected={values(filters.country)} onChange={(v) => update((f) => ({ ...f, country: v }))} />
           </FilterSection>
 
           <div className="grid grid-cols-2 gap-2 pt-1">

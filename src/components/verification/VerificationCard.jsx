@@ -6,6 +6,7 @@ import SuccessSplash from "@/components/subscription/SuccessSplash";
 import { base44 } from "@/api/base44Client";
 import { haptic, isNative } from "@/lib/despia";
 import { isShuftiUrl, openExternal, openInSecureBrowser } from "@/lib/openExternal";
+import useErrorHaptic from "@/hooks/useErrorHaptic";
 import {
   LEVEL_CHECKS,
   LEVEL_LABEL,
@@ -65,14 +66,21 @@ export default function VerificationCard({ trader, onVerified }) {
     };
   }, [state?.status, load, onVerified]);
 
-  // Celebrate only a real pending → approved transition seen in this session.
+  // React only to a real pending → decision transition seen in this session:
+  // celebrate an approval, buzz an error on a decline.
   useEffect(() => {
     if (isAwaitingDecision(state?.status)) sawPending.current = true;
     else if (state?.status === STATUS.APPROVED && covered && sawPending.current) {
       sawPending.current = false;
+      haptic("success");
       setSplash(true);
+    } else if (state?.status === STATUS.DECLINED && sawPending.current) {
+      sawPending.current = false;
+      haptic("error");
     }
   }, [state?.status, covered]);
+
+  useErrorHaptic(notice?.error);
 
   // The open Shufti link lives on the user's own Verification row, so it can be
   // opened straight from a tap — iOS blocks window.open once a tap has waited
@@ -85,7 +93,7 @@ export default function VerificationCard({ trader, onVerified }) {
       : "";
 
   const openLink = (url) => {
-    haptic("light");
+    haptic("heavy");
     setNotice(null);
     setOpened(true);
     // Shufti's hosted page handles document capture and the liveness scan.
@@ -98,7 +106,7 @@ export default function VerificationCard({ trader, onVerified }) {
   const start = async () => {
     setBusy(true);
     setNotice(null);
-    haptic("light");
+    haptic("heavy");
     try {
       const { data } = await base44.functions.invoke("submitVerification", {});
       if (data?.state === "redirect" && isShuftiUrl(data.url)) {

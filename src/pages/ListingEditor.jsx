@@ -15,6 +15,7 @@ import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
 import { CERTIFICATE_NOTICE, heldLevel, isVerified } from "@/lib/verification";
 import { createRecord, updateRecord } from "@/lib/offlineSync";
+import { haptic } from "@/lib/despia";
 import useOnline from "@/hooks/useOnline";
 
 const EMPTY = {
@@ -68,8 +69,10 @@ export default function ListingEditor() {
     e.preventDefault();
     if (!form.weight_carats || !form.treatment || !form.gemstone_type) {
       setError("Gemstone type, weight and treatment are required.");
+      haptic("error");
       return;
     }
+    haptic("heavy");
     setError("");
     setSaving(true);
     const payload = {
@@ -93,6 +96,7 @@ export default function ListingEditor() {
     // Optimistic write — queued in the outbox when the network is unavailable.
     if (id) await updateRecord("Listing", id, payload);
     else await createRecord("Listing", payload);
+    haptic("success");
     navigate("/profile", { replace: true });
   };
 

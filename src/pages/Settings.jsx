@@ -15,6 +15,7 @@ import useTheme from "@/hooks/useTheme";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { TIERS } from "@/lib/gems";
 import { renewalLabel } from "@/lib/plan";
+import { haptic } from "@/lib/despia";
 
 export default function Settings() {
   const { dark, setDark } = useTheme();
@@ -26,6 +27,7 @@ export default function Settings() {
     setSaving(true);
     await base44.entities.Trader.update(trader.id, data);
     await reload();
+    haptic("success");
     setSaving(false);
     setSaved(true);
   };

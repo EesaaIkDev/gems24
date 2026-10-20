@@ -8,14 +8,31 @@ export const isNativeAndroid = isNative && ua.includes("android");
 
 const LOCK_KEY = "gems24_app_lock";
 
-/** Fire-and-forget native command. No-op outside the Despia runtime. */
-export function native(command) {
-  if (!isNative) return;
-  despia(command);
+/**
+ * Fire-and-forget native command. No-op outside the Despia runtime, and a
+ * bridge failure never reaches the UI — native polish must not break a tap.
+ */
+export function native(command, { enabled = isNative, run = despia } = {}) {
+  if (!enabled || typeof run !== "function") return false;
+  try {
+    run(command);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-export function haptic(type = "light") {
-  native(`${type}haptic://`);
+/**
+ * Haptic feedback, by meaning:
+ *   light   — tab switches, filter toggles, small taps
+ *   heavy   — critical taps and primary confirmations (post listing, verify, pay)
+ *   success — an action completed (listing saved, verification approved)
+ *   error   — validation errors and failed lookups
+ */
+const HAPTICS = new Set(["light", "heavy", "success", "error", "warning"]);
+
+export function haptic(type = "light", options) {
+  return native(`${HAPTICS.has(type) ? type : "light"}haptic://`, options);
 }
 
 /** Map this device's push registration to the signed-in user.

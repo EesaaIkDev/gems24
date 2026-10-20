@@ -7,6 +7,7 @@ import SignInPrompt from "@/components/common/SignInPrompt";
 import ConversationRow from "@/components/chat/ConversationRow";
 import RequestsList from "@/components/chat/RequestsList";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
+import { haptic } from "@/lib/despia";
 import { acknowledgeMessage, listConversations, otherIdOf, unreadFor } from "@/lib/chat";
 import { listIncomingRequests, respondToRequest } from "@/lib/network";
 import { MessageCircle } from "lucide-react";
@@ -74,7 +75,7 @@ export default function Messages() {
     <div className="pt-5">
       <h1 className="px-4 text-[1.625rem] font-bold leading-tight">Chats</h1>
 
-      <Tabs defaultValue="chats" className="mt-4">
+      <Tabs defaultValue="chats" className="mt-4" onValueChange={() => haptic("light")}>
         <TabsList className="mx-4 grid grid-cols-2 h-11 rounded-xl" style={{ width: "calc(100% - 2rem)" }}>
           <TabsTrigger value="chats" className="rounded-lg">Chats</TabsTrigger>
           <TabsTrigger value="requests" className="rounded-lg">

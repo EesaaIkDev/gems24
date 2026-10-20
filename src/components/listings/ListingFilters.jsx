@@ -7,15 +7,26 @@ import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
 import { chipClass as chip } from "@/components/common/filterChip";
 import CountryFilter from "@/components/common/CountryFilter";
 import { values, selected, toggle } from "@/components/common/filterValues";
+import { haptic } from "@/lib/despia";
 
 export default function ListingFilters({ filters, setFilters, countries }) {
   const [open, setOpen] = useState(false);
   const set = (k, v) => setFilters((f) => ({ ...f, [k]: v }));
-  const pick = (k, v) => setFilters((f) => ({ ...f, [k]: toggle(f[k], v) }));
+  // Toggles tick; typing carat values doesn't.
+  const choose = (k, v) => {
+    haptic("light");
+    set(k, v);
+  };
+  const pick = (k, v) => {
+    haptic("light");
+    setFilters((f) => ({ ...f, [k]: toggle(f[k], v) }));
+  };
   const secondaryCount = values(filters.treatment).length + values(filters.country).length + (filters.minCt || filters.maxCt ? 1 : 0);
 
-  const clearAll = () =>
+  const clearAll = () => {
+    haptic("light");
     setFilters({ q: filters.q, type: [], treatment: [], country: [], minCt: "", maxCt: "" });
+  };
 
   return (
     <>
@@ -24,7 +35,10 @@ export default function ListingFilters({ filters, setFilters, countries }) {
       <div className="flex gap-1.5 overflow-x-auto -mx-3.5 px-3.5 pb-1 scrollbar-none">
         <button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={() => {
+            haptic("light");
+            setOpen(true);
+          }}
           className={`gem-chip shrink-0 flex items-center gap-1.5 px-3 py-1 text-[0.6875rem] font-semibold ${
             secondaryCount ? "neu-inset text-primary" : "neu-raised-xs text-muted-foreground"
           }`}
@@ -32,7 +46,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
           <SlidersHorizontal className="h-3.5 w-3.5" />
           Filters{secondaryCount ? ` · ${secondaryCount}` : ""}
         </button>
-        <button aria-pressed={!values(filters.type).length} className={chip(!values(filters.type).length)} onClick={() => set("type", [])}>All</button>
+        <button aria-pressed={!values(filters.type).length} className={chip(!values(filters.type).length)} onClick={() => choose("type", [])}>All</button>
         {GEM_TYPES.map((t) => (
           <button key={t} aria-pressed={selected(filters.type, t)} className={chip(selected(filters.type, t))} onClick={() => pick("type", t)}>
             {cap(t)}
@@ -63,7 +77,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
           </FilterSection>
 
           <FilterSection label="Seller location">
-            <CountryFilter countries={countries} selected={values(filters.country)} onChange={(v) => set("country", v)} />
+            <CountryFilter countries={countries} selected={values(filters.country)} onChange={(v) => choose("country", v)} />
           </FilterSection>
 
           <FilterSection label="Carat weight">

@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
+import useErrorHaptic from "@/hooks/useErrorHaptic";
 import FormattingToolbar from "@/components/chat/FormattingToolbar";
 import formatSelection from "@/components/chat/formatSelection";
 
@@ -11,6 +12,7 @@ export default function MessageComposer({ onSend }) {
   const [focused, setFocused] = useState(false);
   const [error, setError] = useState("");
   const ref = useRef(null);
+  useErrorHaptic(error);
 
   const submit = async (e) => {
     e?.preventDefault();

@@ -70,6 +70,7 @@ export default function Subscription() {
     const rank = tierRank(trader?.subscription_tier);
     if (!trader) return;
     if (lastRank.current !== null && rank > lastRank.current) {
+      haptic("success");
       setSplash({
         title: "You're on " + TIERS[trader.subscription_tier].label,
         subtitle: `${CAPACITY[trader.subscription_tier]} — your grade is live across the network.`,
@@ -100,7 +101,7 @@ export default function Subscription() {
   };
 
   const subscribe = () => {
-    haptic("light");
+    haptic("heavy");
     launchPaywall(selected, trader.id);
     closeSheet();
   };

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserPlus, Mail, Lock, Loader2, User, Building2, Eye, EyeOff, X } from "lucide-react";
+import useErrorHaptic from "@/hooks/useErrorHaptic";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import AuthLayout from "@/components/AuthLayout";
 import PasswordStrength, { MIN_PASSWORD_LENGTH } from "@/components/auth/PasswordStrength";
@@ -23,6 +24,7 @@ export default function Register() {
   const [consent, setConsent] = useState({ terms: false, privacy: false });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  useErrorHaptic(error);
   const [showOtp, setShowOtp] = useState(false);
   const [otpCode, setOtpCode] = useState("");
 

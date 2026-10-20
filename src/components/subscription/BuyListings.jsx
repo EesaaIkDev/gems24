@@ -17,7 +17,7 @@ export default function BuyListings({ trader, onPurchaseStarted }) {
   const [open, setOpen] = useState(false);
 
   const buy = () => {
-    haptic("light");
+    haptic("heavy");
     launchPaywall("extra_listings", trader.id);
     setOpen(false);
     onPurchaseStarted?.();

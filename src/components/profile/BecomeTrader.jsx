@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import useOnline from "@/hooks/useOnline";
 import { haptic } from "@/lib/despia";
+import useErrorHaptic from "@/hooks/useErrorHaptic";
 import { isVerified } from "@/lib/verification";
 
 const POINTS = [
@@ -22,7 +23,10 @@ export default function BecomeTrader({ trader, onUpgraded }) {
   const [working, setWorking] = useState(false);
   const [error, setError] = useState("");
 
+  useErrorHaptic(error);
+
   const confirm = async () => {
+    haptic("heavy");
     setError("");
     setWorking(true);
     try {

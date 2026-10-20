@@ -15,6 +15,7 @@ import usePagedListings, { ON_MARKET } from "@/hooks/usePagedListings";
 import LoadMore from "@/components/common/LoadMore";
 import { GEM_TYPES, tierRank } from "@/lib/gems";
 import useCountries from "@/hooks/useCountries";
+import { haptic } from "@/lib/despia";
 import { matches, values } from "@/components/common/filterValues";
 import Seo from "@/components/seo/Seo";
 import CategoryLinks from "@/components/seo/CategoryLinks";
@@ -118,7 +119,7 @@ export default function Gemstones() {
         />
       </div>
 
-      <Tabs defaultValue="stones">
+      <Tabs defaultValue="stones" onValueChange={() => haptic("light")}>
         <TabsList className="grid grid-cols-2 w-full h-10 rounded-xl">
           <TabsTrigger value="stones">Stones</TabsTrigger>
           <TabsTrigger value="traders">Traders</TabsTrigger>
