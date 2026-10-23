@@ -56,10 +56,11 @@ export function upsertMessages(list, incoming) {
 }
 
 /** Sent server-side so the sender can't be spoofed. Returns { message, conversation }. */
-export async function sendMessage(conversation, text) {
+export async function sendMessage(conversation, text, imageUri) {
   const { data } = await base44.functions.invoke("sendChatMessage", {
     conversation_id: conversation.id,
     text,
+    image_uri: imageUri,
   });
   return data;
 }

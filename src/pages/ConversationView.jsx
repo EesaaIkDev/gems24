@@ -210,8 +210,8 @@ export default function ConversationView() {
 
   if (loading || !conversation || !trader) return <Spinner />;
 
-  const send = async (text) => {
-    const sent = await sendMessage(conversation, text);
+  const send = async (text, imageUri) => {
+    const sent = await sendMessage(conversation, text, imageUri);
     if (sent?.message) setMessages((list) => upsertMessages(list, [sent.message]));
     if (sent?.conversation) setConversation((prev) => ({
       ...sent.conversation,
@@ -297,7 +297,7 @@ export default function ConversationView() {
       </div>
 
       {networked ? (
-        <MessageComposer onSend={send} />
+        <MessageComposer onSend={send} canAttach={trader.account_type !== "buyer"} />
       ) : (
         <p className="px-6 pb-4 text-center text-sm text-muted-foreground">
           Messaging unlocks once {other?.full_name || "this trader"} accepts your network request.

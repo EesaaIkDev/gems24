@@ -2,6 +2,7 @@ import React from "react";
 import { format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import { Check, CheckCheck } from "lucide-react";
+import ChatImage from "@/components/chat/ChatImage";
 
 export default function MessageBubble({ message, mine, deliveryStatus = "sent" }) {
   return (
@@ -13,9 +14,10 @@ export default function MessageBubble({ message, mine, deliveryStatus = "sent" }
             : "bg-secondary text-foreground rounded-bl-md"
         }`}
       >
-        <div className="text-[0.9375rem] leading-snug break-words selectable [&_p]:whitespace-pre-wrap [&_strong]:font-bold [&_em]:italic [&_ul]:list-disc [&_ul]:pl-4">
+        {message.image_uri && <ChatImage uri={message.image_uri} />}
+        {message.text && <div className="text-[0.9375rem] leading-snug break-words selectable [&_p]:whitespace-pre-wrap [&_strong]:font-bold [&_em]:italic [&_ul]:list-disc [&_ul]:pl-4">
           <ReactMarkdown>{message.text}</ReactMarkdown>
-        </div>
+        </div>}
         <p className={`mt-1 flex items-center justify-end gap-1 text-[0.625rem] ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
           {format(new Date(message.created_date), "HH:mm")}
           {mine && (deliveryStatus === "read"

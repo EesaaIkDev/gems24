@@ -5,8 +5,10 @@ import { Send } from "lucide-react";
 import useErrorHaptic from "@/hooks/useErrorHaptic";
 import FormattingToolbar from "@/components/chat/FormattingToolbar";
 import formatSelection from "@/components/chat/formatSelection";
+import AttachPhotoButton from "@/components/chat/AttachPhotoButton";
+import { base44 } from "@/api/base44Client";
 
-export default function MessageComposer({ onSend }) {
+export default function MessageComposer({ onSend, canAttach = false }) {
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -25,6 +27,20 @@ export default function MessageComposer({ onSend }) {
       setText("");
     } catch {
       setError("Message couldn't be sent. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const sendPhoto = async (file) => {
+    if (!file || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
+      await onSend("", file_uri);
+    } catch {
+      setError("Photo couldn't be sent. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -56,6 +72,7 @@ export default function MessageComposer({ onSend }) {
         {focused && <FormattingToolbar onApply={apply} />}
         {error && <p role="alert" className="pb-2 text-xs text-destructive">{error}</p>}
         <div className="flex items-end gap-2">
+          {canAttach && <AttachPhotoButton disabled={busy} onPick={sendPhoto} />}
           <Textarea
             ref={ref}
             aria-label="Message"

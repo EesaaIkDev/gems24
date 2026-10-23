@@ -12,6 +12,17 @@
     "text": {
       "type": "string"
     },
+    "image_uri": {
+      "type": "string",
+      "description": "Private file URI of an attached photo. Only trader accounts may send one; set only by sendChatMessage.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
     "sender_user_id": {
       "type": "string",
       "description": "App user id of the sender. Set only by sendChatMessage.",
@@ -49,8 +60,7 @@
   },
   "required": [
     "conversation_id",
-    "sender_id",
-    "text"
+    "sender_id"
   ],
   "rls": {
     "create": {

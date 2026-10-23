@@ -16,9 +16,13 @@ export default async function (req: Request): Promise<Response> {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (!trader) return Response.json({ error: 'No profile found' }, { status: 404 });
 
-    const { conversation_id, text } = await req.json().catch(() => ({}));
+    const { conversation_id, text, image_uri } = await req.json().catch(() => ({}));
     const body = String(text || '').trim().slice(0, MAX_LENGTH);
-    if (!body) return Response.json({ error: 'Empty message' }, { status: 400 });
+    const image = typeof image_uri === 'string' ? image_uri.slice(0, 1000) : '';
+    if (image && trader.account_type === 'buyer') {
+      return Response.json({ error: 'Only traders can send photos.' }, { status: 403 });
+    }
+    if (!body && !image) return Response.json({ error: 'Empty message' }, { status: 400 });
 
     const c = (
       await base44.asServiceRole.entities.Conversation.filter({ id: String(conversation_id || '') })
@@ -38,10 +42,11 @@ export default async function (req: Request): Promise<Response> {
       sender_id: trader.id,
       sender_user_id: user.id,
       text: body,
+      ...(image ? { image_uri: image } : {}),
       recipient_user_id: isA ? c.participant_b_user_id : c.participant_a_user_id,
     });
     const conversation = await base44.asServiceRole.entities.Conversation.update(c.id, {
-      last_message: body,
+      last_message: body || 'Photo',
       last_message_at: message.created_date,
       last_message_id: message.id,
       last_sender_id: trader.id,
