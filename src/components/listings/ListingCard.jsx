@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
-import { Gem, MapPin } from "lucide-react";
+import { BadgeCheck, Gem, MapPin, ShieldOff } from "lucide-react";
 import SellerVerification from "@/components/common/SellerVerification";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import { cap } from "@/lib/gems";
@@ -23,16 +23,26 @@ export default function ListingCard({ listing }) {
       <div className="flex flex-col w-full gem-corners gem-card overflow-hidden bg-background">
       <div className="relative aspect-[4/3] bg-secondary overflow-hidden">
         {photo ? (
-          <Image
-            src={photo}
-            alt={listingAlt(listing)}
-            className="w-full h-full group-hover:scale-[1.04] transition-transform duration-500"
-          />
+          <>
+            <Image src={photo} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full scale-110 blur-xl opacity-60" />
+            <Image
+              src={photo}
+              alt={listingAlt(listing)}
+              fittingType="fit"
+              className="relative w-full h-full group-hover:scale-[1.03] transition-transform duration-500"
+            />
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <Gem className="w-8 h-8 text-muted-foreground/40" />
           </div>
         )}
+        <span
+          className={`neu-raised-xs absolute left-2 top-2 flex items-center gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-semibold backdrop-blur ${listing.trader_verified ? "text-primary" : "text-muted-foreground"}`}
+        >
+          {listing.trader_verified ? <BadgeCheck className="w-3 h-3" /> : <ShieldOff className="w-3 h-3" />}
+          {listing.trader_verified ? "Verified" : "Not verified"}
+        </span>
       </div>
 
       <div className="flex items-center justify-between gap-2 px-3.5 pt-3">
