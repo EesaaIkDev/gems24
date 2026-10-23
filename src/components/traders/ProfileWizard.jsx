@@ -11,7 +11,24 @@ function splitPhone(phone = "") {
   return match ? { code: match[1], number: match[2] } : { code: "", number: phone };
 }
 
-export default function ProfileWizard({ initial = {}, accountType, onSave, saving, submitLabel = "Save profile", onExit }) {
+/** Business fields as saved on the profile; the trading name falls back to the registered one. */
+export function businessDetails(form) {
+  let website = form.website.trim();
+  if (website && !/^https?:\/\//i.test(website)) website = `https://${website}`;
+  return {
+    legal_business_name: form.legal_business_name.trim(),
+    business_name: form.business_name.trim() || form.legal_business_name.trim(),
+    business_type: form.business_type,
+    registration_number: form.registration_number.trim(),
+    year_founded: form.year_founded === "" ? undefined : Number(form.year_founded),
+    team_size: form.team_size,
+    website,
+    contact_role: form.contact_role.trim(),
+  };
+}
+
+export default function ProfileWizard({ initial = {}, accountType, traderKind, onSave, saving, submitLabel = "Save profile", onExit }) {
+  const business = accountType === "trader" && traderKind === "business";
   const initialPhone = splitPhone(initial.phone || "");
   const [form, setForm] = useState({
     full_name: initial.full_name || "",
@@ -25,11 +42,18 @@ export default function ProfileWizard({ initial = {}, accountType, onSave, savin
     specialtiesText: (initial.specialties || []).join(", "),
     phoneCode: initialPhone.code,
     phoneNumber: initialPhone.number,
+    legal_business_name: initial.legal_business_name || "",
+    business_type: initial.business_type || "",
+    registration_number: initial.registration_number || "",
+    year_founded: initial.year_founded ?? "",
+    team_size: initial.team_size || "",
+    website: initial.website || "",
+    contact_role: initial.contact_role || "",
   });
   const [index, setIndex] = useState(0);
   const [error, setError] = useState("");
 
-  const steps = useMemo(() => buildSteps(accountType), [accountType]);
+  const steps = useMemo(() => buildSteps(accountType, traderKind), [accountType, traderKind]);
   const step = steps[index];
   const isLast = index === steps.length - 1;
   const progress = Math.round(((index + 1) / steps.length) * 100);
@@ -58,6 +82,7 @@ export default function ProfileWizard({ initial = {}, accountType, onSave, savin
       specialties: form.specialtiesText.split(",").map((s) => s.trim()).filter(Boolean),
       phone: form.phoneNumber.trim() ? `${form.phoneCode} ${form.phoneNumber.trim()}`.trim() : "",
       years_experience: form.years_experience === "" ? undefined : Number(form.years_experience),
+      ...(business ? businessDetails(form) : {}),
     });
   };
 

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
-import { CalendarClock, Crown, Settings2, TriangleAlert } from "lucide-react";
+import { Building2, CalendarClock, Crown, Settings2, TriangleAlert } from "lucide-react";
 import DowngradeSheet from "@/components/subscription/DowngradeSheet";
 import { base44 } from "@/api/base44Client";
 import { effectiveLimit } from "@/lib/referral";
@@ -19,26 +19,27 @@ import useEntitlements from "@/hooks/useEntitlements";
 import useOnline from "@/hooks/useOnline";
 import { isNative, haptic } from "@/lib/despia";
 import { launchPaywall, openCustomerCenter } from "@/lib/revenuecat";
-import { LOGO_URL, TIERS, TIER_ORDER, tierRank } from "@/lib/gems";
+import { LOGO_URL, TIERS, isBusiness, plansFor, tierRank } from "@/lib/gems";
 
 const CAPACITY = {
   bronze: "25 stones on the market at once",
   silver: "40 stones on the market at once",
   gold: "80 stones on the market at once",
-  platinum: "300 stones on the market at once",
+  platinum: "300 stones on the market at once — room for your company's full inventory",
 };
 
 const PLACEMENT = {
   bronze: "A public trader profile with your parcels, open to enquiries from the whole network.",
   silver: "Your Silver badge travels with every stone and lifts you above unranked traders in search.",
   gold: "Gold badge on profile and stones, with priority placement in search and the trader directory.",
-  platinum: "Top placement everywhere plus a featured spot on the home feed — the grade buyers look for first.",
+  platinum:
+    "A company profile with your business details, the Platinum badge on every stone, top placement in search and the trader directory, and a featured spot on the home feed.",
 };
 
 // Each grade states who it is for, so a trader recognises their own standing.
 const AUDIENCE = {
-  platinum: "Built for businesses and established firms.",
-  gold: "For high-profile traders.",
+  platinum: "For registered businesses only — gem houses, exporters and wholesalers.",
+  gold: "The highest plan for individual traders.",
   silver: "For intermediate traders.",
   bronze: "For traders just starting out.",
 };
@@ -128,6 +129,8 @@ export default function Subscription() {
     );
 
   const tier = trader?.subscription_tier || "none";
+  const business = isBusiness(trader);
+  const plans = plansFor(trader);
   const pending = trader?.pending_tier || "";
   const overBy = pending ? Math.max(0, listings.length - effectiveLimit(trader)) : 0;
   const isUpgrade = selected && tierRank(tier) > 0 && tierRank(selected) > tierRank(tier);
@@ -136,10 +139,13 @@ export default function Subscription() {
     <div className="px-4 pb-14 pt-8">
       <div className="mx-auto max-w-lg text-center">
         <img src={LOGO_URL} alt="Gems24" className="mx-auto h-16 w-16" />
-        <h1 className="mt-5 font-heading text-[1.75rem] font-bold leading-tight">Your trading grade</h1>
+        <h1 className="mt-5 font-heading text-[1.75rem] font-bold leading-tight">
+          {business ? "Your business plan" : "Your trading grade"}
+        </h1>
         <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
-          Gems24 grades traders the way the trade grades stones. The higher your grade, the more parcels
-          you can list and the earlier buyers see them.
+          {business
+            ? "Platinum is the Gems24 plan for registered businesses: a company profile, room for your full inventory and the highest placement across the network."
+            : "Gems24 grades traders the way the trade grades stones. The higher your grade, the more parcels you can list and the earlier buyers see them. Gold is the highest plan for individual traders."}
         </p>
         <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5">
           <span className="text-xs text-muted-foreground">Current grade</span>
@@ -200,8 +206,15 @@ export default function Subscription() {
         </div>
       )}
 
-      <div className="mx-auto mt-9 grid max-w-lg grid-cols-1 gap-4 sm:max-w-3xl sm:grid-cols-2">
-        {TIER_ORDER.map((t) => (
+      {business && tier !== "none" && tier !== "platinum" && (
+        <p className="mx-auto mt-6 max-w-lg rounded-2xl border border-border bg-card p-4 text-xs leading-relaxed text-muted-foreground">
+          Your {TIERS[tier].label} plan stays active until it ends. Business accounts renew on Platinum — choose it below
+          whenever you're ready.
+        </p>
+      )}
+
+      <div className={`mx-auto mt-9 grid max-w-lg grid-cols-1 gap-4 ${plans.length > 1 ? "sm:max-w-3xl sm:grid-cols-2" : ""}`}>
+        {plans.map((t) => (
           <TierRow
             key={t}
             tier={t}
@@ -209,11 +222,28 @@ export default function Subscription() {
             placement={PLACEMENT[t]}
             anchor={AUDIENCE[t]}
             current={tier === t}
-            recommended={t === "gold"}
+            recommended={!business && t === "gold"}
+            tag={t === "platinum" ? "Business plan" : t === "gold" ? "Top trader plan" : ""}
             onSelect={openTier}
           />
         ))}
       </div>
+
+      {!business && (
+        <div className="mx-auto mt-4 max-w-lg rounded-2xl border border-border bg-card p-4">
+          <div className="flex items-center gap-2">
+            <Building2 className="h-4 w-4 text-primary" />
+            <p className="text-sm font-semibold">Platinum is for registered businesses</p>
+          </div>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+            Trading as a gem house, exporter or wholesaler? Switch to a business account from your profile to unlock
+            the Platinum business plan.
+          </p>
+          <Button asChild variant="outline" className="mt-3 w-full">
+            <Link to="/profile">Switch to a business account</Link>
+          </Button>
+        </div>
+      )}
 
       {trader && tier !== "none" && (
         <BuyListings trader={trader} onPurchaseStarted={reload} />

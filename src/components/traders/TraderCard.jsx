@@ -4,11 +4,13 @@ import { Image } from "@/components/ui/image";
 import { MapPin, User } from "lucide-react";
 import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
-import { cap } from "@/lib/gems";
+import { cap, isBusiness } from "@/lib/gems";
+import BusinessTag from "@/components/common/BusinessTag";
 import { isVerified } from "@/lib/verification";
 
 export default function TraderCard({ trader }) {
   const highlight = ["platinum", "gold"].includes(trader.subscription_tier);
+  const business = isBusiness(trader);
   return (
     <Link
       to={`/trader/${trader.id}`}
@@ -28,11 +30,15 @@ export default function TraderCard({ trader }) {
           <div className="flex items-start gap-2">
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <h3 className="font-semibold text-[15px] truncate">{trader.full_name}</h3>
+                <h3 className="font-semibold text-[15px] truncate">
+                  {business ? trader.business_name || trader.legal_business_name || trader.full_name : trader.full_name}
+                </h3>
                 <VerifiedBadge verified={isVerified(trader)} />
               </div>
-              {trader.business_name && (
-                <p className="text-xs text-muted-foreground truncate">{trader.business_name}</p>
+              {business ? (
+                <BusinessTag className="mt-0.5" />
+              ) : (
+                trader.business_name && <p className="text-xs text-muted-foreground truncate">{trader.business_name}</p>
               )}
             </div>
             <TierBadge tier={trader.subscription_tier} className="ml-auto shrink-0" />

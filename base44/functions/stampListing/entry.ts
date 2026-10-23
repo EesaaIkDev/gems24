@@ -28,7 +28,10 @@ export default async function (req: Request): Promise<Response> {
     const owns =
       !!trader &&
       ((!!listing.created_by_id && listing.created_by_id === trader.created_by_id) ||
-        (!!listing.created_by && listing.created_by === trader.user_email));
+        (!!listing.created_by && listing.created_by === trader.user_email) ||
+        // Demo businesses are created server-side with no user owner; the flag
+        // is server-only, so a client can't use it to claim another profile.
+        (trader.is_demo === true && listing.is_demo === true));
 
     if (!owns || trader.account_type !== 'trader') {
       await base44.asServiceRole.entities.Listing.delete(listing.id);

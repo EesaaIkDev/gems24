@@ -8,7 +8,7 @@ import { LOYALTY_STEP, TIERS, TIER_STYLES } from "@/lib/gems";
  * traders see across the app, its listing capacity as a filled carat meter, and
  * the placement it buys — no generic feature checklist.
  */
-export default function TierRow({ tier, capacity, placement, anchor, current, recommended, onSelect }) {
+export default function TierRow({ tier, capacity, placement, anchor, current, recommended, tag, onSelect }) {
   const t = TIERS[tier];
   const filled = Math.min(5, t.rank + 1);
 
@@ -21,9 +21,9 @@ export default function TierRow({ tier, capacity, placement, anchor, current, re
           >
             {t.label}
           </span>
-          {recommended && (
+          {(tag || recommended) && (
             <span className="text-[0.625rem] font-bold uppercase tracking-wider text-primary">
-              Most chosen
+              {tag || "Most chosen"}
             </span>
           )}
           {current && (

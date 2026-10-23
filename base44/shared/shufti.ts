@@ -34,10 +34,10 @@ export const LEVELS = ['buyer', 'trader', 'business'] as const;
 export type Level = (typeof LEVELS)[number];
 export const levelRank = (l: string) => LEVELS.indexOf(l as Level) + 1;
 
-/** What a trader must pass for their account: buyers optional KYC, Platinum = business. */
+/** What an account must pass: buyers optional KYC, individual traders KYC + AML, businesses KYB too. */
 export function requiredLevel(trader: any): Level {
   if (trader?.account_type === 'buyer') return 'buyer';
-  return trader?.subscription_tier === 'platinum' ? 'business' : 'trader';
+  return trader?.trader_kind === 'business' ? 'business' : 'trader';
 }
 
 /** Which checks each level runs. */

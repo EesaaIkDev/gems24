@@ -44,11 +44,92 @@
       },
       "description": "Chosen at signup. Afterwards only upgradeToTrader may change it (buyer -> trader, one way)."
     },
+    "trader_kind": {
+      "type": "string",
+      "enum": [
+        "individual",
+        "business"
+      ],
+      "default": "individual",
+      "description": "Trader accounts only: individual trader or registered business. Chosen at signup; afterwards only upgradeToBusiness may change it (individual -> business, one way). Platinum is for businesses only.",
+      "rls": {
+        "update": {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        "delete": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
     "full_name": {
       "type": "string"
     },
     "business_name": {
+      "type": "string",
+      "description": "Trading / display name shown on the profile"
+    },
+    "legal_business_name": {
+      "type": "string",
+      "description": "Registered (legal) business name. Required for business accounts."
+    },
+    "business_type": {
+      "type": "string",
+      "enum": [
+        "",
+        "sole_proprietorship",
+        "partnership",
+        "private_limited",
+        "public_limited",
+        "other"
+      ],
+      "default": ""
+    },
+    "registration_number": {
+      "type": "string",
+      "description": "Company registration number. Private: owner and admins only (used for KYB via Shufti).",
+      "rls": {
+        "read": {
+          "$or": [
+            {
+              "created_by_id": "{{user.id}}"
+            },
+            {
+              "data.user_email": "{{user.email}}"
+            },
+            {
+              "user_condition": {
+                "role": "admin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "year_founded": {
+      "type": "number"
+    },
+    "team_size": {
+      "type": "string",
+      "enum": [
+        "",
+        "1",
+        "2-10",
+        "11-50",
+        "51-200",
+        "200+"
+      ],
+      "default": ""
+    },
+    "website": {
       "type": "string"
+    },
+    "contact_role": {
+      "type": "string",
+      "description": "Role of the person managing the account, e.g. Director"
     },
     "profile_photo": {
       "type": "string"
@@ -388,6 +469,18 @@
       "type": "number",
       "default": 0,
       "description": "Free listing slots earned from uninterrupted annual renewals. Set only by storeWebhook; reset when the plan lapses.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false,
+      "description": "Sample account created by curatePlatinum for demos. Never verified; remove before launch. Server-only.",
       "rls": {
         "write": {
           "user_condition": {

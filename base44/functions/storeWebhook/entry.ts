@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { LOYALTY_STEP, TIER_KEYS, tierRank } from '../../shared/traders.ts';
+import { LOYALTY_STEP, TIER_KEYS, tierAllowed, tierRank } from '../../shared/traders.ts';
 
 /**
  * Applies a store purchase. This is the only thing in the system allowed to set
@@ -108,6 +108,11 @@ export default async function (req: Request): Promise<Response> {
       await base44.asServiceRole.entities.Trader.update(row.id, {
         purchased_listings: (row.purchased_listings || 0) + listingsGranted,
       });
+    } else if (tier && GRANTING_EVENTS.includes(eventType) && !tierAllowed(row, tier)) {
+      // Platinum is the business plan and Bronze–Gold are for individuals; a
+      // stale paywall or a renewal after switching kind must not grant across.
+      appliedTier = `refused:${tier}`;
+      console.warn(`storeWebhook: refusing ${tier} for ${row.trader_kind || 'individual'} trader=${row.id}`);
     } else if (tier && GRANTING_EVENTS.includes(eventType)) {
       kind = 'tier';
       appliedTier = tier;
@@ -140,7 +145,7 @@ export default async function (req: Request): Promise<Response> {
       await base44.asServiceRole.entities.Trader.update(row.id, update);
     } else if (eventType === 'PRODUCT_CHANGE') {
       const next = String(event?.new_product_id || '').toLowerCase();
-      if (TIER_KEYS.includes(next) && tierRank(next) < tierRank(row.subscription_tier)) {
+      if (TIER_KEYS.includes(next) && tierAllowed(row, next) && tierRank(next) < tierRank(row.subscription_tier)) {
         // Downgrade: the trader keeps their grade until the plan year ends.
         kind = 'tier';
         appliedTier = `pending:${next}`;

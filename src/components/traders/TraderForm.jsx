@@ -10,6 +10,8 @@ import { detectCountry } from "@/lib/locale";
 import { countWords, limitWords } from "@/lib/words";
 import CountrySelect from "./CountrySelect";
 import PhoneRegionSelect from "./PhoneRegionSelect";
+import BusinessFields, { businessForm } from "./BusinessFields";
+import { businessDetails } from "./ProfileWizard";
 
 const SPECIALTY_WORD_LIMIT = 20;
 const BIO_WORD_LIMIT = 70;
@@ -21,8 +23,10 @@ function splitPhone(phone = "") {
 }
 
 export default function TraderForm({ initial = {}, onSave, saving, submitLabel = "Save profile" }) {
+  const business = initial.account_type === "trader" && initial.trader_kind === "business";
   const initialPhone = splitPhone(initial.phone || "");
   const [form, setForm] = useState({
+    ...businessForm(initial),
     full_name: initial.full_name || "",
     business_name: initial.business_name || "",
     profile_photo: initial.profile_photo || "",
@@ -55,9 +59,17 @@ export default function TraderForm({ initial = {}, onSave, saving, submitLabel =
       setError("Please enter your full name.");
       return;
     }
+    if (business && form.legal_business_name.trim().length < 2) {
+      setError("Please enter your registered business name.");
+      return;
+    }
     setError("");
+    const { legal_business_name, business_type, registration_number, year_founded, team_size, website, contact_role, ...personal } = form;
     onSave({
-      ...form,
+      ...personal,
+      ...(business
+        ? businessDetails({ legal_business_name, business_name: form.business_name, business_type, registration_number, year_founded: String(year_founded ?? ""), team_size, website, contact_role })
+        : {}),
       specialties: specialtiesText
         .split(",")
         .map((s) => s.trim())
@@ -84,15 +96,19 @@ export default function TraderForm({ initial = {}, onSave, saving, submitLabel =
         </label>
       </div>
 
+      {business && <BusinessFields form={form} set={set} />}
+
       <div className="space-y-1.5">
-        <Label>Full name</Label>
+        <Label>{business ? "Contact person (your full name)" : "Full name"}</Label>
         <Input value={form.full_name} onChange={(e) => set("full_name", e.target.value)} className="h-11" />
       </div>
 
-      <div className="space-y-1.5">
-        <Label>Business name (optional)</Label>
-        <Input value={form.business_name} onChange={(e) => set("business_name", e.target.value)} className="h-11" />
-      </div>
+      {!business && (
+        <div className="space-y-1.5">
+          <Label>Business name (optional)</Label>
+          <Input value={form.business_name} onChange={(e) => set("business_name", e.target.value)} className="h-11" />
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">

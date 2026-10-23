@@ -11,7 +11,7 @@ import PhotoUploader from "@/components/listings/PhotoUploader";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
-import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
+import { GEM_TYPES, TREATMENTS, cap, isBusiness } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
 import { CERTIFICATE_NOTICE, heldLevel, isVerified } from "@/lib/verification";
 import { createRecord, updateRecord } from "@/lib/offlineSync";
@@ -87,7 +87,7 @@ export default function ListingEditor() {
       description: form.description,
       status: form.status,
       trader_id: trader.id,
-      trader_name: trader.full_name,
+      trader_name: (isBusiness(trader) && (trader.business_name || trader.legal_business_name)) || trader.full_name,
       trader_country: trader.country || "",
       trader_tier: trader.subscription_tier || "none",
       trader_verified: isVerified(trader),

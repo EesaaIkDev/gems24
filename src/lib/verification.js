@@ -4,7 +4,7 @@
  *
  *   buyer    → optional KYC (ID + selfie)            → Verified Buyer
  *   trader   → KYC + AML screening                   → Verified Trader
- *   business → Platinum: KYB + KYC + AML screening   → Verified Business
+ *   business → business accounts (Platinum): KYB + KYC + AML → Verified Business
  */
 
 /** Matches the Verification entity's status enum. */
@@ -41,9 +41,9 @@ export const LEVEL_CHECKS = {
 
 const RANK = { buyer: 1, trader: 2, business: 3 };
 
-/** The badge level this account would earn now. Platinum traders are businesses. */
+/** The badge level this account would earn now. Business accounts verify as a business. */
 export const requiredLevel = (t) =>
-  t?.account_type === "buyer" ? "buyer" : t?.subscription_tier === "platinum" ? "business" : "trader";
+  t?.account_type === "buyer" ? "buyer" : t?.trader_kind === "business" ? "business" : "trader";
 
 /**
  * The public badge is only valid when it was granted for the trader's current

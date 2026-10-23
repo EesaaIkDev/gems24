@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import { ArrowLeft, Briefcase, Clock, Gem, Lock, Mail, MapPin, User } from "lucide-react";
+import { ArrowLeft, Briefcase, Clock, Gem, Globe, Lock, Mail, MapPin, User } from "lucide-react";
+import BusinessTag from "@/components/common/BusinessTag";
+import { openExternal } from "@/lib/openExternal";
+import { isNative } from "@/lib/despia";
 import Spinner from "@/components/common/Spinner";
 import LoadError from "@/components/common/LoadError";
 import useLoader from "@/hooks/useLoader";
@@ -11,7 +14,7 @@ import VerifiedBadge from "@/components/common/VerifiedBadge";
 import ListingCard from "@/components/listings/ListingCard";
 import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
-import { cap } from "@/lib/gems";
+import { businessTypeLabel, cap, isBusiness } from "@/lib/gems";
 import { isVerified } from "@/lib/verification";
 import {
   findConnection,
@@ -64,15 +67,16 @@ export default function TraderProfile() {
   const needsMyReply = isAwaitingMyApproval(connection, viewer?.id);
   const active = listings.filter((l) => l.status !== "sold");
   const isBuyer = trader.account_type === "buyer";
+  const business = isBusiness(trader);
 
-  const traderName = trader.business_name || trader.full_name;
+  const traderName = trader.business_name || trader.legal_business_name || trader.full_name;
   const place = [trader.city, trader.country].filter(Boolean).join(", ");
 
   return (
     <div className="pb-6">
       {/* Public profile: only the trade-facing details, never contact data. */}
       <Seo
-        title={`${traderName} — Gemstone ${trader.account_type === "buyer" ? "Buyer" : "Trader"}${place ? ` in ${place}` : ""} | Gems24`}
+        title={`${traderName} — Gemstone ${isBuyer ? "Buyer" : business ? "Business" : "Trader"}${place ? ` in ${place}` : ""} | Gems24`}
         description={`${traderName} on Gems24${place ? `, based in ${place}` : ""}${
           trader.specialties?.length ? `, specialising in ${trader.specialties.slice(0, 3).join(", ")}` : ""
         }. View ${active.length} active gemstone listing${active.length === 1 ? "" : "s"} and connect on Gems24.`}
@@ -90,6 +94,9 @@ export default function TraderProfile() {
             image: trader.profile_photo || undefined,
             address: place ? { "@type": "PostalAddress", addressLocality: trader.city, addressCountry: trader.country } : undefined,
             knowsAbout: trader.specialties?.length ? trader.specialties : undefined,
+            legalName: business && trader.legal_business_name ? trader.legal_business_name : undefined,
+            foundingDate: business && trader.year_founded ? String(trader.year_founded) : undefined,
+            url: business && trader.website ? trader.website : undefined,
           },
           isPartOf: { "@type": "WebSite", name: SITE.name, url: SITE.url },
         }}
@@ -112,14 +119,25 @@ export default function TraderProfile() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold truncate">{trader.full_name}</h1>
+                <h1 className="text-xl font-bold truncate">{business ? traderName : trader.full_name}</h1>
                 <VerifiedBadge verified={isVerified(trader)} />
               </div>
-              {trader.business_name && <p className="text-sm text-muted-foreground">{trader.business_name}</p>}
+              {business ? (
+                <p className="text-sm text-muted-foreground">
+                  {trader.full_name}
+                  {trader.contact_role ? `, ${trader.contact_role}` : ""}
+                </p>
+              ) : (
+                trader.business_name && <p className="text-sm text-muted-foreground">{trader.business_name}</p>
+              )}
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span className="rounded-lg bg-primary/10 px-2 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-wide text-primary">
-                  {isBuyer ? "Buyer" : "Trader"}
-                </span>
+                {business ? (
+                  <BusinessTag />
+                ) : (
+                  <span className="rounded-lg bg-primary/10 px-2 py-0.5 text-[0.6875rem] font-semibold uppercase tracking-wide text-primary">
+                    {isBuyer ? "Buyer" : "Trader"}
+                  </span>
+                )}
                 <TierBadge tier={trader.subscription_tier} />
                 {(trader.city || trader.country) && (
                   <span className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -137,6 +155,29 @@ export default function TraderProfile() {
               </div>
             </div>
           </div>
+
+          {business && (
+            <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 rounded-2xl bg-secondary/70 p-4 text-sm">
+              <BusinessFact label="Registered name" value={trader.legal_business_name} wide />
+              <BusinessFact label="Business type" value={businessTypeLabel(trader.business_type)} />
+              <BusinessFact label="Established" value={trader.year_founded} />
+              <BusinessFact label="Team size" value={trader.team_size && (trader.team_size === "1" ? "1 person" : `${trader.team_size} people`)} />
+              {trader.website && (
+                <div className="col-span-2">
+                  <dt className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground font-semibold">Website</dt>
+                  <dd>
+                    <button
+                      type="button"
+                      onClick={() => openExternal(trader.website, { native: isNative })}
+                      className="mt-0.5 inline-flex items-center gap-1 text-primary hover:underline break-all text-left"
+                    >
+                      <Globe className="h-3.5 w-3.5 shrink-0" /> {trader.website.replace(/^https?:\/\//, "")}
+                    </button>
+                  </dd>
+                </div>
+              )}
+            </dl>
+          )}
 
           {trader.specialties?.length > 0 && (
             <div className="mt-5">
@@ -217,6 +258,15 @@ export default function TraderProfile() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+function BusinessFact({ label, value, wide }) {
+  if (!value) return null;
+  return (
+    <div className={wide ? "col-span-2" : ""}>
+      <dt className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground font-semibold">{label}</dt>
+      <dd className="mt-0.5 font-medium">{value}</dd>
     </div>
   );
 }

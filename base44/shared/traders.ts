@@ -34,6 +34,48 @@ export const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
 export const tierRank = (tier: string) => TIER_KEYS.indexOf(String(tier || '')) + 1;
 
+export const isBusiness = (t: any) => t?.account_type === 'trader' && t?.trader_kind === 'business';
+
+/** Platinum is the business plan; Bronze–Gold are for individual traders (Gold is their top plan). */
+export const tierAllowed = (t: any, tier: string) =>
+  t?.account_type === 'trader' && TIER_KEYS.includes(tier) && (tier === 'platinum') === isBusiness(t);
+
+export const BUSINESS_TYPES = ['sole_proprietorship', 'partnership', 'private_limited', 'public_limited', 'other'];
+export const TEAM_SIZES = ['1', '2-10', '11-50', '51-200', '200+'];
+
+/**
+ * Cleans the business details a user submits. Returns { fields } or { error }.
+ * No documents here — KYB happens later through Shufti.
+ */
+export function businessFields(input: any) {
+  const text = (v: unknown, max: number) => String(v ?? '').trim().slice(0, max);
+  const legal = text(input?.legal_business_name, 120);
+  if (legal.length < 2) return { error: 'Enter your registered business name.' };
+  const type = text(input?.business_type, 40);
+  const size = text(input?.team_size, 10);
+  const year = Number(input?.year_founded);
+  const thisYear = new Date().getUTCFullYear();
+  let website = text(input?.website, 200);
+  if (website && !/^https?:\/\//i.test(website)) website = `https://${website}`;
+  try {
+    if (website) new URL(website);
+  } catch {
+    return { error: 'That website address doesn\'t look right.' };
+  }
+  return {
+    fields: {
+      legal_business_name: legal,
+      business_name: text(input?.business_name, 120) || legal,
+      business_type: BUSINESS_TYPES.includes(type) ? type : '',
+      registration_number: text(input?.registration_number, 60),
+      year_founded: Number.isInteger(year) && year >= 1800 && year <= thisYear ? year : null,
+      team_size: TEAM_SIZES.includes(size) ? size : '',
+      website,
+      contact_role: text(input?.contact_role, 60),
+    },
+  };
+}
+
 /** Stones on the market at once per grade. Mirrors TIERS in src/lib/gems.js. */
 export const TIER_LIMIT: Record<string, number> = {
   none: 0,
@@ -76,7 +118,8 @@ export const placementScore = (tier: string, createdDate?: string) =>
 
 /** The fields a listing mirrors from its trader — always written server-side. */
 export const listingStamp = (t: any, listing?: any) => ({
-  trader_name: t?.full_name || '',
+  // Businesses list under their company name; individuals under their own.
+  trader_name: (isBusiness(t) && (t.business_name || t.legal_business_name)) || t?.full_name || '',
   trader_country: t?.country || '',
   trader_tier: t?.subscription_tier || 'none',
   trader_verified: isVerified(t),

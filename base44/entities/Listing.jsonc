@@ -134,6 +134,18 @@
         "sold"
       ],
       "default": "available"
+    },
+    "is_demo": {
+      "type": "boolean",
+      "default": false,
+      "description": "Sample listing created by curatePlatinum. Server-only.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     }
   },
   "required": [

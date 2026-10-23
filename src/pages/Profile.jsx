@@ -12,11 +12,13 @@ import EmptyState from "@/components/common/EmptyState";
 import OwnListingsGrid from "@/components/listings/OwnListingsGrid";
 import ProfileProgress from "@/components/profile/ProfileProgress";
 import BecomeTrader from "@/components/profile/BecomeTrader";
+import BecomeBusiness from "@/components/profile/BecomeBusiness";
+import BusinessTag from "@/components/common/BusinessTag";
 import VerificationCard from "@/components/verification/VerificationCard";
 import InvitePrompt from "@/components/referral/InvitePrompt";
 import ReferralStats from "@/components/referral/ReferralStats";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
-import { TIERS, cap } from "@/lib/gems";
+import { TIERS, cap, isBusiness } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
 import { isVerified } from "@/lib/verification";
 
@@ -45,6 +47,7 @@ export default function Profile() {
     );
 
   const isTrader = trader.account_type === "trader";
+  const business = isBusiness(trader);
   const links = [
     { to: `/trader/${trader.id}`, icon: User, label: "View public profile" },
     { to: "/messages", icon: MessageCircle, label: "Chats" },
@@ -74,8 +77,11 @@ export default function Profile() {
                 <VerifiedBadge verified={isVerified(trader)} />
               </div>
               <p className="text-sm text-muted-foreground truncate">
-                {trader.business_name || cap(trader.account_type)}
+                {business
+                  ? `${trader.contact_role ? `${trader.contact_role} · ` : ""}${trader.business_name || trader.legal_business_name}`
+                  : trader.business_name || cap(trader.account_type)}
               </p>
+              {business && <BusinessTag className="mt-1" />}
               {isTrader && (
                 <div className="mt-1.5 flex items-center gap-2">
                   <TierBadge tier={trader.subscription_tier} />
@@ -94,6 +100,8 @@ export default function Profile() {
         <VerificationCard trader={trader} onVerified={reload} />
 
         {!isTrader && <BecomeTrader trader={trader} onUpgraded={reload} />}
+
+        {isTrader && !business && <BecomeBusiness trader={trader} onUpgraded={reload} />}
 
         <ProfileProgress trader={trader} />
 

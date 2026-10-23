@@ -37,6 +37,7 @@ export default async function (req: Request): Promise<Response> {
 
     await base44.asServiceRole.entities.Trader.update(trader.id, {
       account_type: 'trader',
+      trader_kind: 'individual',
       verified: false,
       verified_as: '',
       verified_level: '',

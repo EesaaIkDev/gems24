@@ -47,7 +47,7 @@ Deno.test('store: rejects calls without the webhook secret', async () => {
 
 Deno.test('store: upgrade applies immediately, keeps loyalty streak, no bonus', async () => {
   reset();
-  db.Trader = [{ id: 'T1', account_type: 'trader', subscription_tier: 'gold', loyalty_years: 2, loyalty_bonus_listings: 30 }];
+  db.Trader = [{ id: 'T1', account_type: 'trader', trader_kind: 'business', subscription_tier: 'gold', loyalty_years: 2, loyalty_bonus_listings: 30 }];
   // App Store upgrade: arrives as RENEWAL with the higher product.
   await store({ type: 'RENEWAL', product_id: 'platinum', expiration_at_ms: YEAR });
   assertEquals(trader().subscription_tier, 'platinum');
@@ -88,7 +88,7 @@ Deno.test('store: PRODUCT_CHANGE to a higher grade grants nothing by itself', as
 
 Deno.test('store: Google upgrade — old product expiring does not wipe the new plan', async () => {
   reset();
-  db.Trader = [{ id: 'T1', account_type: 'trader', subscription_tier: 'gold', loyalty_years: 3 }];
+  db.Trader = [{ id: 'T1', account_type: 'trader', trader_kind: 'business', subscription_tier: 'gold', loyalty_years: 3 }];
   await store({ type: 'INITIAL_PURCHASE', product_id: 'platinum', expiration_at_ms: YEAR });
   assertEquals(trader().subscription_tier, 'platinum');
   assertEquals(trader().loyalty_years, 3, 'upgrade keeps the streak');

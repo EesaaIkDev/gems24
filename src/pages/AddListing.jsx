@@ -13,7 +13,7 @@ import SignInPrompt from "@/components/common/SignInPrompt";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import usePopularDefaults from "@/hooks/usePopularDefaults";
 import LimitChoice from "@/components/subscription/LimitChoice";
-import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
+import { GEM_TYPES, TREATMENTS, cap, isBusiness } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
 import { CERTIFICATE_NOTICE, heldLevel, isVerified } from "@/lib/verification";
 import { createRecord } from "@/lib/offlineSync";
@@ -78,7 +78,7 @@ export default function AddListing() {
       ...form,
       weight_carats: Number(form.weight_carats),
       trader_id: trader.id,
-      trader_name: trader.full_name,
+      trader_name: (isBusiness(trader) && (trader.business_name || trader.legal_business_name)) || trader.full_name,
       trader_country: trader.country || "",
       trader_tier: trader.subscription_tier || "none",
       trader_verified: isVerified(trader),

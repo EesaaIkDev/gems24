@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { TIER_KEYS, callerTrader } from '../../shared/traders.ts';
+import { TIER_KEYS, callerTrader, tierAllowed } from '../../shared/traders.ts';
 
 /**
  * Validates a discount code and, for a 100% code, grants the grade.
@@ -45,6 +45,14 @@ export default async function (req: Request): Promise<Response> {
     }
     if (trader.account_type !== 'trader') {
       return Response.json({ error: 'Only trader accounts can redeem a subscription code' }, { status: 403 });
+    }
+    if (!tierAllowed(trader, tier)) {
+      return Response.json({
+        state: 'wrong_tier',
+        reason: tier === 'platinum'
+          ? 'Platinum is for registered businesses.'
+          : 'Business accounts use the Platinum plan.',
+      });
     }
 
     const found = (await base44.asServiceRole.entities.DiscountCode.filter({ code }))?.[0] ?? null;

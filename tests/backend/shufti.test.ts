@@ -73,7 +73,7 @@ Deno.test('start: trader gets KYC + AML, hosted link returned, no PII in the ref
 });
 
 Deno.test('start: Platinum is a business — KYB + business AML added', async () => {
-  seed({ subscription_tier: 'platinum' });
+  seed({ subscription_tier: 'platinum', trader_kind: 'business' });
   const { body, request } = await start();
   assertEquals(body.level, 'business');
   assert(request.kyb && request.aml_for_businesses && request.background_checks);
@@ -121,7 +121,7 @@ Deno.test('start: traders need a plan; verified at the right level is a no-op; G
   assertEquals((await start()).status, 403);
   seed({ verified: true, verified_as: 'trader', verified_level: 'trader' });
   assertEquals((await start()).body.state, 'already_verified');
-  seed({ verified: true, verified_as: 'trader', verified_level: 'trader', subscription_tier: 'platinum' });
+  seed({ verified: true, verified_as: 'trader', verified_level: 'trader', subscription_tier: 'platinum', trader_kind: 'business' });
   assertEquals((await start()).body.level, 'business');
 });
 
@@ -164,7 +164,7 @@ Deno.test('callback: a forged "accepted" body cannot beat Shufti\'s real status'
 });
 
 Deno.test('callback: accepted grants the badge for the requested level', async () => {
-  seed({ subscription_tier: 'platinum' });
+  seed({ subscription_tier: 'platinum', trader_kind: 'business' });
   await start();
   statusSays({ event: 'verification.accepted', verification_result: { document: { name: 1, dob: 1 }, face: 1, background_checks: 1, kyb: 1, aml_for_businesses: 1 } });
   await callback({ reference: ref(), event: 'verification.accepted' });

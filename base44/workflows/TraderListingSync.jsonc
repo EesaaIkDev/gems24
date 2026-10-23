@@ -9,7 +9,7 @@
         "update"
       ]
     },
-    "condition": "${ .trigger.data.full_name != .trigger.old_data.full_name or .trigger.data.country != .trigger.old_data.country or .trigger.data.subscription_tier != .trigger.old_data.subscription_tier or .trigger.data.verified != .trigger.old_data.verified or .trigger.data.verified_as != .trigger.old_data.verified_as or .trigger.data.verified_level != .trigger.old_data.verified_level or .trigger.data.account_type != .trigger.old_data.account_type }"
+    "condition": "${ .trigger.data.full_name != .trigger.old_data.full_name or .trigger.data.business_name != .trigger.old_data.business_name or .trigger.data.legal_business_name != .trigger.old_data.legal_business_name or .trigger.data.trader_kind != .trigger.old_data.trader_kind or .trigger.data.country != .trigger.old_data.country or .trigger.data.subscription_tier != .trigger.old_data.subscription_tier or .trigger.data.verified != .trigger.old_data.verified or .trigger.data.verified_as != .trigger.old_data.verified_as or .trigger.data.verified_level != .trigger.old_data.verified_level or .trigger.data.account_type != .trigger.old_data.account_type }"
   },
   "definition": {
     "document": {

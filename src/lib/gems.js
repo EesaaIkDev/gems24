@@ -35,6 +35,21 @@ export const TIER_STYLES = {
 export const GEM_TYPES = ["sapphire", "ruby", "emerald", "spinel", "garnet", "other"];
 export const TREATMENTS = ["heated", "unheated", "other"];
 
+export const isBusiness = (t) => t?.account_type === "trader" && t?.trader_kind === "business";
+
+/** Platinum is the business plan; individual traders choose Bronze–Gold (Gold is their top plan). */
+export const plansFor = (t) => (isBusiness(t) ? ["platinum"] : ["gold", "silver", "bronze"]);
+
+export const BUSINESS_TYPES = [
+  { value: "sole_proprietorship", label: "Sole proprietorship" },
+  { value: "partnership", label: "Partnership" },
+  { value: "private_limited", label: "Private limited company" },
+  { value: "public_limited", label: "Public limited company" },
+  { value: "other", label: "Other" },
+];
+export const TEAM_SIZES = ["1", "2-10", "11-50", "51-200", "200+"];
+export const businessTypeLabel = (v) => BUSINESS_TYPES.find((b) => b.value === v)?.label || "";
+
 export const tierRank = (t) => TIERS[t || "none"]?.rank ?? 0;
 export const tierLimit = (t) => TIERS[t || "none"]?.limit ?? 0;
 export const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "");

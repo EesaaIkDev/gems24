@@ -55,6 +55,16 @@ Deno.test('verification: badge level and AML flag are server-only; the flag is h
   assertEquals(v.properties.review_note.rls.read, ADMIN);
 });
 
+Deno.test('business accounts: kind is fixed after signup, demo flag server-only, reg. number private', () => {
+  const t = load('Trader').properties;
+  assertEquals(t.trader_kind.rls.update, ADMIN);
+  assertEquals(t.trader_kind.rls.create, undefined, 'chosen at signup');
+  assert(serverOnly(t.is_demo));
+  assert(serverOnly(load('Listing').properties.is_demo));
+  const read = JSON.stringify(t.registration_number.rls.read);
+  assert(read.includes('{{user.id}}') && read.includes('admin'));
+});
+
 Deno.test('receipts: delivery and read markers are server-owned', () => {
   const p = load('Conversation').properties;
   for (const field of [
