@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
-import { BadgeCheck, Gem, MapPin, ShieldOff } from "lucide-react";
+import { BadgeCheck, Gem, MapPin } from "lucide-react";
 import SellerVerification from "@/components/common/SellerVerification";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import { cap } from "@/lib/gems";
@@ -37,12 +37,14 @@ export default function ListingCard({ listing }) {
             <Gem className="w-8 h-8 text-muted-foreground/40" />
           </div>
         )}
-        <span
-          className={`neu-raised-xs absolute left-2 top-2 flex items-center gap-1 rounded-full bg-background/90 px-2 py-0.5 text-[10px] font-semibold backdrop-blur ${listing.trader_verified ? "text-primary" : "text-muted-foreground"}`}
-        >
-          {listing.trader_verified ? <BadgeCheck className="w-3 h-3" /> : <ShieldOff className="w-3 h-3" />}
-          {listing.trader_verified ? "Verified" : "Not verified"}
-        </span>
+        {listing.trader_verified && (
+          <span
+            aria-label="Verified trader"
+            className="absolute left-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-background/85 text-primary backdrop-blur"
+          >
+            <BadgeCheck className="w-3.5 h-3.5" />
+          </span>
+        )}
       </div>
 
       <div className="flex items-center justify-between gap-2 px-3.5 pt-3">
