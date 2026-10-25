@@ -34,6 +34,33 @@
     "applied_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "trader_name": {
+      "type": "string",
+      "description": "Snapshot of the buyer's name at purchase time"
+    },
+    "business_name": {
+      "type": "string"
+    },
+    "trader_kind": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "price": {
+      "type": "number",
+      "description": "Price reported by the store"
+    },
+    "currency": {
+      "type": "string"
+    },
+    "store": {
+      "type": "string",
+      "description": "App Store, Play Store, etc."
     }
   },
   "required": [

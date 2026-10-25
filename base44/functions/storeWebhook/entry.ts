@@ -187,6 +187,14 @@ export default async function (req: Request): Promise<Response> {
       tier: appliedTier,
       listings_granted: listingsGranted,
       applied_at: now,
+      trader_name: row.full_name || '',
+      business_name: row.business_name || row.legal_business_name || '',
+      trader_kind: row.trader_kind || 'individual',
+      user_email: row.user_email || '',
+      country: row.country || '',
+      price: typeof event?.price === 'number' ? event.price : null,
+      currency: String(event?.currency || ''),
+      store: String(event?.store || ''),
     });
 
     console.log(

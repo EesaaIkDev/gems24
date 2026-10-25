@@ -1,0 +1,54 @@
+{
+  "name": "Plan purchase alert",
+  "description": "Emails eesaa@gems24.lk whenever a trader (individual or business) purchases or renews a plan",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "StorePurchase",
+      "events": [
+        "create"
+      ]
+    },
+    "condition": "${ .trigger.data.kind == \"tier\" and ((.trigger.data.tier // \"\") | IN(\"bronze\",\"silver\",\"gold\",\"platinum\")) }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "plan_purchase_alert",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "send_alert": {
+          "call": "send_email",
+          "with": {
+            "template_name": "PlanPurchaseAlert",
+            "to": "eesaa@gems24.lk",
+            "description": "Details of the plan purchase and the trader who bought it",
+            "variables": {
+              "tier": "${ .trigger.data.tier }",
+              "event_type": "${ .trigger.data.event_type // \"\" }",
+              "product_id": "${ .trigger.data.product_id // \"\" }",
+              "price": "${ .trigger.data.price // \"-\" }",
+              "currency": "${ .trigger.data.currency // \"\" }",
+              "store": "${ .trigger.data.store // \"-\" }",
+              "applied_at": "${ .trigger.data.applied_at // \"\" }",
+              "trader_name": "${ .trigger.data.trader_name // \"-\" }",
+              "business_name": "${ .trigger.data.business_name // \"-\" }",
+              "trader_kind": "${ .trigger.data.trader_kind // \"individual\" }",
+              "user_email": "${ .trigger.data.user_email // \"-\" }",
+              "country": "${ .trigger.data.country // \"-\" }",
+              "trader_id": "${ .trigger.data.trader_id // \"\" }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Email purchase details",
+            "description": "To eesaa@gems24.lk"
+          }
+        }
+      }
+    ]
+  }
+}

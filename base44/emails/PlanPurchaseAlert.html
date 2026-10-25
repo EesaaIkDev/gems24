@@ -1,0 +1,62 @@
+<mjml>
+  <mj-head>
+    <mj-title>New plan purchase: {{tier}} by {{trader_name}}</mj-title>
+    <mj-preview>{{trader_name}} ({{trader_kind}}) purchased the {{tier}} plan</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="'Sofia Sans', Arial, sans-serif" />
+      <mj-section background-color="#ffffff" padding="0 36px" />
+      <mj-text color="#0f1115" font-size="15px" line-height="1.6" padding="0" />
+      <mj-class name="h" font-family="'Expletus Sans', Arial, sans-serif" font-weight="700" />
+      <mj-class name="label" color="#5b6270" font-size="13px" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#e9edf1">
+    <mj-section background-color="#08a054" padding="20px 36px">
+      <mj-group>
+        <mj-column width="20%" vertical-align="middle">
+          <mj-image src="https://media.base44.com/images/public/6a661583e07cf311ecceee39/8e35f9b87_logo.png" width="40px" align="left" padding="0" alt="Gems24" />
+        </mj-column>
+        <mj-column width="80%" vertical-align="middle">
+          <mj-text mj-class="h" font-size="20px" color="#000000">Gems24</mj-text>
+        </mj-column>
+      </mj-group>
+    </mj-section>
+    <mj-section padding="36px 36px 8px">
+      <mj-column>
+        <mj-text mj-class="h" font-size="26px" line-height="1.2">New plan purchase</mj-text>
+        <mj-text mj-class="label" padding="8px 0 0">A trader just bought or renewed a subscription.</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="20px 36px 8px">
+      <mj-column>
+        <mj-text mj-class="h" font-size="16px" padding="0 0 8px">Purchase</mj-text>
+        <mj-table padding="0" font-size="14px" color="#0f1115">
+          <tr><td style="padding:4px 0;color:#5b6270;">Plan</td><td style="padding:4px 0;font-weight:700;">{{tier}}</td></tr>
+          <tr><td style="padding:4px 0;color:#5b6270;">Event</td><td style="padding:4px 0;">{{event_type}}</td></tr>
+          <tr><td style="padding:4px 0;color:#5b6270;">Product</td><td style="padding:4px 0;">{{product_id}}</td></tr>
+          <tr><td style="padding:4px 0;color:#5b6270;">Price</td><td style="padding:4px 0;">{{price}} {{currency}}</td></tr>
+          <tr><td style="padding:4px 0;color:#5b6270;">Store</td><td style="padding:4px 0;">{{store}}</td></tr>
+          <tr><td style="padding:4px 0;color:#5b6270;">Date</td><td style="padding:4px 0;">{{applied_at}}</td></tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="20px 36px 36px">
+      <mj-column>
+        <mj-text mj-class="h" font-size="16px" padding="0 0 8px">Trader</mj-text>
+        <mj-table padding="0" font-size="14px" color="#0f1115">
+          <tr><td style="padding:4px 0;color:#5b6270;">Name</td><td style="padding:4px 0;font-weight:700;">{{trader_name}}</td></tr>
+          <tr><td style="padding:4px 0;color:#5b6270;">Business</td><td style="padding:4px 0;">{{business_name}}</td></tr>
+          <tr><td style="padding:4px 0;color:#5b6270;">Type</td><td style="padding:4px 0;">{{trader_kind}}</td></tr>
+          <tr><td style="padding:4px 0;color:#5b6270;">Email</td><td style="padding:4px 0;">{{user_email}}</td></tr>
+          <tr><td style="padding:4px 0;color:#5b6270;">Country</td><td style="padding:4px 0;">{{country}}</td></tr>
+          <tr><td style="padding:4px 0;color:#5b6270;">Trader ID</td><td style="padding:4px 0;">{{trader_id}}</td></tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#e9edf1" padding="20px 36px">
+      <mj-column>
+        <mj-text mj-class="label" align="center">Internal Gems24 notification</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
