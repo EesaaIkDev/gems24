@@ -9,7 +9,6 @@ import { effectiveLimit } from "@/lib/referral";
 import { renewalLabel } from "@/lib/plan";
 import TierRow from "@/components/subscription/TierRow";
 import RedeemCode from "@/components/subscription/RedeemCode";
-import BuyListings from "@/components/subscription/BuyListings";
 import SuccessSplash from "@/components/subscription/SuccessSplash";
 import Spinner from "@/components/common/Spinner";
 import EmptyState from "@/components/common/EmptyState";
@@ -243,10 +242,6 @@ export default function Subscription() {
             <Link to="/profile">Switch to a business account</Link>
           </Button>
         </div>
-      )}
-
-      {trader && tier !== "none" && (
-        <BuyListings trader={trader} onPurchaseStarted={reload} />
       )}
 
       {isNative && tier !== "none" && (

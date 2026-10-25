@@ -47,7 +47,6 @@ export function effectiveLimit(trader, tier) {
   return (
     base +
     (trader?.referral_bonus_listings || 0) +
-    (trader?.purchased_listings || 0) +
     (trader?.loyalty_bonus_listings || 0)
   );
 }

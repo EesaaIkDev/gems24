@@ -18,7 +18,6 @@ export const LOYALTY_STEP = { bronze: 10, silver: 15, gold: 30, platinum: 50 };
 export const REFERRALS_PER_YEAR = 2;
 
 /** Price of one extra listing slot, bought outright and never expiring. */
-export const EXTRA_LISTING_PRICE = 10;
 
 // Highest grade first: Platinum anchors the price scale so Gold reads as the
 // reasonable choice rather than the expensive end of a build-up from Bronze.

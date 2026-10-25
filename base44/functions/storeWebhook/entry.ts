@@ -3,7 +3,7 @@ import { LOYALTY_STEP, TIER_KEYS, tierAllowed, tierRank } from '../../shared/tra
 
 /**
  * Applies a store purchase. This is the only thing in the system allowed to set
- * subscription_tier or purchased_listings from a payment.
+ * subscription_tier from a payment.
  *
  * Shaped for a RevenueCat webhook (app_user_id carries the trader id, passed as
  * external_id when the paywall is launched), but the payload it reads is small
@@ -16,9 +16,7 @@ import { LOYALTY_STEP, TIER_KEYS, tierAllowed, tierRank } from '../../shared/tra
  *   STORE_WEBHOOK_SECRET — sent by the provider in the Authorization header
  */
 
-// A tier product/entitlement is named after the tier. An extra-listings product
-// is named extra_listings_<count>, e.g. extra_listings_5.
-const EXTRA_LISTINGS = /^extra_listings_(\d{1,3})$/i;
+// A tier product/entitlement is named after the tier.
 
 // PRODUCT_CHANGE is informational only (RevenueCat): the switch itself arrives
 // later as RENEWAL (App Store) or INITIAL_PURCHASE (Google Play). It's used to
@@ -94,21 +92,13 @@ export default async function (req: Request): Promise<Response> {
     }
 
     const now = new Date().toISOString();
-    const extra = EXTRA_LISTINGS.exec(productId);
     const tier = TIER_KEYS.includes(productId.toLowerCase()) ? productId.toLowerCase() : '';
 
     let kind = 'ignored';
     let listingsGranted = 0;
     let appliedTier = '';
 
-    if (extra && GRANTING_EVENTS.includes(eventType)) {
-      // Bought outright — these never expire, so a later expiry never removes them.
-      listingsGranted = Math.min(50, parseInt(extra[1], 10) || 0);
-      kind = 'extra_listings';
-      await base44.asServiceRole.entities.Trader.update(row.id, {
-        purchased_listings: (row.purchased_listings || 0) + listingsGranted,
-      });
-    } else if (tier && GRANTING_EVENTS.includes(eventType) && !tierAllowed(row, tier)) {
+    if (tier && GRANTING_EVENTS.includes(eventType) && !tierAllowed(row, tier)) {
       // Platinum is the business plan and Bronze–Gold are for individuals; a
       // stale paywall or a renewal after switching kind must not grant across.
       appliedTier = `refused:${tier}`;

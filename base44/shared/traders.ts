@@ -1,6 +1,6 @@
 /**
  * Shared trader/entitlement helpers for the backend functions that grant paid
- * benefits. Entitlements (subscription_tier, purchased_listings,
+ * benefits. Entitlements (subscription_tier,
  * referral_bonus_listings) are server-managed: the client never writes them, so
  * every grant path goes through one of these helpers.
  */
@@ -98,7 +98,6 @@ export function effectiveLimit(trader: any) {
   return (
     base +
     (trader.referral_bonus_listings || 0) +
-    (trader.purchased_listings || 0) +
     (trader.loyalty_bonus_listings || 0)
   );
 }
