@@ -4,7 +4,7 @@
   "properties": {
     "event_id": {
       "type": "string",
-      "description": "Store event id \u2014 used to make webhook delivery idempotent"
+      "description": "Store event id, used to make webhook delivery idempotent"
     },
     "trader_id": {
       "type": "string"
@@ -19,7 +19,6 @@
       "type": "string",
       "enum": [
         "tier",
-        "extra_listings",
         "ignored"
       ],
       "description": "What the purchase granted"
@@ -29,7 +28,8 @@
     },
     "listings_granted": {
       "type": "number",
-      "default": 0
+      "default": 0,
+      "description": "Loyalty listing slots granted by this renewal"
     },
     "applied_at": {
       "type": "string",

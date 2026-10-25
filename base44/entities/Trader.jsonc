@@ -218,7 +218,7 @@
     "verified": {
       "type": "boolean",
       "default": false,
-      "description": "Public verified badge. Set only by shuftiCallback / reviewVerification on an approved decision \u2014 never writable by the client.",
+      "description": "Public verified badge. Set only by shuftiCallback / reviewVerification on an approved decision, never writable by the client.",
       "rls": {
         "write": {
           "user_condition": {
@@ -385,18 +385,6 @@
       "type": "string",
       "format": "date-time",
       "description": "Start of the current 12-month referral window",
-      "rls": {
-        "write": {
-          "user_condition": {
-            "role": "admin"
-          }
-        }
-      }
-    },
-    "purchased_listings": {
-      "type": "number",
-      "default": 0,
-      "description": "Extra listing slots bought individually \u2014 never expire or reset",
       "rls": {
         "write": {
           "user_condition": {

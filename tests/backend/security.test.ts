@@ -183,7 +183,7 @@ Deno.test('listings: a scheduled downgrade\'s lower limit already applies', asyn
 
 Deno.test('listings: bonus slots count toward capacity', async () => {
   reset(); seedPeople();
-  Object.assign(db.Trader[0], { subscription_tier: 'bronze', purchased_listings: 1 });
+  Object.assign(db.Trader[0], { subscription_tier: 'bronze', referral_bonus_listings: 1 });
   db.Listing = Array.from({ length: 26 }, (_, i) => listing(`L${i}`));
   await call(stampListing, { listing_id: 'L25', event_type: 'create' });
   assert(db.Listing.some((l) => l.id === 'L25'));
