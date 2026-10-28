@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { isNative } from "@/lib/despia";
+import { PURCHASE_EVENT } from "@/lib/GoldMembership";
 
 /**
  * Refreshes the trader after the store reports a purchase or a restore.
@@ -18,13 +19,15 @@ export default function useEntitlements(trader, onSynced) {
     setChecking(false);
   }, [trader?.id, onSynced]);
 
+  // Purchases are handled app-wide by GoldMembershipProvider (haptic + refresh);
+  // this page just re-reads its own copy when one lands.
   useEffect(() => {
-    window.onRevenueCatPurchase = check;
+    window.addEventListener(PURCHASE_EVENT, check);
     window.onRevenueCatCenter = (event) => {
       if (event?.event === "restoreCompleted" || event?.event === "dismissed") check();
     };
     return () => {
-      window.onRevenueCatPurchase = undefined;
+      window.removeEventListener(PURCHASE_EVENT, check);
       window.onRevenueCatCenter = undefined;
     };
   }, [check]);

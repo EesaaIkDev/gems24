@@ -4,7 +4,7 @@ export const TIERS = {
   none: { key: "none", label: "Free", limit: 0, rank: 0, price: null },
   bronze: { key: "bronze", label: "Bronze", limit: 25, rank: 1, price: 9 },
   silver: { key: "silver", label: "Silver", limit: 40, rank: 2, price: 29 },
-  gold: { key: "gold", label: "Gold", limit: 80, rank: 3, price: 59 },
+  gold: { key: "gold", label: "Gold", limit: 80, rank: 3, price: 69 },
   platinum: { key: "platinum", label: "Platinum", limit: 300, rank: 4, price: 199 },
 };
 

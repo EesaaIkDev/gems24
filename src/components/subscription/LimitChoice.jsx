@@ -6,6 +6,8 @@ import ShareInviteButton from "@/components/referral/ShareInviteButton";
 import useReferralCode from "@/hooks/useReferralCode";
 import { TIERS, tierRank } from "@/lib/gems";
 import { bonusPerReferral, referralsRemaining } from "@/lib/referral";
+import { isNative } from "@/lib/despia";
+import { useGoldMembership } from "@/lib/GoldMembership";
 
 /**
  * Shown when a trader is out of listing slots: upgrading and inviting a trader
@@ -15,6 +17,8 @@ export default function LimitChoice({ trader, active, limit }) {
   const code = useReferralCode(trader);
   const unlock = referralsRemaining(trader) > 0 ? bonusPerReferral(trader) : 0;
   const label = TIERS[trader?.subscription_tier || "none"].label;
+  const { isGoldMember, upgradeToGold } = useGoldMembership();
+  const offerGold = isNative && !isGoldMember && trader?.trader_kind !== "business";
 
   return (
     <div className="mx-auto max-w-sm px-4 py-10 text-center">
@@ -53,7 +57,12 @@ export default function LimitChoice({ trader, active, limit }) {
         <p className="mt-1.5 text-xs text-muted-foreground">
           More slots straight away, plus higher placement in search and feeds.
         </p>
-        <Button asChild variant="outline" className="mt-4 h-12 w-full font-semibold">
+        {offerGold && (
+          <Button onClick={upgradeToGold} className="mt-4 h-12 w-full font-semibold">
+            Upgrade to Gold — {TIERS.gold.limit} listings
+          </Button>
+        )}
+        <Button asChild variant={offerGold ? "ghost" : "outline"} className={`${offerGold ? "mt-1" : "mt-4"} h-12 w-full font-semibold`}>
           <Link to="/subscription">See plans</Link>
         </Button>
       </div>

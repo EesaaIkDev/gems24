@@ -35,6 +35,7 @@ import OAuthConsent from '@/pages/OAuthConsent';
 import AdminVerifications from '@/pages/AdminVerifications';
 import RouteSeo from '@/components/seo/RouteSeo';
 import PushInit from '@/components/native/PushInit';
+import { GoldMembershipProvider } from '@/lib/GoldMembership';
 import Spinner from '@/components/common/Spinner';
 
 const AuthenticatedApp = () => {
@@ -107,7 +108,9 @@ function App() {
           <ScrollToTop />
           <RouteSeo />
           <PushInit />
-          <AuthenticatedApp />
+          <GoldMembershipProvider>
+            <AuthenticatedApp />
+          </GoldMembershipProvider>
         </Router>
         <Toaster />
       </QueryClientProvider>
