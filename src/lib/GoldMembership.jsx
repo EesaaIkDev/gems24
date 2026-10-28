@@ -72,7 +72,8 @@ export function GoldMembershipProvider({ children }) {
     if (!trader || trader.account_type !== "trader" || trader.trader_kind === "business" || !isNative) {
       return navigate(trader?.account_type === "buyer" ? "/profile" : "/subscription");
     }
-    launchPaywall("gold", trader.id);
+    // Gold lives in RevenueCat's "default" offering.
+    launchPaywall("gold", trader.id, "default");
   }, [trader, navigate]);
 
   return (

@@ -8,10 +8,10 @@ import { TIER_ORDER, tierRank } from "@/lib/gems";
  * Each tier has an offering of the same name (with monthly / yearly / lifetime packages).
  */
 
-/** Opens the native RevenueCat paywall for a tier. */
-export function launchPaywall(tier, externalId) {
+/** Opens the native RevenueCat paywall for an offering (defaults to the tier's own). */
+export function launchPaywall(tier, externalId, offering = tier) {
   if (!isNative) return false;
-  despia(`revenuecat://launchPaywall?external_id=${encodeURIComponent(externalId)}&offering=${tier}`);
+  despia(`revenuecat://launchPaywall?external_id=${encodeURIComponent(externalId)}&offering=${encodeURIComponent(offering)}`);
   return true;
 }
 
