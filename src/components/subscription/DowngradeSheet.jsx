@@ -58,7 +58,7 @@ export default function DowngradeSheet({ trader, tier, listings, scheduled = fal
 
   const continueToStore = () => {
     haptic("heavy");
-    launchPaywall(tier, trader.id);
+    launchPaywall(trader.id);
     onClose();
   };
 

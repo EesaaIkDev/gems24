@@ -5,13 +5,14 @@ import { TIER_ORDER, tierRank } from "@/lib/gems";
 /**
  * RevenueCat via the Despia native bridge — App Store / Google Play billing.
  * Entitlement ids in RevenueCat must match the tier keys: bronze, silver, gold, platinum.
- * Each tier has an offering of the same name (with monthly / yearly / lifetime packages).
+ * Every plan lives in the single "default" offering.
  */
+const OFFERING = "default";
 
-/** Opens the native RevenueCat paywall for an offering (defaults to the tier's own). */
-export function launchPaywall(tier, externalId, offering = tier) {
+/** Opens the native RevenueCat paywall (the "default" offering holds every plan). */
+export function launchPaywall(externalId) {
   if (!isNative) return false;
-  despia(`revenuecat://launchPaywall?external_id=${encodeURIComponent(externalId)}&offering=${encodeURIComponent(offering)}`);
+  despia(`revenuecat://launchPaywall?external_id=${encodeURIComponent(externalId)}&offering=${OFFERING}`);
   return true;
 }
 

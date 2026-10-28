@@ -102,7 +102,7 @@ export default function Subscription() {
 
   const subscribe = () => {
     haptic("heavy");
-    launchPaywall(selected, trader.id);
+    launchPaywall(trader.id);
     closeSheet();
   };
 
