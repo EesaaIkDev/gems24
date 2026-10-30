@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { LOYALTY_STEP, TIER_KEYS, tierAllowed, tierRank } from '../../shared/traders.ts';
+import { CYCLE_MONTHS, LOYALTY_STEP, MONTH_MS, cycleMonth, tierAllowed, tierFromProduct, tierRank } from '../../shared/traders.ts';
 
 /**
  * Applies a store purchase. This is the only thing in the system allowed to set
@@ -16,7 +16,8 @@ import { LOYALTY_STEP, TIER_KEYS, tierAllowed, tierRank } from '../../shared/tra
  *   STORE_WEBHOOK_SECRET — sent by the provider in the Authorization header
  */
 
-// A tier product/entitlement is named after the tier.
+// Store products are gems24_<tier>_yearly (billed every 3 months despite the
+// name); a bare tier key is accepted too. See tierFromProduct.
 
 // PRODUCT_CHANGE is informational only (RevenueCat): the switch itself arrives
 // later as RENEWAL (App Store) or INITIAL_PURCHASE (Google Play). It's used to
@@ -92,7 +93,7 @@ export default async function (req: Request): Promise<Response> {
     }
 
     const now = new Date().toISOString();
-    const tier = TIER_KEYS.includes(productId.toLowerCase()) ? productId.toLowerCase() : '';
+    const tier = tierFromProduct(productId);
 
     let kind = 'ignored';
     let listingsGranted = 0;
@@ -108,12 +109,21 @@ export default async function (req: Request): Promise<Response> {
       appliedTier = tier;
       const current = row.subscription_tier || 'none';
       const hadPlan = tierRank(current) > 0;
-      // A higher grade while already on a plan is a mid-year upgrade: live now,
-      // and it doesn't count as another loyalty year.
+      // A higher grade while already on a plan is a mid-cycle upgrade: live now,
+      // and it doesn't count as another loyalty renewal.
       const isUpgrade = hadPlan && tierRank(tier) > tierRank(current);
       const update: Record<string, unknown> = { subscription_tier: tier };
       const renewsAt = toIso(event?.expiration_at_ms);
       if (renewsAt) update.plan_renews_at = renewsAt;
+      // The month clock starts with a fresh subscription and keeps running
+      // through upgrades and renewals (a renewal stays at month 3).
+      // Subscribers from before the 3-month cycle have no start date and are
+      // already fully built up, so they continue at month 3.
+      const startedAt = !hadPlan
+        ? toIso(event?.purchased_at_ms) || now
+        : row.subscription_start_date || new Date(Date.now() - (CYCLE_MONTHS - 1) * MONTH_MS).toISOString();
+      update.subscription_start_date = startedAt;
+      update.current_cycle_month = cycleMonth(startedAt);
       // Any grade change (an upgrade, or the plan year rolling over) settles a
       // scheduled downgrade one way or the other.
       if (row.pending_tier && eventType !== 'UNCANCELLATION') {
@@ -125,17 +135,18 @@ export default async function (req: Request): Promise<Response> {
         update.loyalty_years = 1;
         update.loyalty_bonus_listings = 0;
       } else if (!isUpgrade && (eventType === 'RENEWAL' || eventType === 'INITIAL_PURCHASE')) {
-        // Plans bill annually: a same-grade renewal, or a scheduled downgrade
-        // landing at the anniversary, is another uninterrupted year.
+        // Plans bill every 3 months: a same-grade renewal, or a scheduled
+        // downgrade landing at renewal, is another uninterrupted cycle and
+        // adds one month's worth of slots.
         const years = (row.loyalty_years || 1) + 1;
-        listingsGranted = (LOYALTY_STEP[tier] || 0) * (years - 1);
+        listingsGranted = LOYALTY_STEP[tier] || 0;
         update.loyalty_years = years;
         update.loyalty_bonus_listings = (row.loyalty_bonus_listings || 0) + listingsGranted;
       }
       await base44.asServiceRole.entities.Trader.update(row.id, update);
     } else if (eventType === 'PRODUCT_CHANGE') {
-      const next = String(event?.new_product_id || '').toLowerCase();
-      if (TIER_KEYS.includes(next) && tierAllowed(row, next) && tierRank(next) < tierRank(row.subscription_tier)) {
+      const next = tierFromProduct(String(event?.new_product_id || ''));
+      if (next && tierAllowed(row, next) && tierRank(next) < tierRank(row.subscription_tier)) {
         // Downgrade: the trader keeps their grade until the plan year ends.
         kind = 'tier';
         appliedTier = `pending:${next}`;
@@ -145,7 +156,7 @@ export default async function (req: Request): Promise<Response> {
           pending_tier_at: at,
           ...(at ? { plan_renews_at: at } : {}),
         });
-      } else if (TIER_KEYS.includes(next) && row.pending_tier) {
+      } else if (next && row.pending_tier) {
         // Switched back up (or to the same grade) before the downgrade landed.
         kind = 'tier';
         appliedTier = 'pending:cleared';
@@ -161,6 +172,8 @@ export default async function (req: Request): Promise<Response> {
       await base44.asServiceRole.entities.Trader.update(row.id, {
         subscription_tier: 'none',
         plan_renews_at: null,
+        subscription_start_date: null,
+        current_cycle_month: 0,
         pending_tier: '',
         pending_tier_at: null,
         loyalty_years: 0,

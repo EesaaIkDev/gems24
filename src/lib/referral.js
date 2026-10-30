@@ -1,5 +1,5 @@
 import { base44 } from "@/api/base44Client";
-import { REFERRALS_PER_YEAR, REFERRAL_BONUS, tierLimit, tierRank } from "@/lib/gems";
+import { REFERRALS_PER_YEAR, REFERRAL_BONUS, TIERS, planLapsed, tierRank, traderCycleMonth } from "@/lib/gems";
 import { isNative, shareApp } from "@/lib/despia";
 
 const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
@@ -35,15 +35,18 @@ export const referralMessage = (code) =>
   `I've been trading gemstones on Gems24 — join with my code ${code} and we can connect: ${referralLink(code)}`;
 
 /**
- * Tier capacity plus referral bonuses and any slots bought outright. While a
- * downgrade is scheduled the lower grade's limit already applies. Mirrors
- * effectiveLimit in base44/shared/traders.ts, which is what's enforced.
+ * The tier's monthly slots × the cycle month, plus referral and loyalty
+ * bonuses. While a downgrade is scheduled the lower grade already applies.
+ * Mirrors effectiveLimit in base44/shared/traders.ts, which is what's enforced.
  */
 export function effectiveLimit(trader, tier) {
+  if (planLapsed(trader)) return 0;
+  const month = traderCycleMonth(trader);
+  const slots = (t) => (TIERS[t || "none"]?.monthly ?? 0) * month;
   const base = tier
-    ? tierLimit(tier)
-    : Math.min(tierLimit(trader?.subscription_tier), trader?.pending_tier ? tierLimit(trader.pending_tier) : Infinity);
-  if (base === Infinity) return Infinity;
+    ? slots(tier)
+    : Math.min(slots(trader?.subscription_tier), trader?.pending_tier ? slots(trader.pending_tier) : Infinity);
+  if (!base) return 0;
   return (
     base +
     (trader?.referral_bonus_listings || 0) +

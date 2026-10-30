@@ -1,18 +1,51 @@
 export const LOGO_URL = "https://media.base44.com/images/public/6a661583e07cf311ecceee39/497267ee2_Gems24-logo.png";
 
+/**
+ * Plans bill every 3 months and slots build up month by month (30 days each):
+ * `monthly` × the cycle month, so `limit` (month 3) is the full allocation.
+ * Mirrors MONTHLY_SLOTS in base44/shared/traders.ts, which is what's enforced.
+ */
+export const CYCLE_MONTHS = 3;
+const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+const LAPSE_GRACE_MS = 2 * 24 * 60 * 60 * 1000;
+
 export const TIERS = {
-  none: { key: "none", label: "Free", limit: 0, rank: 0, price: null },
-  bronze: { key: "bronze", label: "Bronze", limit: 25, rank: 1, price: 9 },
-  silver: { key: "silver", label: "Silver", limit: 40, rank: 2, price: 29 },
-  gold: { key: "gold", label: "Gold", limit: 80, rank: 3, price: 69 },
-  platinum: { key: "platinum", label: "Platinum", limit: 300, rank: 4, price: 199 },
+  none: { key: "none", label: "Free", monthly: 0, limit: 0, rank: 0, price: null },
+  bronze: { key: "bronze", label: "Bronze", monthly: 2, limit: 6, rank: 1, price: 9 },
+  silver: { key: "silver", label: "Silver", monthly: 4, limit: 12, rank: 2, price: 29 },
+  gold: { key: "gold", label: "Gold", monthly: 6, limit: 18, rank: 3, price: 69 },
+  platinum: { key: "platinum", label: "Platinum", monthly: 10, limit: 30, rank: 4, price: 199 },
+};
+
+/** Month of the 3-month cycle (1–3), or 0 with no start date. Days 0–29 → 1, 30–59 → 2, 60+ → 3. */
+export function cycleMonth(startDate, now = Date.now()) {
+  const start = Date.parse(startDate || "");
+  if (!Number.isFinite(start)) return 0;
+  return Math.min(CYCLE_MONTHS, Math.max(0, Math.floor((now - start) / MONTH_MS)) + 1);
+}
+
+/** Cycle month the trader's slots are counted at; plans from before the cycle count as month 3. */
+export const traderCycleMonth = (t) => cycleMonth(t?.subscription_start_date) || CYCLE_MONTHS;
+
+/** When the next month's slots unlock, or null once the cycle is fully built up. */
+export function nextSlotsAt(t) {
+  const start = Date.parse(t?.subscription_start_date || "");
+  const month = cycleMonth(t?.subscription_start_date);
+  if (!Number.isFinite(start) || !month || month >= CYCLE_MONTHS) return null;
+  return new Date(start + month * MONTH_MS);
+}
+
+/** The cycle ended (plus store retry grace) without a renewal. */
+export const planLapsed = (t) => {
+  const ends = Date.parse(t?.plan_renews_at || "");
+  return Number.isFinite(ends) && Date.now() > ends + LAPSE_GRACE_MS;
 };
 
 /** Referral reward scales with the grade of the trader handing out the code. */
 export const REFERRAL_BONUS = { bronze: 5, silver: 8, gold: 12, platinum: 20 };
 
-/** Loyalty listings: renewal N (uninterrupted) adds step × (N − 1) free slots. Mirrors the server. */
-export const LOYALTY_STEP = { bronze: 10, silver: 15, gold: 30, platinum: 50 };
+/** Loyalty listings: every uninterrupted 3-month renewal adds one month's worth of slots. Mirrors the server. */
+export const LOYALTY_STEP = { bronze: 2, silver: 4, gold: 6, platinum: 10 };
 
 /** Referrals are a growth lever, not a plan replacement — twice a year each. */
 export const REFERRALS_PER_YEAR = 2;

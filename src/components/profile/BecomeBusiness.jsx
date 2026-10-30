@@ -13,7 +13,7 @@ import { TIERS } from "@/lib/gems";
 
 const POINTS = [
   "A company profile with your registered name, business type and team",
-  "The Platinum business plan: 300 listings and top placement",
+  "The Platinum business plan: up to 30 listings (10 more each month of the cycle) and top placement",
   "Verified Business badge once your company passes business verification",
 ];
 

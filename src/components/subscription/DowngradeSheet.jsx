@@ -14,7 +14,7 @@ import { effectiveLimit } from "@/lib/referral";
 import { renewalLabel } from "@/lib/plan";
 
 /**
- * Moving to a lower grade. The switch lands at the end of the plan year, but
+ * Moving to a lower grade. The switch lands at the end of the 3-month cycle, but
  * the trader has to get down to the lower grade's listing limit first — they
  * pick which stones go. Upgrades never come through here.
  *

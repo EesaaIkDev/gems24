@@ -11,7 +11,7 @@ Deno.test('Trader: paid and referral fields are server-only', () => {
   for (const f of [
     'subscription_tier', 'plan_renews_at', 'pending_tier', 'pending_tier_at',
     'referral_count', 'referral_bonus_listings', 'referral_count_year', 'referral_year_start',
-    'referred_by_code', 'loyalty_years', 'loyalty_bonus_listings', 'verified', 'verified_as',
+    'referred_by_code', 'loyalty_years', 'loyalty_bonus_listings', 'subscription_start_date', 'current_cycle_month', 'verified', 'verified_as',
   ]) assert(serverOnly(p[f]), `${f} must be server-only`);
   assertEquals(p.account_type.rls.update, ADMIN, 'account type only changes via upgradeToTrader');
 });

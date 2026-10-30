@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { TIER_KEYS, callerTrader, tierAllowed } from '../../shared/traders.ts';
+import { TIER_KEYS, callerTrader, tierAllowed, tierRank } from '../../shared/traders.ts';
 
 /**
  * Validates a discount code and, for a 100% code, grants the grade.
@@ -95,7 +95,13 @@ export default async function (req: Request): Promise<Response> {
     await base44.asServiceRole.entities.DiscountCode.update(found.id, {
       times_used: (found.times_used || 0) + 1,
     });
-    await base44.asServiceRole.entities.Trader.update(trader.id, { subscription_tier: tier });
+    // A plan from nothing starts the 3-month cycle at month 1; an existing plan
+    // keeps its month clock.
+    const fresh = tierRank(trader.subscription_tier) === 0;
+    await base44.asServiceRole.entities.Trader.update(trader.id, {
+      subscription_tier: tier,
+      ...(fresh ? { subscription_start_date: new Date().toISOString(), current_cycle_month: 1 } : {}),
+    });
 
     console.log(`discount code granted trader=${trader.id} tier=${tier} code=${code}`);
 

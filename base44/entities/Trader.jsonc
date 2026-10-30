@@ -175,7 +175,31 @@
     "plan_renews_at": {
       "type": "string",
       "format": "date-time",
-      "description": "End of the current paid plan year, as reported by the store. Set only by storeWebhook.",
+      "description": "End of the current paid 3-month cycle, as reported by the store. Set only by storeWebhook.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "subscription_start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the current uninterrupted subscription began; months of the 3-month cycle (30 days each) count from here. Set only by storeWebhook.",
+      "rls": {
+        "write": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
+    },
+    "current_cycle_month": {
+      "type": "number",
+      "default": 0,
+      "description": "Month of the 3-month cycle (1, 2 or 3; 0 = no plan) as of the last store event. Slots are always worked out live from subscription_start_date. Set only by storeWebhook.",
       "rls": {
         "write": {
           "user_condition": {
@@ -444,7 +468,7 @@
     "loyalty_years": {
       "type": "number",
       "default": 0,
-      "description": "Consecutive subscription years without the plan lapsing. Set only by storeWebhook.",
+      "description": "Consecutive 3-month cycles without the plan lapsing (name kept from the yearly plans). Set only by storeWebhook.",
       "rls": {
         "write": {
           "user_condition": {
@@ -456,7 +480,7 @@
     "loyalty_bonus_listings": {
       "type": "number",
       "default": 0,
-      "description": "Free listing slots earned from uninterrupted annual renewals. Set only by storeWebhook; reset when the plan lapses.",
+      "description": "Free listing slots earned from uninterrupted 3-month renewals. Set only by storeWebhook; reset when the plan lapses.",
       "rls": {
         "write": {
           "user_condition": {

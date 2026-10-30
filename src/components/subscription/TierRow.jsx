@@ -36,12 +36,12 @@ export default function TierRow({ tier, capacity, placement, anchor, current, re
         <div className="mt-3 flex items-end justify-between gap-3">
           <div>
             {/* The amount stays hidden until the store's billing screen. */}
-            <p className="font-heading text-lg font-bold leading-none">Billed annually</p>
+            <p className="font-heading text-lg font-bold leading-none">Billed every 3 months</p>
             <p className="mt-1.5 text-[0.8125rem] text-muted-foreground">{capacity}</p>
             {anchor && <p className="mt-1 text-[0.75rem] leading-snug text-primary">{anchor}</p>}
             {LOYALTY_STEP[tier] > 0 && (
               <p className="mt-1 text-[0.75rem] leading-snug text-muted-foreground">
-                +{LOYALTY_STEP[tier]} free listings when you renew, growing every year you stay
+                +{LOYALTY_STEP[tier]} free listings every time you renew without a break
               </p>
             )}
           </div>

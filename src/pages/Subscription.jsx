@@ -18,13 +18,15 @@ import useEntitlements from "@/hooks/useEntitlements";
 import useOnline from "@/hooks/useOnline";
 import { isNative, haptic } from "@/lib/despia";
 import { launchPaywall, openCustomerCenter } from "@/lib/revenuecat";
-import { LOGO_URL, TIERS, isBusiness, plansFor, tierRank } from "@/lib/gems";
+import { CYCLE_MONTHS, LOGO_URL, TIERS, isBusiness, nextSlotsAt, plansFor, tierRank, traderCycleMonth } from "@/lib/gems";
 
+const slotsCopy = (t) =>
+  `${TIERS[t].monthly} → ${TIERS[t].monthly * 2} → ${TIERS[t].limit} stones on the market, unlocking month by month`;
 const CAPACITY = {
-  bronze: "25 stones on the market at once",
-  silver: "40 stones on the market at once",
-  gold: "80 stones on the market at once",
-  platinum: "300 stones on the market at once — room for your company's full inventory",
+  bronze: slotsCopy("bronze"),
+  silver: slotsCopy("silver"),
+  gold: slotsCopy("gold"),
+  platinum: `${slotsCopy("platinum")} — the largest allocation, for your company's inventory`,
 };
 
 const PLACEMENT = {
@@ -79,7 +81,7 @@ export default function Subscription() {
     lastRank.current = rank;
   }, [trader?.subscription_tier, trader]);
 
-  // Lower grades wait for the end of the plan year (and need the listings to
+  // Lower grades wait for the end of the 3-month cycle (and need the listings to
   // fit); higher grades go straight to billing and apply once paid.
   const openTier = (t) => {
     if (tierRank(trader?.subscription_tier) > 0 && tierRank(t) < tierRank(trader.subscription_tier)) {
@@ -254,8 +256,17 @@ export default function Subscription() {
         </Button>
       )}
 
+      {tierRank(trader?.subscription_tier) > 0 && (
+        <p className="mx-auto mt-8 max-w-sm text-center text-sm leading-relaxed text-muted-foreground">
+          Month {traderCycleMonth(trader)} of {CYCLE_MONTHS}:{" "}
+          <span className="font-semibold text-foreground">{effectiveLimit(trader)} listing slots</span> now.
+          {nextSlotsAt(trader) &&
+            ` ${TIERS[trader.subscription_tier].monthly} more unlock on ${nextSlotsAt(trader).toLocaleDateString(undefined, { day: "numeric", month: "long" })}.`}
+        </p>
+      )}
+
       <p className="mx-auto mt-8 max-w-sm text-center text-xs leading-relaxed text-muted-foreground">
-        All grades are billed annually through your{" "}
+        All grades are billed every 3 months through your{" "}
         {isNative ? "app store" : "App Store or Google Play"} account. Cancel anytime.
       </p>
 
@@ -269,9 +280,9 @@ export default function Subscription() {
             <>
               <div className="flex items-baseline justify-between">
                 <TierBadge tier={selected} />
-                {/* Annual-only, and the amount is revealed on the billing screen. */}
+                {/* Billed every 3 months; the amount is revealed on the billing screen. */}
                 <p className="font-heading text-sm font-bold">
-                  Annual plan
+                  3-month plan
                   {discount && (
                     <span className="ml-1.5 text-xs font-medium text-primary">
                       {discount.percent_off}% off
@@ -295,8 +306,8 @@ export default function Subscription() {
               {online && (
                 <p className="text-center text-xs text-muted-foreground">
                   {isUpgrade
-                    ? `Upgrades apply as soon as your app store confirms payment, and your plan year restarts from that day. Your unused ${TIERS[tier].label} time is credited by the store.`
-                    : "Your annual total is shown on the next screen before you confirm."}
+                    ? `Upgrades apply as soon as your app store confirms payment, and your month-by-month slots carry on from where you are. Your unused ${TIERS[tier].label} time is credited by the store.`
+                    : "Your 3-month total is shown on the next screen before you confirm."}
                 </p>
               )}
               {!online && (

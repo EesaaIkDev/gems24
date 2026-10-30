@@ -68,7 +68,7 @@ Deno.test('store: downgrade waits for the anniversary, then counts as a renewal 
   assertEquals(trader().subscription_tier, 'silver');
   assertEquals(trader().pending_tier, '');
   assertEquals(trader().loyalty_years, 2);
-  assertEquals(trader().loyalty_bonus_listings, 15, 'silver loyalty step for year 2');
+  assertEquals(trader().loyalty_bonus_listings, 4, 'silver loyalty step for one renewal');
 });
 
 Deno.test('store: switching back up clears a scheduled downgrade', async () => {
@@ -183,10 +183,11 @@ Deno.test('listings: a scheduled downgrade\'s lower limit already applies', asyn
 
 Deno.test('listings: bonus slots count toward capacity', async () => {
   reset(); seedPeople();
+  // Bronze with no cycle start (pre-cycle plan) counts as month 3: 6 slots, +1 referral.
   Object.assign(db.Trader[0], { subscription_tier: 'bronze', referral_bonus_listings: 1 });
-  db.Listing = Array.from({ length: 26 }, (_, i) => listing(`L${i}`));
-  await call(stampListing, { listing_id: 'L25', event_type: 'create' });
-  assert(db.Listing.some((l) => l.id === 'L25'));
+  db.Listing = Array.from({ length: 7 }, (_, i) => listing(`L${i}`));
+  await call(stampListing, { listing_id: 'L6', event_type: 'create' });
+  assert(db.Listing.some((l) => l.id === 'L6'));
 });
 
 // ---------------------------------------------------------------- network + chat

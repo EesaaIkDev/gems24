@@ -19,16 +19,47 @@ export const REFERRAL_BONUS: Record<string, number> = {
 export const REFERRALS_PER_YEAR = 2;
 
 /**
- * Loyalty listings: each uninterrupted annual renewal grants free slots, and
- * the grant grows every year — renewal N adds step × (N − 1). Platinum: +50 at
- * year 2, +100 at year 3, +150 at year 4 … Reset when the plan lapses.
+ * Loyalty listings: each uninterrupted 3-month renewal adds one month's worth
+ * of slots (a flat amount per renewal). Reset when the plan lapses.
  */
 export const LOYALTY_STEP: Record<string, number> = {
-  bronze: 10,
-  silver: 15,
-  gold: 30,
-  platinum: 50,
+  bronze: 2,
+  silver: 4,
+  gold: 6,
+  platinum: 10,
 };
+
+/**
+ * Plans bill every 3 months. Slots build up month by month (30 days each):
+ * month 1 = 1×, month 2 = 2×, month 3 = 3× the tier's monthly allocation, and
+ * renewals stay at month 3.
+ */
+export const MONTHLY_SLOTS: Record<string, number> = {
+  none: 0,
+  bronze: 2,
+  silver: 4,
+  gold: 6,
+  platinum: 10,
+};
+export const CYCLE_MONTHS = 3;
+export const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+/** Store billing retries after the cycle ends before an unrenewed plan stops counting. */
+export const LAPSE_GRACE_MS = 2 * 24 * 60 * 60 * 1000;
+
+/** Store product → tier: `gems24_<tier>_yearly` (the store ids), or the bare tier key. */
+export function tierFromProduct(productId: string) {
+  const id = String(productId || '').toLowerCase();
+  if (TIER_KEYS.includes(id)) return id;
+  const m = id.match(/^gems24_([a-z]+)_yearly$/);
+  return m && TIER_KEYS.includes(m[1]) ? m[1] : '';
+}
+
+/** Month of the 3-month cycle (1–3) at `now`, or 0 with no start date. Days 0–29 → 1, 30–59 → 2, 60+ → 3. */
+export function cycleMonth(startDate: string | null | undefined, now = Date.now()) {
+  const start = Date.parse(startDate || '');
+  if (!Number.isFinite(start)) return 0;
+  return Math.min(CYCLE_MONTHS, Math.max(0, Math.floor((now - start) / MONTH_MS)) + 1);
+}
 
 export const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
@@ -77,23 +108,28 @@ export function businessFields(input: any) {
 }
 
 /** Stones on the market at once per grade. Mirrors TIERS in src/lib/gems.js. */
-export const TIER_LIMIT: Record<string, number> = {
-  none: 0,
-  bronze: 25,
-  silver: 40,
-  gold: 80,
-  platinum: 300,
+/** Full (month-3) allocation per tier. */
+export const TIER_LIMIT: Record<string, number> = Object.fromEntries(
+  Object.entries(MONTHLY_SLOTS).map(([t, n]) => [t, n * CYCLE_MONTHS])
+);
+
+/** A plan whose cycle ended (plus grace) without a renewal no longer counts. */
+export const planLapsed = (trader: any, now = Date.now()) => {
+  const ends = Date.parse(trader?.plan_renews_at || '');
+  return Number.isFinite(ends) && now > ends + LAPSE_GRACE_MS;
 };
 
 /**
- * Listing capacity right now. While a downgrade is scheduled the lower grade's
- * limit already applies, so a trader who trimmed down can't refill before the
- * switch lands.
+ * Listing capacity right now: the tier's monthly slots × the cycle month. While
+ * a downgrade is scheduled the lower grade already applies, so a trader who
+ * trimmed down can't refill before the switch lands.
  */
-export function effectiveLimit(trader: any) {
-  if (trader?.account_type !== 'trader') return 0;
+export function effectiveLimit(trader: any, now = Date.now()) {
+  if (trader?.account_type !== 'trader' || planLapsed(trader, now)) return 0;
   const tiers = [trader.subscription_tier, trader.pending_tier].filter(Boolean);
-  const base = Math.min(...tiers.map((t: string) => TIER_LIMIT[t] ?? 0));
+  // Plans from before the 3-month cycle have no start date: treat them as fully built up.
+  const month = cycleMonth(trader.subscription_start_date, now) || CYCLE_MONTHS;
+  const base = Math.min(...tiers.map((t: string) => (MONTHLY_SLOTS[t] ?? 0) * month));
   if (!base) return 0;
   return (
     base +
