@@ -25,8 +25,8 @@ export default function Terms() {
         Payment, shipping, insurance and customs are arranged directly between users.
       </LegalSection>
       <LegalSection title="6. Placeholder — Subscriptions">
-        [PLACEHOLDER TEXT] Paid tiers unlock additional listing capacity and placement. Billing terms,
-        renewals and cancellation rights to be finalised.
+        [PLACEHOLDER TEXT] Paid tiers unlock additional listing capacity and placement. Plans are billed
+        every 3 months through your app store and renew automatically every 3 months until cancelled.
       </LegalSection>
       <LegalSection title="7. Placeholder — Termination">
         [PLACEHOLDER TEXT] You may delete your account at any time from Settings. We may suspend

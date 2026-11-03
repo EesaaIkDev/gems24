@@ -10,7 +10,7 @@ import useErrorHaptic from "@/hooks/useErrorHaptic";
 import { isVerified } from "@/lib/verification";
 
 const POINTS = [
-  "Publish gemstone listings with a trading plan",
+  "Publish gemstone listings with a trading plan, billed every 3 months",
   "Appear in Gemstones search and the trader directory",
   "Your profile, network and chats stay as they are",
 ];

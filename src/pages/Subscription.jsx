@@ -157,7 +157,7 @@ export default function Subscription() {
           )}
         </div>
         {tier !== "none" && !pending && trader?.plan_renews_at && (
-          <p className="mt-2 text-xs text-muted-foreground">Renews on {renewalLabel(trader)}</p>
+          <p className="mt-2 text-xs text-muted-foreground">Billed every 3 months · next renewal {renewalLabel(trader)}</p>
         )}
       </div>
 
