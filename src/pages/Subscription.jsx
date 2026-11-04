@@ -17,8 +17,8 @@ import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useEntitlements from "@/hooks/useEntitlements";
 import useOnline from "@/hooks/useOnline";
 import { isNative, haptic } from "@/lib/despia";
-import { launchPaywall, openCustomerCenter } from "@/lib/revenuecat";
-import { CYCLE_MONTHS, LOGO_URL, TIERS, isBusiness, nextSlotsAt, plansFor, tierRank, traderCycleMonth } from "@/lib/gems";
+import { purchaseTier, openCustomerCenter } from "@/lib/revenuecat";
+import { CYCLE_MONTHS, LOGO_URL, TIERS, TIER_ORDER, isBusiness, nextSlotsAt, plansFor, tierRank, traderCycleMonth } from "@/lib/gems";
 
 const slotsCopy = (t) =>
   `${TIERS[t].monthly} → ${TIERS[t].monthly * 2} → ${TIERS[t].limit} stones on the market, unlocking month by month`;
@@ -104,7 +104,7 @@ export default function Subscription() {
 
   const subscribe = () => {
     haptic("heavy");
-    launchPaywall(trader.id);
+    purchaseTier(trader.id, selected);
     closeSheet();
   };
 
@@ -131,7 +131,8 @@ export default function Subscription() {
 
   const tier = trader?.subscription_tier || "none";
   const business = isBusiness(trader);
-  const plans = plansFor(trader);
+  const plans = TIER_ORDER;
+  const allowed = plansFor(trader);
   const pending = trader?.pending_tier || "";
   const overBy = pending ? Math.max(0, listings.length - effectiveLimit(trader)) : 0;
   const isUpgrade = selected && tierRank(tier) > 0 && tierRank(selected) > tierRank(tier);
@@ -223,6 +224,7 @@ export default function Subscription() {
             placement={PLACEMENT[t]}
             anchor={AUDIENCE[t]}
             current={tier === t}
+            locked={!allowed.includes(t)}
             recommended={!business && t === "gold"}
             tag={t === "platinum" ? "Business plan" : t === "gold" ? "Top trader plan" : ""}
             onSelect={openTier}

@@ -8,7 +8,7 @@ import { LOYALTY_STEP, TIERS, TIER_STYLES } from "@/lib/gems";
  * traders see across the app, its listing capacity as a filled carat meter, and
  * the placement it buys — no generic feature checklist.
  */
-export default function TierRow({ tier, capacity, placement, anchor, current, recommended, tag, onSelect }) {
+export default function TierRow({ tier, capacity, placement, anchor, current, locked, recommended, tag, onSelect }) {
   const t = TIERS[tier];
   const filled = Math.min(5, t.rank + 1);
 
@@ -36,7 +36,7 @@ export default function TierRow({ tier, capacity, placement, anchor, current, re
         <div className="mt-3 flex items-end justify-between gap-3">
           <div>
             {/* The amount stays hidden until the store's billing screen. */}
-            <p className="font-heading text-lg font-bold leading-none">Billed every 3 months</p>
+            <p className="font-heading text-lg font-bold leading-none">Billed yearly</p>
             <p className="mt-1.5 text-[0.8125rem] text-muted-foreground">{capacity}</p>
             {anchor && <p className="mt-1 text-[0.75rem] leading-snug text-primary">{anchor}</p>}
             {LOYALTY_STEP[tier] > 0 && (
@@ -63,10 +63,10 @@ export default function TierRow({ tier, capacity, placement, anchor, current, re
         <Button
           className="mt-4 w-full"
 
-          disabled={current}
+          disabled={current || locked}
           onClick={() => onSelect(tier)}
         >
-          {current ? "Current plan" : `Choose ${t.label}`}
+          {current ? "Current plan" : locked ? (tier === "platinum" ? "Business accounts only" : "Individual traders only") : `Choose ${t.label}`}
         </Button>
       </div>
     </div>

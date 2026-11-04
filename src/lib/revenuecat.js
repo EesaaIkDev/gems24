@@ -16,6 +16,22 @@ export function launchPaywall(externalId) {
   return true;
 }
 
+/** One store product per tier — each button buys exactly its own product. */
+export const PRODUCT_IDS = {
+  bronze: "gems24_bronze_yearly",
+  silver: "gems24_silver_yearly",
+  gold: "gems24_gold_yearly",
+  platinum: "gems24_platinum_yearly",
+};
+
+/** Starts the native purchase of one tier's product. */
+export function purchaseTier(externalId, tier) {
+  const product = PRODUCT_IDS[tier];
+  if (!isNative || !product) return false;
+  despia(`revenuecat://purchase?external_id=${encodeURIComponent(externalId)}&product=${product}`);
+  return true;
+}
+
 /** Opens the native Customer Center (manage plan, restore, refunds). */
 export function openCustomerCenter(externalId) {
   if (!isNative) return false;
