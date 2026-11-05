@@ -15,7 +15,7 @@ const FAQ = [
   },
   {
     q: "How do listings work?",
-    a: "A trader publishes a stone with its carat weight, colour, treatment disclosure, origin and laboratory certificate where one exists. Buyers browse the marketplace, open a listing and message the trader through Gems24.",
+    a: "A trader publishes a stone with its carat weight, colour, treatment disclosure, and origin. Buyers browse the marketplace, open a listing and message the trader through Gems24.",
   },
   {
     q: "Is contact information public?",
@@ -54,8 +54,8 @@ export default function About() {
         </h1>
         <p className="mt-3 text-[0.9375rem] leading-relaxed text-foreground/85">
           Gems24 exists so that the people who actually move coloured stones can find each other without a middleman.
-          Traders list natural gemstones with the details the trade cares about — weight, colour, treatment, origin and
-          certification — and buyers deal with the dealer directly.
+          Traders list natural gemstones with the details the trade cares about — weight, colour, treatment and
+          origin — and buyers deal with the dealer directly.
         </p>
       </header>
 

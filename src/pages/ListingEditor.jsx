@@ -6,14 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, FileUp, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import PhotoUploader from "@/components/listings/PhotoUploader";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { GEM_TYPES, TREATMENTS, cap, isBusiness } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
-import { CERTIFICATE_NOTICE, heldLevel, isVerified } from "@/lib/verification";
+import { heldLevel, isVerified } from "@/lib/verification";
 import { createRecord, updateRecord } from "@/lib/offlineSync";
 import { haptic } from "@/lib/despia";
 import useOnline from "@/hooks/useOnline";
@@ -25,8 +25,6 @@ const EMPTY = {
   color: "",
   treatment: "",
   origin: "",
-  certificate_lab: "",
-  certificate_url: "",
   description: "",
   status: "available",
 };
@@ -39,7 +37,6 @@ export default function ListingEditor() {
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [uploadingCert, setUploadingCert] = useState(false);
   const [blocked, setBlocked] = useState(false);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
@@ -55,15 +52,6 @@ export default function ListingEditor() {
       setBlocked(active >= effectiveLimit(trader));
     });
   }, [trader?.id, trader?.subscription_tier, trader?.pending_tier, id]);
-
-  const uploadCert = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingCert(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    set("certificate_url", file_url);
-    setUploadingCert(false);
-  };
 
   const submit = async (e) => {
     e.preventDefault();
@@ -82,8 +70,6 @@ export default function ListingEditor() {
       color: form.color,
       treatment: form.treatment,
       origin: form.origin,
-      certificate_lab: form.certificate_lab,
-      certificate_url: form.certificate_url,
       description: form.description,
       status: form.status,
       trader_id: trader.id,
@@ -172,32 +158,6 @@ export default function ListingEditor() {
         <div className="space-y-1.5">
           <Label>Origin / provenance (optional)</Label>
           <Input value={form.origin} onChange={(e) => set("origin", e.target.value)} className="h-11" placeholder="Ceylon, Sri Lanka" />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label>Certificate lab (optional)</Label>
-          <Input value={form.certificate_lab} onChange={(e) => set("certificate_lab", e.target.value)} className="h-11" placeholder="GIA, GRS…" />
-        </div>
-
-        <div className="space-y-2">
-          <Label>Certificate file (optional)</Label>
-          <label className="flex items-center gap-2 rounded-xl border border-dashed border-border h-12 px-4 text-sm cursor-pointer hover:border-primary/50">
-            {uploadingCert ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4 text-primary" />}
-            <span className="truncate text-muted-foreground">
-              {!online
-                ? "Certificate upload needs a connection"
-                : form.certificate_url
-                  ? "Certificate uploaded — replace"
-                  : "Upload certificate"}
-            </span>
-            <input
-              type="file"
-              className="hidden"
-              onChange={uploadCert}
-              disabled={uploadingCert || !online}
-            />
-          </label>
-          <p className="text-[0.6875rem] text-muted-foreground">Buyers will see: "{CERTIFICATE_NOTICE}".</p>
         </div>
 
         <div className="space-y-1.5">

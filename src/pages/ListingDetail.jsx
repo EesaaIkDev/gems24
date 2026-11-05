@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
-import { ArrowLeft, FileCheck2, Gem, MapPin, User } from "lucide-react";
+import { ArrowLeft, Gem, MapPin, User } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import LoadError from "@/components/common/LoadError";
 import useLoader from "@/hooks/useLoader";
@@ -11,7 +11,7 @@ import VerifiedBadge from "@/components/common/VerifiedBadge";
 import NetworkButton from "@/components/chat/NetworkButton";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { cap } from "@/lib/gems";
-import { CERTIFICATE_NOTICE, heldLevel, isVerified } from "@/lib/verification";
+import { heldLevel, isVerified } from "@/lib/verification";
 import Seo from "@/components/seo/Seo";
 import { SITE, absolute, listingAlt, listingPath, listingTitle } from "@/lib/seo";
 
@@ -66,9 +66,6 @@ export default function ListingDetail() {
         listing.color ? { "@type": "PropertyValue", name: "Colour", value: listing.color } : null,
         { "@type": "PropertyValue", name: "Treatment", value: cap(listing.treatment) },
         listing.origin ? { "@type": "PropertyValue", name: "Origin", value: listing.origin } : null,
-        listing.certificate_lab
-          ? { "@type": "PropertyValue", name: "Certificate", value: listing.certificate_lab }
-          : null,
       ].filter(Boolean),
       offers: {
         "@type": "Offer",
@@ -103,9 +100,7 @@ export default function ListingDetail() {
     <div className="pb-6">
       <Seo
         title={`${heading} | Gems24`}
-        description={`${heading}. ${cap(listing.treatment)}${
-          listing.certificate_lab ? `, ${listing.certificate_lab} certificate` : ""
-        }, listed by a verified gemstone trader on the Gems24 marketplace.`}
+        description={`${heading}. ${cap(listing.treatment)}, listed by a verified gemstone trader on the Gems24 marketplace.`}
         canonical={canonical}
         image={photos[0]}
         type="product"
@@ -163,23 +158,9 @@ export default function ListingDetail() {
           <Spec label="Colour" value={listing.color} />
           <Spec label="Treatment" value={cap(listing.treatment)} />
           <Spec label="Origin" value={listing.origin} />
-          <Spec label="Certificate" value={listing.certificate_lab} />
           <Spec label="Status" value={cap(listing.status)} />
         </div>
 
-        {listing.certificate_url && (
-          <a
-            href={listing.certificate_url}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-2 rounded-xl border border-border p-3 text-sm font-medium hover:border-primary/40"
-          >
-            <FileCheck2 className="w-4 h-4 text-primary" /> View certificate
-          </a>
-        )}
-        {(listing.certificate_url || listing.certificate_lab) && (
-          <p className="-mt-3 text-[0.6875rem] text-muted-foreground">{CERTIFICATE_NOTICE}</p>
-        )}
 
         {listing.description && (
           <div>

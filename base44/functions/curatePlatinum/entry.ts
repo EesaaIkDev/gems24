@@ -34,9 +34,9 @@ const BUSINESSES: Array<{ trader: Record<string, unknown>; stones: Stone[] }> = 
       bio: `${SAMPLE_NOTE} Family-run mine owner and cutter in Ratnapura supplying unheated Ceylon sapphires to the trade.`,
     },
     stones: [
-      ['sapphire', 3.12, 'Royal blue', 'unheated', 'Ratnapura, Sri Lanka', 'GRS'],
+      ['sapphire', 3.12, 'Royal blue', 'unheated', 'Ratnapura, Sri Lanka'],
       ['sapphire', 2.05, 'Cornflower blue', 'unheated', 'Ratnapura, Sri Lanka', ''],
-      ['sapphire', 1.48, 'Padparadscha pink-orange', 'unheated', 'Sri Lanka', 'GIA'],
+      ['sapphire', 1.48, 'Padparadscha pink-orange', 'unheated', 'Sri Lanka'],
       ['spinel', 2.6, 'Hot pink', 'unheated', 'Sri Lanka', ''],
       ['sapphire', 4.4, 'Yellow', 'heated', 'Sri Lanka', ''],
       ['garnet', 3.9, 'Hessonite orange', 'unheated', 'Sri Lanka', ''],
@@ -53,7 +53,7 @@ const BUSINESSES: Array<{ trader: Record<string, unknown>; stones: Stone[] }> = 
     },
     stones: [
       ['sapphire', 1.02, 'Blue', 'heated', 'Sri Lanka', ''],
-      ['sapphire', 5.2, 'Velvet blue', 'heated', 'Sri Lanka', 'GIA'],
+      ['sapphire', 5.2, 'Velvet blue', 'heated', 'Sri Lanka'],
       ['ruby', 1.35, 'Pinkish red', 'heated', 'Sri Lanka', ''],
       ['sapphire', 2.75, 'Teal', 'unheated', 'Madagascar', ''],
       ['sapphire', 0.95, 'Pink', 'heated', 'Sri Lanka', ''],
@@ -70,7 +70,7 @@ const BUSINESSES: Array<{ trader: Record<string, unknown>; stones: Stone[] }> = 
       bio: `${SAMPLE_NOTE} Bangkok gem house trading Burmese and Mozambique rubies and fine spinel.`,
     },
     stones: [
-      ['ruby', 2.01, 'Pigeon blood red', 'unheated', 'Mozambique', 'GRS'],
+      ['ruby', 2.01, 'Pigeon blood red', 'unheated', 'Mozambique'],
       ['ruby', 1.18, 'Red', 'heated', 'Myanmar', ''],
       ['spinel', 3.05, 'Red', 'unheated', 'Myanmar', ''],
       ['spinel', 1.75, 'Cobalt blue', 'unheated', 'Vietnam', ''],
@@ -88,7 +88,7 @@ const BUSINESSES: Array<{ trader: Record<string, unknown>; stones: Stone[] }> = 
       bio: `${SAMPLE_NOTE} Dubai wholesaler of Colombian and Zambian emeralds for the Gulf jewellery trade.`,
     },
     stones: [
-      ['emerald', 2.5, 'Vivid green', 'other', 'Colombia', 'GIA'],
+      ['emerald', 2.5, 'Vivid green', 'other', 'Colombia'],
       ['emerald', 1.65, 'Green', 'other', 'Zambia', ''],
       ['emerald', 4.02, 'Bluish green', 'other', 'Zambia', ''],
       ['ruby', 1.9, 'Red', 'heated', 'Mozambique', ''],
@@ -109,7 +109,7 @@ const BUSINESSES: Array<{ trader: Record<string, unknown>; stones: Stone[] }> = 
       ['sapphire', 2.02, 'Blue (matched pair)', 'heated', 'Sri Lanka', ''],
       ['spinel', 1.4, 'Lavender', 'unheated', 'Sri Lanka', ''],
       ['emerald', 1.12, 'Green', 'other', 'Colombia', ''],
-      ['sapphire', 6.1, 'Blue', 'heated', 'Madagascar', 'GRS'],
+      ['sapphire', 6.1, 'Blue', 'heated', 'Madagascar'],
       ['ruby', 0.85, 'Red', 'heated', 'Thailand', ''],
       ['other', 3.25, 'Aquamarine blue', 'heated', 'Brazil', ''],
     ],
@@ -210,7 +210,7 @@ export default async function (req: Request): Promise<Response> {
         verified: false,
         read_receipts: true,
       });
-      for (const [gemstone_type, weight_carats, color, treatment, origin, certificate_lab] of b.stones) {
+      for (const [gemstone_type, weight_carats, color, treatment, origin] of b.stones) {
         const listing = {
           trader_id: trader.id,
           gemstone_type,
@@ -218,7 +218,6 @@ export default async function (req: Request): Promise<Response> {
           color,
           treatment,
           origin,
-          certificate_lab,
           status: 'available',
           photos: [],
           is_demo: true,

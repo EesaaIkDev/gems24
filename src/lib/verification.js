@@ -63,6 +63,3 @@ export const coversRequired = (t) => {
 };
 
 export const badgeLabel = (level) => LEVEL_LABEL[level] || "Verified";
-
-/** Shown wherever a seller-supplied certificate appears. */
-export const CERTIFICATE_NOTICE = "Certificate provided by seller — unverified by Gems24";

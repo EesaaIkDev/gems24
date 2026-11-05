@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileUp, Loader2 } from "lucide-react";
 import PhotoUploader from "@/components/listings/PhotoUploader";
 import StepShell from "@/components/listings/StepShell";
 import Spinner from "@/components/common/Spinner";
@@ -15,7 +14,7 @@ import usePopularDefaults from "@/hooks/usePopularDefaults";
 import LimitChoice from "@/components/subscription/LimitChoice";
 import { GEM_TYPES, TREATMENTS, cap, isBusiness } from "@/lib/gems";
 import { effectiveLimit } from "@/lib/referral";
-import { CERTIFICATE_NOTICE, heldLevel, isVerified } from "@/lib/verification";
+import { heldLevel, isVerified } from "@/lib/verification";
 import { createRecord } from "@/lib/offlineSync";
 import { haptic } from "@/lib/despia";
 import useOnline from "@/hooks/useOnline";
@@ -27,13 +26,11 @@ const EMPTY = {
   color: "",
   treatment: "heated",
   origin: "",
-  certificate_lab: "",
-  certificate_url: "",
   description: "",
   status: "available",
 };
 
-const TOTAL = 3;
+const TOTAL = 2;
 
 export default function AddListing() {
   const navigate = useNavigate();
@@ -43,7 +40,6 @@ export default function AddListing() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
-  const [uploadingCert, setUploadingCert] = useState(false);
   const [activeCount, setActiveCount] = useState(null);
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
@@ -60,15 +56,6 @@ export default function AddListing() {
       setActiveCount(rows.filter((l) => l.status !== "sold").length)
     );
   }, [trader?.id]);
-
-  const uploadCert = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadingCert(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    set("certificate_url", file_url);
-    setUploadingCert(false);
-  };
 
   const publish = async () => {
     haptic("heavy");
@@ -126,16 +113,16 @@ export default function AddListing() {
       </StepShell>
     );
 
-  if (step === 1)
-    return (
+  return (
       <StepShell
         step={1}
         total={TOTAL}
         title="Stone details"
         hint="Prices are never shown publicly — traders network with you instead."
         onBack={back}
-        onNext={() => setStep(2)}
-        nextDisabled={!form.weight_carats || !form.treatment}
+        onNext={publish}
+        nextDisabled={!form.weight_carats || !form.treatment || saving}
+        nextLabel={saving ? "Publishing…" : "Publish listing"}
       >
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
@@ -183,51 +170,6 @@ export default function AddListing() {
           <Label>Description (optional)</Label>
           <Textarea rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} />
         </div>
-      </StepShell>
-    );
-
-  return (
-    <StepShell
-      step={2}
-      total={TOTAL}
-      title="Certificate"
-      hint="Optional, but certified stones earn more trust in the network."
-      onBack={back}
-      onNext={publish}
-      nextDisabled={saving}
-      nextLabel={saving ? "Publishing…" : "Publish listing"}
-    >
-      <div className="space-y-1.5">
-        <Label>Certificate lab</Label>
-        <Input
-          value={form.certificate_lab}
-          onChange={(e) => set("certificate_lab", e.target.value)}
-          className="h-11"
-          placeholder="GIA, GRS…"
-        />
-      </div>
-      <div className="space-y-2">
-        <Label>Certificate file</Label>
-        <label className="flex items-center gap-2 rounded-xl border border-dashed border-border h-12 px-4 text-sm cursor-pointer hover:border-primary/50">
-          {uploadingCert ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4 text-primary" />}
-          <span className="truncate text-muted-foreground">
-            {!online
-              ? "Certificate upload needs a connection"
-              : form.certificate_url
-                ? "Certificate uploaded — replace"
-                : "Upload certificate"}
-          </span>
-          <input
-            type="file"
-            className="hidden"
-            onChange={uploadCert}
-            disabled={uploadingCert || !online}
-          />
-        </label>
-        <p className="text-[0.6875rem] text-muted-foreground">
-          Buyers will see: "{CERTIFICATE_NOTICE}".
-        </p>
-      </div>
       <div className="space-y-1.5">
         <Label>Status</Label>
         <Select value={form.status} onValueChange={(v) => set("status", v)}>

@@ -117,12 +117,6 @@
     "origin": {
       "type": "string"
     },
-    "certificate_lab": {
-      "type": "string"
-    },
-    "certificate_url": {
-      "type": "string"
-    },
     "description": {
       "type": "string"
     },

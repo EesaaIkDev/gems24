@@ -21,9 +21,9 @@ export const CATEGORIES = [
     name: "Sapphire",
     title: "Sapphires for Sale — Natural Sapphire Marketplace",
     description:
-      "Browse natural sapphires listed by verified gemstone dealers on Gems24, from Ceylon blues to unheated fancy colours, with carat weight, origin and certificate details.",
+      "Browse natural sapphires listed by verified gemstone dealers on Gems24, from Ceylon blues to unheated fancy colours, with carat weight, colour and origin details.",
     intro:
-      "Sapphire is the most traded coloured stone on Gems24. Listings come directly from dealers and cutters, so each stone is described with its carat weight, colour, treatment status, origin and laboratory certificate where one exists. Unheated Ceylon material, Madagascan blues and fancy colours such as pink, yellow and padparadscha all appear here.",
+      "Sapphire is the most traded coloured stone on Gems24. Listings come directly from dealers and cutters, so each stone is described with its carat weight, colour, treatment status and origin. Unheated Ceylon material, Madagascan blues and fancy colours such as pink, yellow and padparadscha all appear here.",
   },
   {
     slug: "ruby",
@@ -41,7 +41,7 @@ export const CATEGORIES = [
     name: "Emerald",
     title: "Emeralds for Sale — Natural Emerald Marketplace",
     description:
-      "Browse natural emeralds offered by gemstone suppliers on Gems24, with clarity, origin, treatment and certificate information on each listing.",
+      "Browse natural emeralds offered by gemstone suppliers on Gems24, with clarity, origin and treatment information on each listing.",
     intro:
       "Emerald trades on colour saturation and clarity character rather than flawlessness. Gems24 listings identify origin — Colombian, Zambian or Brazilian — along with treatment disclosure, so buyers can compare stones on the terms the trade actually uses.",
   },
