@@ -131,7 +131,8 @@ export default function Subscription() {
 
   const tier = trader?.subscription_tier || "none";
   const business = isBusiness(trader);
-  const plans = TIER_ORDER;
+  // Business accounts only see Platinum; individuals see every grade, with Platinum locked as business-only.
+  const plans = business ? ["platinum"] : TIER_ORDER;
   const allowed = plansFor(trader);
   const pending = trader?.pending_tier || "";
   const overBy = pending ? Math.max(0, listings.length - effectiveLimit(trader)) : 0;
