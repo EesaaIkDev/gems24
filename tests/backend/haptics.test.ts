@@ -8,8 +8,8 @@ const recorder = () => {
 
 Deno.test('haptics: exact Despia commands for each meaning', () => {
   const { sent, run } = recorder();
-  for (const type of ['light', 'heavy', 'success', 'error']) haptic(type, { enabled: true, run });
-  assertEquals(sent, ['lighthaptic://', 'heavyhaptic://', 'successhaptic://', 'errorhaptic://']);
+  for (const type of ['light', 'heavy', 'success', 'warning', 'error']) haptic(type, { enabled: true, run });
+  assertEquals(sent, ['lighthaptic://', 'heavyhaptic://', 'successhaptic://', 'warninghaptic://', 'errorhaptic://']);
 });
 
 Deno.test('haptics: unknown types fall back to light, never an arbitrary command', () => {

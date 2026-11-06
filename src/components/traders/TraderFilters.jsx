@@ -18,7 +18,10 @@ export default function TraderFilters({ filters, setFilters, countries, specialt
   const set = (k, v) => update((f) => ({ ...f, [k]: toggle(f[k], v) }));
   const secondaryCount = values(filters.tier).length + values(filters.country).length;
 
-  const clearAll = () => update(() => ({ specialty: [], tier: [], country: [] }));
+  const clearAll = () => {
+    haptic("heavy");
+    update(() => ({ specialty: [], tier: [], country: [] }));
+  };
 
   return (
     <>
@@ -69,7 +72,7 @@ export default function TraderFilters({ filters, setFilters, countries, specialt
 
           <div className="grid grid-cols-2 gap-2 pt-1">
             <Button variant="outline" onClick={clearAll}>Clear all</Button>
-            <Button onClick={() => setOpen(false)}>Show results</Button>
+            <Button onClick={() => { haptic("heavy"); setOpen(false); }}>Show results</Button>
           </div>
         </div>
       </BottomSheet>

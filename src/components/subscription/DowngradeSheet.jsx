@@ -40,7 +40,7 @@ export default function DowngradeSheet({ trader, tier, listings, scheduled = fal
     setSelected((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
 
   const removeSelected = async () => {
-    haptic("heavy");
+    haptic("warning");
     setBusy(true);
     setError("");
     try {

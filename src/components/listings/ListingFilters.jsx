@@ -24,7 +24,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
   const secondaryCount = values(filters.treatment).length + values(filters.country).length + (filters.minCt || filters.maxCt ? 1 : 0);
 
   const clearAll = () => {
-    haptic("light");
+    haptic("heavy");
     setFilters({ q: filters.q, type: [], treatment: [], country: [], minCt: "", maxCt: "" });
   };
 
@@ -106,7 +106,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
 
           <div className="grid grid-cols-2 gap-2 pt-1">
             <Button variant="outline" onClick={clearAll}>Clear all</Button>
-            <Button onClick={() => setOpen(false)}>Show results</Button>
+            <Button onClick={() => { haptic("heavy"); setOpen(false); }}>Show results</Button>
           </div>
         </div>
       </BottomSheet>

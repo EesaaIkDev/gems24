@@ -44,7 +44,7 @@ export default function NetworkButton({ viewerId, other, connection, context, cl
   };
 
   const onClick = async () => {
-    haptic("light");
+    haptic("heavy");
     if (connected) return openChat();
     // Pending either way: nothing to do here. Incoming requests are answered
     // from the Requests tab in Chats.

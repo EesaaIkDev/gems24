@@ -106,7 +106,7 @@ export default function VerificationCard({ trader, onVerified }) {
   const start = async () => {
     setBusy(true);
     setNotice(null);
-    haptic("heavy");
+    haptic("warning");
     try {
       const { data } = await base44.functions.invoke("submitVerification", {});
       if (data?.state === "redirect" && isShuftiUrl(data.url)) {

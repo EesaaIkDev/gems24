@@ -3,6 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
 import useErrorHaptic from "@/hooks/useErrorHaptic";
+import { haptic } from "@/lib/despia";
 import FormattingToolbar from "@/components/chat/FormattingToolbar";
 import formatSelection from "@/components/chat/formatSelection";
 import AttachPhotoButton from "@/components/chat/AttachPhotoButton";
@@ -20,6 +21,7 @@ export default function MessageComposer({ onSend, canAttach = false }) {
     e?.preventDefault();
     const value = text.trim();
     if (!value || busy) return;
+    haptic("heavy");
     setBusy(true);
     setError("");
     try {

@@ -27,9 +27,10 @@ export function native(command, { enabled = isNative, run = despia } = {}) {
  *   light   — tab switches, filter toggles, small taps
  *   heavy   — critical taps and primary confirmations (post listing, verify, pay)
  *   success — an action completed (listing saved, verification approved)
+ *   warning — destructive actions and irreversible changes (delete account, remove listings)
  *   error   — validation errors and failed lookups
  */
-const HAPTICS = new Set(["light", "heavy", "success", "error", "warning"]);
+const HAPTICS = new Set(["light", "heavy", "success", "warning", "error"]);
 
 export function haptic(type = "light", options) {
   return native(`${HAPTICS.has(type) ? type : "light"}haptic://`, options);

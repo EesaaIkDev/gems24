@@ -14,7 +14,7 @@ export default function ShareInviteButton({ code, label = "Invite a trader" }) {
 
   const share = async () => {
     if (!code) return;
-    haptic();
+    haptic("heavy");
     setBusy(true);
     const result = await shareInvite(code);
     setBusy(false);
@@ -23,6 +23,7 @@ export default function ShareInviteButton({ code, label = "Invite a trader" }) {
   };
 
   const copy = async (text, title) => {
+    haptic("light");
     await navigator.clipboard.writeText(text);
     toast({ title });
   };

@@ -18,7 +18,7 @@ export default function DeleteAccount({ trader }) {
   useErrorHaptic(error);
 
   const runDelete = async () => {
-    haptic("heavy");
+    haptic("warning");
     setBusy(true);
     setError("");
     try {

@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { LOYALTY_STEP, TIERS, TIER_STYLES } from "@/lib/gems";
+import { haptic } from "@/lib/despia";
 
 /**
  * A subscription tier presented like a gemstone grade card: the same tier badge
@@ -62,9 +63,8 @@ export default function TierRow({ tier, capacity, placement, anchor, current, lo
 
         <Button
           className="mt-4 w-full"
-
           disabled={current || locked}
-          onClick={() => onSelect(tier)}
+          onClick={() => { haptic("heavy"); onSelect(tier); }}
         >
           {current ? "Current plan" : locked ? (tier === "platinum" ? "Business accounts only" : "Individual traders only") : `Choose ${t.label}`}
         </Button>

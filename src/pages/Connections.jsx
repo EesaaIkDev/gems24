@@ -44,6 +44,7 @@ export default function Connections() {
   }, [load]);
 
   const respond = async (c, status) => {
+    haptic("heavy");
     await respondToRequest(c.id, status);
     load();
   };
