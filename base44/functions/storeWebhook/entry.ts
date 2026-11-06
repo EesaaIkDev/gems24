@@ -75,7 +75,9 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({ ok: true, duplicate: true });
     }
 
-    const trader = await base44.asServiceRole.entities.Trader.filter({ id: traderId });
+    // RevenueCat's dashboard "test event" uses a made-up user id, which isn't a
+    // valid record id; treat it as unmatched rather than failing with a 500.
+    const trader = await base44.asServiceRole.entities.Trader.filter({ id: traderId }).catch(() => []);
     const row = trader?.[0] ?? null;
     if (!row) {
       console.warn(`storeWebhook: no trader for app_user_id=${traderId}`);
