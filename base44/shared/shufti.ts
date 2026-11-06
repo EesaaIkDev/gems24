@@ -97,7 +97,9 @@ async function call(path: string, body: unknown) {
 /** The hosted (onsite) journey for a level: ID document + selfie, plus AML and KYB as required. */
 export function verificationRequest(reference: string, level: Level, trader: any) {
   const checks = CHECKS[level];
-  const ongoing = secret('SHUFTI_ONGOING_AML') === '1' ? '1' : '0';
+  // Trial accounts reject the `ongoing` key outright (even '0'), so it is only
+  // sent when ongoing AML monitoring is switched on.
+  const ongoing = secret('SHUFTI_ONGOING_AML') === '1' ? { ongoing: '1' } : {};
   const request: Record<string, unknown> = {
     reference,
     callback_url: secret('SHUFTI_CALLBACK_URL') || DEFAULT_CALLBACK,
@@ -119,12 +121,12 @@ export function verificationRequest(reference: string, level: Level, trader: any
   };
   if (checks.aml) {
     // Name and date of birth are read from the ID document the user just scanned.
-    request.background_checks = { process_from_document: '1', ongoing, match_score: '100' };
+    request.background_checks = { process_from_document: '1', match_score: '100', ...ongoing };
   }
   if (checks.kyb) {
     // Empty keys make Shufti collect the company details on its hosted page.
     request.kyb = { advanced_search: '1', company_registration_number: '', company_name: '' };
-    request.aml_for_businesses = { business_name: trader?.business_name || '', ongoing };
+    request.aml_for_businesses = { business_name: trader?.business_name || '', ...ongoing };
   }
   return request;
 }
