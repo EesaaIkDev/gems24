@@ -38,6 +38,9 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 export default async function (req: Request): Promise<Response> {
+  // Last step reached, logged on failure so a 500 points at the failing call.
+  let stage = 'start';
+  let eventInfo = '';
   try {
     const secret = env('STORE_WEBHOOK_SECRET');
     if (!secret) {
@@ -64,12 +67,15 @@ export default async function (req: Request): Promise<Response> {
     const traderId = String(event?.app_user_id || event?.external_id || event?.trader_id || '');
     const productId = String(event?.product_id || event?.entitlement_id || '');
 
+    eventInfo = `event=${eventId} type=${eventType} product=${productId}`;
+
     if (!eventId || !traderId) {
       return Response.json({ ok: true, ignored: true });
     }
 
     const base44 = createClientFromRequest(req);
 
+    stage = 'duplicate-check';
     const seen = await base44.asServiceRole.entities.StorePurchase.filter({ event_id: eventId });
     if ((seen || []).length > 0) {
       return Response.json({ ok: true, duplicate: true });
@@ -77,6 +83,7 @@ export default async function (req: Request): Promise<Response> {
 
     // RevenueCat's dashboard "test event" uses a made-up user id, which isn't a
     // valid record id; treat it as unmatched rather than failing with a 500.
+    stage = 'trader-lookup';
     const trader = await base44.asServiceRole.entities.Trader.filter({ id: traderId }).catch(() => []);
     const row = trader?.[0] ?? null;
     if (!row) {
@@ -96,6 +103,7 @@ export default async function (req: Request): Promise<Response> {
     let kind = 'ignored';
     let listingsGranted = 0;
     let appliedTier = '';
+    stage = 'trader-update';
 
     if (tier && GRANTING_EVENTS.includes(eventType) && !tierAllowed(row, tier)) {
       // Platinum is the business plan and Bronze–Gold are for individuals; a
@@ -147,6 +155,7 @@ export default async function (req: Request): Promise<Response> {
       });
     }
 
+    stage = 'purchase-record';
     await base44.asServiceRole.entities.StorePurchase.create({
       event_id: eventId,
       trader_id: row.id,
@@ -161,7 +170,8 @@ export default async function (req: Request): Promise<Response> {
       trader_kind: row.trader_kind || 'individual',
       user_email: row.user_email || '',
       country: row.country || '',
-      price: typeof event?.price === 'number' ? event.price : null,
+      // Omit a missing price rather than sending null into a number field.
+      ...(typeof event?.price === 'number' ? { price: event.price } : {}),
       currency: String(event?.currency || ''),
       store: String(event?.store || ''),
     });
@@ -173,7 +183,9 @@ export default async function (req: Request): Promise<Response> {
     return Response.json({ ok: true, kind });
   } catch (error: any) {
     // A non-200 makes the provider retry, which is what we want for a transient fault.
-    console.error('storeWebhook failed', error);
+    console.error(
+      `storeWebhook failed at stage=${stage} ${eventInfo} status=${error?.status ?? ''} message=${error?.message ?? error}`
+    );
     return Response.json({ error: 'Webhook processing failed' }, { status: 500 });
   }
 }
