@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import { useNavigate } from "react-router-dom";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { haptic, isNative } from "@/lib/despia";
-import { getActiveEntitlements, launchPaywall } from "@/lib/revenuecat";
+import { getActiveEntitlements, launchPaywall, restartOnPlan, syncPurchase } from "@/lib/revenuecat";
 import { tierRank } from "@/lib/gems";
 
 /**
@@ -60,6 +60,8 @@ export function GoldMembershipProvider({ children }) {
       setDeviceHasGold((had) => had || event?.entitlementId === "gold" || event?.productId === "gold");
       window.dispatchEvent(new CustomEvent(PURCHASE_EVENT, { detail: event }));
       refresh();
+      // Confirm with the store straight away, then restart the app on the new grade.
+      syncPurchase(6).then((tier) => tier && restartOnPlan(tier));
     };
     return () => {
       window.onRevenueCatPurchase = undefined;

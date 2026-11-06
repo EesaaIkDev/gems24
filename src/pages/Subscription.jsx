@@ -17,7 +17,7 @@ import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useEntitlements from "@/hooks/useEntitlements";
 import useOnline from "@/hooks/useOnline";
 import { isNative, isNativeIOS, haptic } from "@/lib/despia";
-import { purchaseTier, openCustomerCenter, presentCodeRedemption } from "@/lib/revenuecat";
+import { purchaseTier, openCustomerCenter, presentCodeRedemption, restartOnPlan, syncPurchase } from "@/lib/revenuecat";
 import { CYCLE_MONTHS, LOGO_URL, TIERS, TIER_ORDER, isBusiness, nextSlotsAt, plansFor, tierRank, traderCycleMonth } from "@/lib/gems";
 
 const slotsCopy = (t) =>
@@ -65,6 +65,27 @@ export default function Subscription() {
   useEffect(() => {
     loadListings();
   }, [loadListings]);
+
+  // Back from a purchase restart: play the success animation once for the new grade.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const purchased = params.get("purchased");
+    if (!trader || !purchased) return;
+    window.history.replaceState(null, "", "/subscription");
+    if (trader.subscription_tier === purchased && TIERS[purchased]) {
+      haptic("success");
+      setSplash({
+        title: "You're on " + TIERS[purchased].label,
+        subtitle: `${CAPACITY[purchased]} — your grade is live across the network.`,
+      });
+    }
+  }, [trader]);
+
+  // Catches a purchase whose callback was missed (e.g. the app was closed mid-checkout).
+  useEffect(() => {
+    if (!isNative || !trader?.id) return;
+    syncPurchase().then((t) => t && restartOnPlan(t));
+  }, [trader?.id]);
 
   // A completed purchase surfaces as a higher grade coming back from the store.
   useEffect(() => {

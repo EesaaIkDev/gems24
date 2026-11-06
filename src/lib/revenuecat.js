@@ -1,6 +1,7 @@
 import despia from "despia-native";
 import { isNative } from "@/lib/despia";
 import { openExternal } from "@/lib/openExternal";
+import { base44 } from "@/api/base44Client";
 import { TIER_ORDER, tierRank } from "@/lib/gems";
 
 /**
@@ -45,6 +46,25 @@ export function presentCodeRedemption() {
   if (!isNative) return false;
   openExternal(`https://apps.apple.com/redeem?ctx=offercodes&id=${APPLE_APP_ID}`, { native: true });
   return true;
+}
+
+/**
+ * Asks the server to confirm the caller's plan with RevenueCat and apply it.
+ * Retries briefly because the store can take a few seconds to record a new
+ * purchase. Resolves to the new tier when the grade changed, otherwise null.
+ */
+export async function syncPurchase(attempts = 1) {
+  for (let i = 0; i < attempts; i++) {
+    if (i) await new Promise((r) => setTimeout(r, 2500));
+    const { data } = await base44.functions.invoke("syncStorePurchase", {}).catch(() => ({ data: null }));
+    if (data?.changed) return data.tier;
+  }
+  return null;
+}
+
+/** Full app restart onto the plan page, which then plays the success animation. */
+export function restartOnPlan(tier) {
+  window.location.replace(`/subscription?purchased=${encodeURIComponent(tier)}`);
 }
 
 /** Opens the native Customer Center (manage plan, restore, refunds). */

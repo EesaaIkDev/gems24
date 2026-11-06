@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
-import { CYCLE_MONTHS, LOYALTY_STEP, MONTH_MS, cycleMonth, tierAllowed, tierFromProduct, tierRank } from '../../shared/traders.ts';
+import { tierAllowed, tierFromProduct, tierRank } from '../../shared/traders.ts';
+import { applyTierGrant, toIso } from '../../shared/storeGrant.ts';
 
 /**
  * Applies a store purchase. This is the only thing in the system allowed to set
@@ -24,11 +25,6 @@ import { CYCLE_MONTHS, LOYALTY_STEP, MONTH_MS, cycleMonth, tierAllowed, tierFrom
 // record a scheduled downgrade, never to grant.
 const GRANTING_EVENTS = ['INITIAL_PURCHASE', 'RENEWAL', 'NON_RENEWING_PURCHASE', 'UNCANCELLATION'];
 const REVOKING_EVENTS = ['EXPIRATION', 'REFUND', 'SUBSCRIPTION_PAUSED'];
-
-const toIso = (ms: unknown) => {
-  const n = Number(ms);
-  return Number.isFinite(n) && n > 0 ? new Date(n).toISOString() : '';
-};
 
 const env = (key: string): string | undefined =>
   (globalThis as any).Deno?.env?.get(key) ?? undefined;
@@ -107,43 +103,11 @@ export default async function (req: Request): Promise<Response> {
     } else if (tier && GRANTING_EVENTS.includes(eventType)) {
       kind = 'tier';
       appliedTier = tier;
-      const current = row.subscription_tier || 'none';
-      const hadPlan = tierRank(current) > 0;
-      // A higher grade while already on a plan is a mid-cycle upgrade: live now,
-      // and it doesn't count as another loyalty renewal.
-      const isUpgrade = hadPlan && tierRank(tier) > tierRank(current);
-      const update: Record<string, unknown> = { subscription_tier: tier };
-      const renewsAt = toIso(event?.expiration_at_ms);
-      if (renewsAt) update.plan_renews_at = renewsAt;
-      // The month clock starts with a fresh subscription and keeps running
-      // through upgrades and renewals (a renewal stays at month 3).
-      // Subscribers from before the 3-month cycle have no start date and are
-      // already fully built up, so they continue at month 3.
-      const startedAt = !hadPlan
-        ? toIso(event?.purchased_at_ms) || now
-        : row.subscription_start_date || new Date(Date.now() - (CYCLE_MONTHS - 1) * MONTH_MS).toISOString();
-      update.subscription_start_date = startedAt;
-      update.current_cycle_month = cycleMonth(startedAt);
-      // Any grade change (an upgrade, or the plan year rolling over) settles a
-      // scheduled downgrade one way or the other.
-      if (row.pending_tier && eventType !== 'UNCANCELLATION') {
-        update.pending_tier = '';
-        update.pending_tier_at = null;
-      }
-      if (!hadPlan || !row.loyalty_years) {
-        // A fresh (or first-seen) subscription starts year one with no loyalty bonus.
-        update.loyalty_years = 1;
-        update.loyalty_bonus_listings = 0;
-      } else if (!isUpgrade && (eventType === 'RENEWAL' || eventType === 'INITIAL_PURCHASE')) {
-        // Plans bill every 3 months: a same-grade renewal, or a scheduled
-        // downgrade landing at renewal, is another uninterrupted cycle and
-        // adds one month's worth of slots.
-        const years = (row.loyalty_years || 1) + 1;
-        listingsGranted = LOYALTY_STEP[tier] || 0;
-        update.loyalty_years = years;
-        update.loyalty_bonus_listings = (row.loyalty_bonus_listings || 0) + listingsGranted;
-      }
-      await base44.asServiceRole.entities.Trader.update(row.id, update);
+      listingsGranted = await applyTierGrant(base44, row, tier, {
+        eventType,
+        purchasedAtMs: event?.purchased_at_ms,
+        expirationAtMs: event?.expiration_at_ms,
+      });
     } else if (eventType === 'PRODUCT_CHANGE') {
       const next = tierFromProduct(String(event?.new_product_id || ''));
       if (next && tierAllowed(row, next) && tierRank(next) < tierRank(row.subscription_tier)) {
