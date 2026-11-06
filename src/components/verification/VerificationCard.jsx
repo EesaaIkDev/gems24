@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { AlertCircle, BadgeCheck, Clock, Copy, ExternalLink, Loader2, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SuccessSplash from "@/components/subscription/SuccessSplash";
+import CancelVerification from "@/components/verification/CancelVerification";
 import { base44 } from "@/api/base44Client";
 import { haptic, isNative } from "@/lib/despia";
 import { isShuftiUrl, openExternal, openInSecureBrowser } from "@/lib/openExternal";
@@ -213,7 +214,7 @@ export default function VerificationCard({ trader, onVerified }) {
                 {state.decline_reason || "That check didn't pass."} {attemptsLeft} attempt{attemptsLeft === 1 ? "" : "s"} left.
               </p>
             )}
-            {lapsed && <p className="mb-2">Your last verification wasn't finished in time. You can start again.</p>}
+            {lapsed && <p className="mb-2">Your last verification wasn't completed. You can start again.</p>}
             <p>{BENEFIT[level]}</p>
             <ul className="mt-3 space-y-1.5">
               {LEVEL_CHECKS[level].map((c) => (
@@ -270,6 +271,19 @@ export default function VerificationCard({ trader, onVerified }) {
             {busy && <Loader2 className="h-4 w-4 animate-spin" />}
             {pending ? "Continue verification" : declined || lapsed ? "Try again" : isBuyer ? "Verify my identity" : `Get ${LEVEL_LABEL[level]}`}
           </Button>
+        )}
+
+        {pending && (
+          <CancelVerification
+            onCancelled={async () => {
+              sawPending.current = false;
+              setFresh(false);
+              setOpened(false);
+              setNotice(null);
+              await load();
+            }}
+            onError={(error) => setNotice({ error })}
+          />
         )}
       </Card>
     </>
