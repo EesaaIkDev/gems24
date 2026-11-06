@@ -1,0 +1,69 @@
+{
+  "name": "DiscountCode",
+  "type": "object",
+  "description": "Web-only free-access codes. Redeeming one grants the chosen grade for one 3-month cycle at no charge.",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "6-character code traders enter (uppercase)",
+      "minLength": 6,
+      "maxLength": 6
+    },
+    "tiers": {
+      "type": "array",
+      "description": "Tiers this code can be used for",
+      "items": {
+        "type": "string",
+        "enum": [
+          "bronze",
+          "silver",
+          "gold",
+          "platinum"
+        ]
+      },
+      "default": []
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "max_uses": {
+      "type": "number",
+      "description": "Total grants allowed for this code. Empty means unlimited."
+    },
+    "times_used": {
+      "type": "number",
+      "default": 0
+    },
+    "note": {
+      "type": "string",
+      "description": "Internal note, e.g. campaign name"
+    }
+  },
+  "required": [
+    "code",
+    "tiers"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -8,6 +8,7 @@ import { base44 } from "@/api/base44Client";
 import { effectiveLimit } from "@/lib/referral";
 import { renewalLabel } from "@/lib/plan";
 import TierRow from "@/components/subscription/TierRow";
+import RedeemCode from "@/components/subscription/RedeemCode";
 import SuccessSplash from "@/components/subscription/SuccessSplash";
 import Spinner from "@/components/common/Spinner";
 import EmptyState from "@/components/common/EmptyState";
@@ -293,6 +294,15 @@ export default function Subscription() {
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {CAPACITY[selected]}. {PLACEMENT[selected]}
               </p>
+              {!isNative && (
+                <RedeemCode
+                  tier={selected}
+                  onGranted={() => {
+                    closeSheet();
+                    reload();
+                  }}
+                />
+              )}
               <Button className="w-full" onClick={subscribe} disabled={!online}>
                 {online ? "Continue to billing" : "Unavailable offline"}
               </Button>

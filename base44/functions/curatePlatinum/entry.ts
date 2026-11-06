@@ -22,7 +22,7 @@ const RAVI = { id: '6a661a334a05abbcc5e2c5e3', full_name: 'Ravi Perera' };
 const NASMA = { id: '6aba8238ae2f27b4f625ef14', full_name: 'Nasma Riyaz' };
 const SAMPLE_NOTE = 'Sample business account for demonstration.';
 
-type Stone = [string, number, string, string, string, string];
+type Stone = [string, number, string, string, string];
 const BUSINESSES: Array<{ trader: Record<string, unknown>; stones: Stone[] }> = [
   {
     trader: {
@@ -35,11 +35,11 @@ const BUSINESSES: Array<{ trader: Record<string, unknown>; stones: Stone[] }> = 
     },
     stones: [
       ['sapphire', 3.12, 'Royal blue', 'unheated', 'Ratnapura, Sri Lanka'],
-      ['sapphire', 2.05, 'Cornflower blue', 'unheated', 'Ratnapura, Sri Lanka', ''],
+      ['sapphire', 2.05, 'Cornflower blue', 'unheated', 'Ratnapura, Sri Lanka'],
       ['sapphire', 1.48, 'Padparadscha pink-orange', 'unheated', 'Sri Lanka'],
-      ['spinel', 2.6, 'Hot pink', 'unheated', 'Sri Lanka', ''],
-      ['sapphire', 4.4, 'Yellow', 'heated', 'Sri Lanka', ''],
-      ['garnet', 3.9, 'Hessonite orange', 'unheated', 'Sri Lanka', ''],
+      ['spinel', 2.6, 'Hot pink', 'unheated', 'Sri Lanka'],
+      ['sapphire', 4.4, 'Yellow', 'heated', 'Sri Lanka'],
+      ['garnet', 3.9, 'Hessonite orange', 'unheated', 'Sri Lanka'],
     ],
   },
   {
@@ -52,12 +52,12 @@ const BUSINESSES: Array<{ trader: Record<string, unknown>; stones: Stone[] }> = 
       bio: `${SAMPLE_NOTE} Colombo exporter of calibrated sapphire parcels and single stones for jewellery manufacturers.`,
     },
     stones: [
-      ['sapphire', 1.02, 'Blue', 'heated', 'Sri Lanka', ''],
+      ['sapphire', 1.02, 'Blue', 'heated', 'Sri Lanka'],
       ['sapphire', 5.2, 'Velvet blue', 'heated', 'Sri Lanka'],
-      ['ruby', 1.35, 'Pinkish red', 'heated', 'Sri Lanka', ''],
-      ['sapphire', 2.75, 'Teal', 'unheated', 'Madagascar', ''],
-      ['sapphire', 0.95, 'Pink', 'heated', 'Sri Lanka', ''],
-      ['sapphire', 3.3, 'Purple', 'unheated', 'Sri Lanka', ''],
+      ['ruby', 1.35, 'Pinkish red', 'heated', 'Sri Lanka'],
+      ['sapphire', 2.75, 'Teal', 'unheated', 'Madagascar'],
+      ['sapphire', 0.95, 'Pink', 'heated', 'Sri Lanka'],
+      ['sapphire', 3.3, 'Purple', 'unheated', 'Sri Lanka'],
     ],
   },
   {
@@ -71,11 +71,11 @@ const BUSINESSES: Array<{ trader: Record<string, unknown>; stones: Stone[] }> = 
     },
     stones: [
       ['ruby', 2.01, 'Pigeon blood red', 'unheated', 'Mozambique'],
-      ['ruby', 1.18, 'Red', 'heated', 'Myanmar', ''],
-      ['spinel', 3.05, 'Red', 'unheated', 'Myanmar', ''],
-      ['spinel', 1.75, 'Cobalt blue', 'unheated', 'Vietnam', ''],
-      ['sapphire', 2.4, 'Green', 'heated', 'Thailand', ''],
-      ['garnet', 4.1, 'Rhodolite purple-red', 'unheated', 'Tanzania', ''],
+      ['ruby', 1.18, 'Red', 'heated', 'Myanmar'],
+      ['spinel', 3.05, 'Red', 'unheated', 'Myanmar'],
+      ['spinel', 1.75, 'Cobalt blue', 'unheated', 'Vietnam'],
+      ['sapphire', 2.4, 'Green', 'heated', 'Thailand'],
+      ['garnet', 4.1, 'Rhodolite purple-red', 'unheated', 'Tanzania'],
     ],
   },
   {
@@ -89,11 +89,11 @@ const BUSINESSES: Array<{ trader: Record<string, unknown>; stones: Stone[] }> = 
     },
     stones: [
       ['emerald', 2.5, 'Vivid green', 'other', 'Colombia'],
-      ['emerald', 1.65, 'Green', 'other', 'Zambia', ''],
-      ['emerald', 4.02, 'Bluish green', 'other', 'Zambia', ''],
-      ['ruby', 1.9, 'Red', 'heated', 'Mozambique', ''],
-      ['sapphire', 3.6, 'Blue', 'heated', 'Sri Lanka', ''],
-      ['garnet', 2.2, 'Tsavorite green', 'unheated', 'Kenya', ''],
+      ['emerald', 1.65, 'Green', 'other', 'Zambia'],
+      ['emerald', 4.02, 'Bluish green', 'other', 'Zambia'],
+      ['ruby', 1.9, 'Red', 'heated', 'Mozambique'],
+      ['sapphire', 3.6, 'Blue', 'heated', 'Sri Lanka'],
+      ['garnet', 2.2, 'Tsavorite green', 'unheated', 'Kenya'],
     ],
   },
   {
@@ -106,12 +106,12 @@ const BUSINESSES: Array<{ trader: Record<string, unknown>; stones: Stone[] }> = 
       bio: `${SAMPLE_NOTE} Hong Kong dealer supplying matched pairs and layouts to Asian jewellery houses.`,
     },
     stones: [
-      ['sapphire', 2.02, 'Blue (matched pair)', 'heated', 'Sri Lanka', ''],
-      ['spinel', 1.4, 'Lavender', 'unheated', 'Sri Lanka', ''],
-      ['emerald', 1.12, 'Green', 'other', 'Colombia', ''],
+      ['sapphire', 2.02, 'Blue (matched pair)', 'heated', 'Sri Lanka'],
+      ['spinel', 1.4, 'Lavender', 'unheated', 'Sri Lanka'],
+      ['emerald', 1.12, 'Green', 'other', 'Colombia'],
       ['sapphire', 6.1, 'Blue', 'heated', 'Madagascar'],
-      ['ruby', 0.85, 'Red', 'heated', 'Thailand', ''],
-      ['other', 3.25, 'Aquamarine blue', 'heated', 'Brazil', ''],
+      ['ruby', 0.85, 'Red', 'heated', 'Thailand'],
+      ['other', 3.25, 'Aquamarine blue', 'heated', 'Brazil'],
     ],
   },
 ];

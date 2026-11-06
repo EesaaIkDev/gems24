@@ -1,0 +1,60 @@
+{
+  "name": "CodeRedemption",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Code that was redeemed"
+    },
+    "trader_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "bronze",
+        "silver",
+        "gold",
+        "platinum"
+      ]
+    },
+    "redeemed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "access_ends_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "End of the free 3-month cycle granted"
+    }
+  },
+  "required": [
+    "code",
+    "trader_id"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

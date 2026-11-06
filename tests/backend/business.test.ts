@@ -2,6 +2,7 @@
 import { assert, assertEquals } from 'jsr:@std/assert@1';
 import { db, reset, state } from './mock.ts';
 import storeWebhook from '../../base44/functions/storeWebhook/entry.ts';
+import redeemDiscountCode from '../../base44/functions/redeemDiscountCode/entry.ts';
 import upgradeToBusiness from '../../base44/functions/upgradeToBusiness/entry.ts';
 import stampListing from '../../base44/functions/stampListing/entry.ts';
 import curatePlatinum from '../../base44/functions/curatePlatinum/entry.ts';
@@ -56,6 +57,17 @@ Deno.test('store: a business on Platinum cannot schedule a downgrade to a trader
   seed({ trader_kind: 'business', subscription_tier: 'platinum' });
   await call(storeWebhook, { event: { id: 'e1', type: 'PRODUCT_CHANGE', app_user_id: 'T', product_id: 'platinum', new_product_id: 'gold' } }, { authorization: 'Bearer shh' });
   assertEquals(trader().pending_tier, undefined);
+});
+
+Deno.test('codes: Platinum codes only for businesses', async () => {
+  seed();
+  state.user = ME;
+  db.DiscountCode = [{ id: 'D', code: 'ABC123', tiers: ['platinum', 'gold'], active: true }];
+  const denied = await call(redeemDiscountCode, { code: 'ABC123', tier: 'platinum' });
+  assertEquals([denied.body.state, denied.body.reason], ['wrong_tier', 'Platinum is for registered businesses.']);
+  assertEquals(trader().subscription_tier, 'none');
+  assertEquals((await call(redeemDiscountCode, { code: 'ABC123', tier: 'gold' })).body.state, 'granted');
+  assert(trader().plan_renews_at);
 });
 
 Deno.test('upgradeToBusiness: own account, needs a registered name, one way', async () => {
