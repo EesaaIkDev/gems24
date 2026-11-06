@@ -1,5 +1,6 @@
 import despia from "despia-native";
 import { isNative } from "@/lib/despia";
+import { openExternal } from "@/lib/openExternal";
 import { TIER_ORDER, tierRank } from "@/lib/gems";
 
 /**
@@ -32,10 +33,17 @@ export function purchaseTier(externalId, tier) {
   return true;
 }
 
-/** Opens Apple's native offer code redemption sheet (iOS only). */
+const APPLE_APP_ID = "6809571842";
+
+/**
+ * Opens Apple's offer code redemption page for Gems24 (iOS only). Despia has no
+ * bridge command for the in-app sheet, so this hands off to the App Store; the
+ * redeemed plan reaches us through the store webhook like any purchase.
+ * Call straight from a tap — iOS drops window.open after an await.
+ */
 export function presentCodeRedemption() {
   if (!isNative) return false;
-  despia("revenuecat://presentCodeRedemptionSheet");
+  openExternal(`https://apps.apple.com/redeem?ctx=offercodes&id=${APPLE_APP_ID}`, { native: true });
   return true;
 }
 
