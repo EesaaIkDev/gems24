@@ -2,13 +2,12 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
-import { Building2, CalendarClock, Crown, Settings2, TriangleAlert } from "lucide-react";
+import { Building2, CalendarClock, Crown, Settings2, Ticket, TriangleAlert } from "lucide-react";
 import DowngradeSheet from "@/components/subscription/DowngradeSheet";
 import { base44 } from "@/api/base44Client";
 import { effectiveLimit } from "@/lib/referral";
 import { renewalLabel } from "@/lib/plan";
 import TierRow from "@/components/subscription/TierRow";
-import RedeemCode from "@/components/subscription/RedeemCode";
 import SuccessSplash from "@/components/subscription/SuccessSplash";
 import Spinner from "@/components/common/Spinner";
 import EmptyState from "@/components/common/EmptyState";
@@ -16,8 +15,8 @@ import TierBadge from "@/components/common/TierBadge";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useEntitlements from "@/hooks/useEntitlements";
 import useOnline from "@/hooks/useOnline";
-import { isNative, haptic } from "@/lib/despia";
-import { purchaseTier, openCustomerCenter } from "@/lib/revenuecat";
+import { isNative, isNativeIOS, haptic } from "@/lib/despia";
+import { purchaseTier, openCustomerCenter, presentCodeRedemption } from "@/lib/revenuecat";
 import { CYCLE_MONTHS, LOGO_URL, TIERS, TIER_ORDER, isBusiness, nextSlotsAt, plansFor, tierRank, traderCycleMonth } from "@/lib/gems";
 
 const slotsCopy = (t) =>
@@ -50,7 +49,6 @@ export default function Subscription() {
   useEntitlements(trader, reload);
   const online = useOnline();
   const [selected, setSelected] = useState(null);
-  const [discount, setDiscount] = useState(null);
   const [splash, setSplash] = useState(null);
   const [downgrade, setDowngrade] = useState(null);
   const [trimOnly, setTrimOnly] = useState(false);
@@ -88,7 +86,6 @@ export default function Subscription() {
       setTrimOnly(false);
       return setDowngrade(t);
     }
-    setDiscount(null);
     setSelected(t);
   };
 
@@ -97,20 +94,12 @@ export default function Subscription() {
     await reload();
   };
 
-  const closeSheet = () => {
-    setSelected(null);
-    setDiscount(null);
-  };
+  const closeSheet = () => setSelected(null);
 
   const subscribe = () => {
     haptic("heavy");
     purchaseTier(trader.id, selected);
     closeSheet();
-  };
-
-  const onGranted = () => {
-    closeSheet();
-    reload();
   };
 
   if (loading) return <Spinner />;
@@ -273,6 +262,19 @@ export default function Subscription() {
         {isNative ? "app store" : "App Store or Google Play"} account. Cancel anytime.
       </p>
 
+      {isNativeIOS && (
+        <Button
+          variant="outline"
+          className="mx-auto mt-6 flex w-full max-w-sm"
+          onClick={() => {
+            haptic("light");
+            presentCodeRedemption();
+          }}
+        >
+          <Ticket className="h-4 w-4" /> Redeem Offer Code
+        </Button>
+      )}
+
       <BottomSheet
         open={!!selected}
         onOpenChange={(o) => !o && closeSheet()}
@@ -286,23 +288,11 @@ export default function Subscription() {
                 {/* Billed every 3 months; the amount is revealed on the billing screen. */}
                 <p className="font-heading text-sm font-bold">
                   3-month plan
-                  {discount && (
-                    <span className="ml-1.5 text-xs font-medium text-primary">
-                      {discount.percent_off}% off
-                    </span>
-                  )}
                 </p>
               </div>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {CAPACITY[selected]}. {PLACEMENT[selected]}
               </p>
-              <RedeemCode
-                tier={selected}
-                trader={trader}
-                discount={discount}
-                onDiscount={setDiscount}
-                onGranted={onGranted}
-              />
               <Button className="w-full" onClick={subscribe} disabled={!online}>
                 {online ? "Continue to billing" : "Unavailable offline"}
               </Button>

@@ -32,6 +32,13 @@ export function purchaseTier(externalId, tier) {
   return true;
 }
 
+/** Opens Apple's native offer code redemption sheet (iOS only). */
+export function presentCodeRedemption() {
+  if (!isNative) return false;
+  despia("revenuecat://presentCodeRedemptionSheet");
+  return true;
+}
+
 /** Opens the native Customer Center (manage plan, restore, refunds). */
 export function openCustomerCenter(externalId) {
   if (!isNative) return false;
