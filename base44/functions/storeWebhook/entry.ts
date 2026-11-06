@@ -73,7 +73,11 @@ export default async function (req: Request): Promise<Response> {
       return Response.json({ ok: true, ignored: true });
     }
 
-    const base44 = createClientFromRequest(req);
+    // The Authorization header carries the webhook secret, not a user session;
+    // strip it so the SDK doesn't try to use it as a user token.
+    const headers = new Headers(req.headers);
+    headers.delete('authorization');
+    const base44 = createClientFromRequest(new Request(req.url, { method: req.method, headers }));
 
     stage = 'duplicate-check';
     const seen = await base44.asServiceRole.entities.StorePurchase.filter({ event_id: eventId });
