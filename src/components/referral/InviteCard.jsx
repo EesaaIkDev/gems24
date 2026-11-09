@@ -9,7 +9,7 @@ const qrSrc = (url) =>
 /** The shareable invite card: branded front, or a scannable QR of the invite link. */
 export default function InviteCard({ name, code, showQr }) {
   return (
-    <div className="relative mx-auto aspect-[3/4] w-full max-w-[20rem] overflow-hidden rounded-[2rem] bg-gradient-to-b from-welcome-green to-welcome-pattern shadow-2xl">
+    <div className="neu-raised relative mx-auto aspect-[3/4] w-full max-w-[20rem] overflow-hidden rounded-[2rem] bg-gradient-to-b from-welcome-green to-welcome-pattern">
       <div className="opacity-40">
         <GemPattern />
       </div>

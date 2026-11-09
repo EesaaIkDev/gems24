@@ -22,31 +22,31 @@ export default function InviteSheet({ open, onOpenChange, name, code }) {
     toast({ title: "Link copied" });
   };
 
-  const iconBtn = "tap-scale flex h-11 w-11 items-center justify-center rounded-full text-welcome-text hover:bg-welcome-text/10";
+  const iconBtn = "tap-scale flex h-10 w-10 items-center justify-center rounded-full text-foreground";
 
   return (
     <Drawer.Root open={open} onOpenChange={onOpenChange}>
       <Drawer.Portal>
-        <Drawer.Overlay className="fixed inset-0 z-50 bg-black/60" />
+        <Drawer.Overlay className="fixed inset-0 z-50 bg-black/45" />
         <Drawer.Content
-          className="fixed inset-x-0 bottom-0 z-50 flex h-[94dvh] flex-col rounded-t-3xl bg-welcome-ink outline-none"
-          style={{ paddingBottom: "calc(var(--safe-bottom) + 1rem)" }}
+          className="fixed inset-x-0 bottom-0 z-50 flex h-[92dvh] flex-col rounded-t-3xl border-t border-border bg-card text-foreground outline-none"
+          style={{ paddingBottom: "calc(var(--safe-bottom) + 1.25rem)" }}
         >
           <Drawer.Title className="sr-only">Invite a trader</Drawer.Title>
-          <Drawer.Handle className="mx-auto mt-3 h-1.5 w-10 shrink-0 rounded-full bg-welcome-text/30" />
+          <Drawer.Handle className="mx-auto mt-4 h-1.5 w-10 shrink-0 rounded-full bg-muted-foreground/30" />
 
-          <div className="flex items-center justify-between px-4 pt-3">
-            <button className={`${iconBtn} bg-welcome-panel`} onClick={() => onOpenChange(false)} aria-label="Close">
+          <div className="flex items-center justify-between px-5 pt-3">
+            <button className={`${iconBtn} neu-raised-sm bg-background`} onClick={() => onOpenChange(false)} aria-label="Close">
               <X className="h-5 w-5" />
             </button>
-            <div className="flex rounded-full bg-welcome-panel">
+            <div className="neu-raised-sm flex items-center gap-0.5 rounded-full bg-background p-1">
               <button
-                className={iconBtn}
+                className={`${iconBtn} ${showQr ? "neu-inset-sm text-primary" : ""}`}
                 onClick={() => { haptic("light"); setShowQr((v) => !v); }}
                 aria-label={showQr ? "Show invite card" : "Show QR code"}
                 aria-pressed={showQr}
               >
-                <QrCode className={`h-5 w-5 ${showQr ? "text-welcome-green-bright" : ""}`} />
+                <QrCode className="h-5 w-5" />
               </button>
               <button className={iconBtn} onClick={copyLink} aria-label="Copy invite link">
                 <Link2 className="h-5 w-5" />
@@ -54,12 +54,12 @@ export default function InviteSheet({ open, onOpenChange, name, code }) {
             </div>
           </div>
 
-          <div className="flex min-h-0 flex-1 items-center px-8 py-4">
+          <div className="flex min-h-0 flex-1 items-center px-7 py-4">
             <InviteCard name={name} code={code} showQr={showQr} />
           </div>
 
           <div className="px-6">
-            <Button onClick={share} className="h-14 w-full rounded-full text-base">
+            <Button onClick={share} size="lg" className="h-12 w-full">
               <Share2 className="h-4 w-4" /> Share Invite Link
             </Button>
           </div>
