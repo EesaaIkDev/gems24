@@ -4,6 +4,7 @@ import { Settings } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import { LOGO_URL } from "@/lib/gems";
 import { haptic } from "@/lib/despia";
+import InviteButton from "@/components/referral/InviteButton";
 
 export default function AppHeader() {
   return (
@@ -19,6 +20,8 @@ export default function AppHeader() {
         <Link to="/" className="tap-scale flex items-center" onClick={() => haptic("light")} aria-label="Gems24 home">
           <Image src={LOGO_URL} alt="Gems24" className="h-8 w-8" fittingType="fit" />
         </Link>
+        <div className="flex items-center gap-1">
+        <InviteButton />
         <Link
           to="/settings"
           onClick={() => haptic("light")}
@@ -27,6 +30,7 @@ export default function AppHeader() {
         >
           <Settings className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
         </Link>
+        </div>
       </div>
     </header>
   );
