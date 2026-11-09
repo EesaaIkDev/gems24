@@ -38,12 +38,14 @@ const toastVariants = cva(
 );
 
 /** Drops down from the top and dismisses on a leftward swipe. */
-const Toast = React.forwardRef(({ className, variant, onDismiss, ...props }, ref) => {
+const Toast = React.forwardRef(({ className, variant, open = true, onOpenChange, onDismiss, ...props }, ref) => {
   const start = React.useRef(null);
   const [dx, setDx] = React.useState(0);
   const [gone, setGone] = React.useState(false);
+  const closing = gone || !open;
 
   const onPointerDown = (e) => {
+    if (e.target.closest("button, a")) return;
     start.current = e.clientX;
     e.currentTarget.setPointerCapture?.(e.pointerId);
   };
@@ -68,13 +70,15 @@ const Toast = React.forwardRef(({ className, variant, onDismiss, ...props }, ref
   return (
     <div
       ref={ref}
+      data-state={closing ? "closed" : "open"}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
       style={{
         transform: `translateX(${dx}px)`,
-        opacity: gone ? 0 : 1,
+        opacity: closing ? 0 : 1,
+        pointerEvents: closing ? "none" : undefined,
         transition: start.current === null ? "transform 200ms ease, opacity 200ms ease" : "none",
         touchAction: "pan-y",
       }}
@@ -97,11 +101,16 @@ const ToastAction = React.forwardRef(({ className, ...props }, ref) => (
 ));
 ToastAction.displayName = "ToastAction";
 
-const ToastClose = React.forwardRef(({ className, ...props }, ref) => (
+const ToastClose = React.forwardRef(({ className, onPointerDown, ...props }, ref) => (
   <button
     ref={ref}
+    type="button"
+    onPointerDown={(e) => {
+      e.stopPropagation();
+      onPointerDown?.(e);
+    }}
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-100 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
+      "absolute right-2 top-2 rounded-md p-1.5 text-foreground/50 opacity-100 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
       className
     )}
     toast-close=""
