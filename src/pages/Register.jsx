@@ -30,7 +30,7 @@ export default function Register() {
 
   const consented = consent.terms && consent.privacy;
   const canSubmit =
-    fullName.trim() && businessName.trim() && email.trim() && password.length >= MIN_PASSWORD_LENGTH && consented;
+    fullName.trim() && email.trim() && password.length >= MIN_PASSWORD_LENGTH && consented;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,7 +69,7 @@ export default function Register() {
         window.location.href = safeReturnTo();
         return;
       }
-      writeProfileDraft({ full_name: fullName.trim(), business_name: businessName.trim() });
+      writeProfileDraft({ full_name: fullName.trim(), business_name: businessName.trim() || "" });
       window.location.href = "/onboarding";
     } catch (err) {
       setError(err.message || "Invalid verification code");
@@ -171,7 +171,7 @@ export default function Register() {
           </div>
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="businessName">Business name</Label>
+          <Label htmlFor="businessName">Business name (optional)</Label>
           <div className="relative">
             <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
             <Input
@@ -181,7 +181,6 @@ export default function Register() {
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
               className="pl-10 h-11"
-              required
             />
           </div>
         </div>

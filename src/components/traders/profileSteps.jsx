@@ -99,11 +99,13 @@ const emailStep = (title) => ({
   render: text("contact_email", { type: "email" }),
 });
 
-const photoStep = (title) => ({
+const photoStep = (title, optional = true) => ({
   key: "profile_photo",
   title,
-  hint: "Optional — you can always add one later.",
-  optional: true,
+  hint: optional ? "Optional — you can always add one later." : "Required for business accounts.",
+  optional,
+  valid: optional ? undefined : (f) => !!f.profile_photo,
+  error: "Please add your business logo.",
   render: ({ form, set }) => <PhotoStep value={form.profile_photo} onChange={(v) => set("profile_photo", v)} />,
 });
 
@@ -181,7 +183,7 @@ function businessSteps() {
     },
     phoneStep("What's your business phone number?"),
     emailStep("Would you like to add a business email?"),
-    photoStep("Add your business logo"),
+    photoStep("Add your business logo", false),
   ];
 }
 
