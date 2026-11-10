@@ -30,6 +30,18 @@ export default function AppLayout() {
   useSwipeBack(scrollRef);
   const { toast } = useToast();
 
+  // Hide bottom nav during onboarding, login, register, and welcome screens
+  const hideNav = [
+    "/onboarding",
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+    "/welcome",
+    "/join",
+    "/oauth/consent",
+  ].some((path) => pathname.startsWith(path));
+
   // Pull down at the top of any page to refetch everything on screen.
   const refreshApp = useCallback(async () => {
     window.dispatchEvent(new Event("app:refresh"));
@@ -80,7 +92,7 @@ export default function AppLayout() {
           </main>
         </div>
 
-        <BottomNav badge={unreadMessages} />
+        {!hideNav && <BottomNav badge={unreadMessages} />}
       </div>
     </AppLockGate>
   );
