@@ -1,33 +1,19 @@
 import React from "react";
-import { motion } from "framer-motion";
-import GemPattern from "./GemPattern";
+import { Image } from "@/components/ui/image";
+import { LOGO_URL } from "@/lib/gems";
 
 export default function WelcomeHero() {
   return (
-    <section className="relative flex h-[38svh] min-h-[200px] max-h-[420px] shrink-0 items-center justify-center overflow-hidden bg-welcome-green">
-      <GemPattern />
-      <motion.div
-        className="relative z-10 flex flex-col items-center"
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15, duration: 0.5, ease: "easeOut" }}>
-        
-        <p className="font-display text-4xl font-bold tracking-tight sm:text-5xl text-[hsl(var(--background))]">Gems24</p>
-      </motion.div>
-      {/* Faceted divider: a trapezium silhouette, as if the green were cut
-           into the dark section by a single large gem facet. */}
-      <svg aria-hidden="true" viewBox="0 0 390 84" preserveAspectRatio="none" className="absolute -bottom-px left-0 h-16 w-full sm:h-20">
-        <path
-          className="fill-welcome-ink"
-          d="M0 76 96 56 294 56 390 76V84H0Z" />
-        
-        <path
-          className="stroke-welcome-ink/25"
-          fill="none"
-          strokeWidth="1"
-          d="M0 76 96 56M294 56 390 76" />
-        
+    <section className="relative flex h-[37svh] min-h-[190px] max-h-[360px] shrink-0 items-center justify-center px-8 py-10">
+      <svg aria-hidden="true" viewBox="0 0 600 800" preserveAspectRatio="xMidYMin slice" className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[85svh] w-screen max-w-3xl -translate-x-1/2 text-welcome-green">
+        <path fill="currentColor" opacity=".035" d="M0 0 300 160 80 420Z M600 0 300 160 520 420Z" />
+        <path fill="currentColor" opacity=".025" d="m80 420 220-260 220 260-220 300Z" />
+        <path fill="currentColor" opacity=".04" d="m0 0 80 420L0 680Z m600 0-80 420 80 260Z" />
       </svg>
+      <div className="flex flex-col items-center gap-4">
+        <Image src={LOGO_URL} alt="" className="h-16 w-16 sm:h-20 sm:w-20" fittingType="fit" />
+        <p className="font-display text-4xl font-semibold tracking-tight text-welcome-text sm:text-5xl">Gems24</p>
+      </div>
     </section>);
 
 }
