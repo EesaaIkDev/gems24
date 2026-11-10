@@ -299,16 +299,28 @@
   }
 }
 
-/* Welcome-only luxury palette, independent of the rest of the app's theme. */
+/* Welcome-only palette, independent of the rest of the app's theme. */
 .luxury-welcome {
-  --welcome-ink: 206 24% 6%;
+  --welcome-ink: 0 0% 100%;
   --welcome-green: 145 100% 39.2%;
-  --welcome-green-bright: 145 85% 48%;
-  --welcome-text: 0 0% 100%;
-  --welcome-muted: 215 20% 65%;
+  --welcome-green-bright: 145 100% 35%;
+  --welcome-text: 222 47% 11%;
+  --welcome-muted: 215 19% 40%;
   --welcome-subtle: 215 16% 47%;
-  background-color: #0B0F12;
-  background-image: radial-gradient(ellipse 95% 52% at 50% 0%, #052E1B 0%, #0B0F12 100%);
+  --welcome-surface: 207 33% 95%;
+  --welcome-shadow: 210 8% 81%;
+  background-color: #EDF2F6;
+  background-image: none;
+}
+
+.luxury-welcome .welcome-primary {
+  box-shadow: 0 4px 14px 0 hsl(var(--welcome-green) / 0.39);
+}
+
+.luxury-welcome .welcome-secondary {
+  background-color: hsl(var(--welcome-surface));
+  border-color: hsl(var(--welcome-ink) / 0.8);
+  box-shadow: 5px 5px 10px #cbcfd3, -5px -5px 10px #ffffff;
 }
 
 /* --- Payment success animation: gem under a loupe resolving into a tick --- */
