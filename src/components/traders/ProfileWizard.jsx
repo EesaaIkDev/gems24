@@ -93,7 +93,7 @@ export default function ProfileWizard({ initial = {}, accountType, traderKind, o
       </button>
 
       <div className="mt-4 flex items-center gap-3">
-        <div className="neu-inset-sm h-2 flex-1 overflow-hidden rounded-full bg-background">
+        <div className="h-2 flex-1 overflow-hidden rounded-full bg-secondary">
           <motion.div
             className="h-full rounded-full bg-primary"
             animate={{ width: `${progress}%` }}

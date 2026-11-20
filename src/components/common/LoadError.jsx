@@ -9,7 +9,7 @@ export default function LoadError({
 }) {
   return (
     <div className="flex flex-col items-center justify-center px-8 py-20 text-center">
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary">
+      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary">
         <RotateCcw className="h-5 w-5 text-muted-foreground" />
       </div>
       <h2 className="mt-4 font-heading text-base font-semibold">{title}</h2>

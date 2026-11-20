@@ -13,7 +13,7 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
   const photo = listing.photos?.[0];
 
   return (
-    <article className="border-b border-border pb-4">
+    <article className="border-b-8 border-secondary bg-background pb-4">
       <div className="flex items-center gap-3 px-4 py-3">
         <Link to={`/trader/${listing.trader_id}`} className="shrink-0">
           <div className="w-10 h-10 rounded-full overflow-hidden bg-secondary flex items-center justify-center">

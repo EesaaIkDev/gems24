@@ -2,27 +2,28 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 
-/** Neomorphic inset search field for the Home feed. */
+/** Flat bordered search field for the Home feed, green search icon on the right. */
 export default function FeedSearch({ value, onChange }) {
   return (
     <div className="relative">
-      <Search className="absolute left-3.5 top-1/2 h-[15px] w-[15px] -translate-y-1/2 text-muted-foreground" />
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search feed"
         aria-label="Search the feed"
-        className="h-10 rounded-xl pl-10 pr-10 text-sm"
+        className="h-12 pl-4 pr-12"
       />
-      {value && (
+      {value ? (
         <button
           type="button"
           onClick={() => onChange("")}
           aria-label="Clear search"
-          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+          className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center text-muted-foreground"
         >
-          <X className="h-4 w-4" />
+          <X className="h-5 w-5" />
         </button>
+      ) : (
+        <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary" aria-hidden="true" />
       )}
     </div>
   );

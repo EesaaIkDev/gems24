@@ -22,7 +22,7 @@ export default function LimitChoice({ trader, active, limit }) {
 
   return (
     <div className="mx-auto max-w-sm px-4 py-10 text-center">
-      <div className="neu-raised mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-background">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent text-primary">
         <EyeOff className="h-6 w-6 text-destructive" />
       </div>
       <h1 className="mt-5 font-heading text-xl font-bold leading-tight">
@@ -35,7 +35,7 @@ export default function LimitChoice({ trader, active, limit }) {
       </p>
 
       {unlock > 0 && tierRank(trader?.subscription_tier) > 0 && (
-        <div className="mt-6 rounded-2xl bg-card p-5 text-left">
+        <div className="mt-6 rounded-xl border border-border bg-card p-5 text-left">
           <div className="flex items-center gap-2">
             <UserPlus className="h-4 w-4 text-primary" />
             <h2 className="font-heading font-semibold">Unlock {unlock} more listings</h2>
@@ -49,7 +49,7 @@ export default function LimitChoice({ trader, active, limit }) {
         </div>
       )}
 
-      <div className="mt-3 rounded-2xl bg-card p-5 text-left">
+      <div className="mt-3 rounded-xl border border-border bg-card p-5 text-left">
         <div className="flex items-center gap-2">
           <Crown className="h-4 w-4 text-primary" />
           <h2 className="font-heading font-semibold">Upgrade your plan</h2>

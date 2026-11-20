@@ -14,13 +14,13 @@ export default function ReferralStats({ trader }) {
   ];
 
   return (
-    <div className="rounded-2xl bg-card p-5">
+    <div className="rounded-xl border border-border bg-card p-5">
       <h2 className="font-heading text-sm font-semibold uppercase tracking-wider text-muted-foreground">
         Referrals
       </h2>
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
         {stats.map(({ label, value }) => (
-          <div key={label} className="neu-inset-sm rounded-xl bg-background px-2 py-3">
+          <div key={label} className="rounded-lg bg-secondary px-2 py-3">
             <p className="font-heading text-base font-bold leading-none">{value}</p>
             <p className="mt-1.5 text-[0.6875rem] text-muted-foreground">{label}</p>
           </div>

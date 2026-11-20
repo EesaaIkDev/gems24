@@ -62,9 +62,9 @@ export default function Profile() {
   return (
     <div className="pt-5 pb-6 max-w-lg mx-auto">
       <div className="px-4 space-y-5">
-        <div className="rounded-2xl bg-card border border-border p-5">
+        <div className="rounded-xl bg-card border border-border p-5">
           <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-2xl overflow-hidden bg-secondary flex items-center justify-center shrink-0">
+            <div className="w-20 h-20 rounded-xl overflow-hidden bg-secondary flex items-center justify-center shrink-0">
               {trader.profile_photo ? (
                 <Image src={trader.profile_photo} alt={trader.full_name} className="w-full h-full" />
               ) : (
@@ -109,7 +109,7 @@ export default function Profile() {
 
         {isTrader && <ReferralStats trader={trader} />}
 
-        <div className="rounded-2xl bg-card border border-border overflow-hidden divide-y divide-border">
+        <div className="rounded-xl bg-card border border-border overflow-hidden divide-y divide-border">
           {links.map(({ to, icon: Icon, label }) => (
             <Link key={to} to={to} className="flex items-center gap-3 px-4 h-14 hover:bg-secondary/60 transition-colors">
               <Icon className="w-[1.125rem] h-[1.125rem] text-primary" />

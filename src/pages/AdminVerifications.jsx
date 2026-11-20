@@ -66,7 +66,7 @@ export default function AdminVerifications() {
         rows.map((r) => {
           const first = r.kind === "first_screening";
           return (
-            <div key={r.trader_id} className="rounded-2xl border border-border bg-card p-4 space-y-2">
+            <div key={r.trader_id} className="rounded-xl border border-border bg-card p-4 space-y-2">
               <div className="flex items-center gap-2">
                 <p className="font-semibold">{r.name || r.trader_id}</p>
                 <span className="ml-auto text-[0.6875rem] font-semibold uppercase tracking-wider text-destructive">

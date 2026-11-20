@@ -14,7 +14,7 @@ export default function LimitWarning({ tier, active, limit }) {
 
   return (
     <div className="mx-auto max-w-sm px-6 py-16 text-center">
-      <div className="neu-raised mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-background">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent text-primary">
         <EyeOff className="h-6 w-6 text-destructive" />
       </div>
       <h1 className="mt-5 font-heading text-xl font-bold leading-tight">

@@ -41,7 +41,7 @@ export default function Settings() {
       </Link>
       <h1 className="text-[1.625rem] font-bold leading-tight">Settings</h1>
 
-      <div className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3">
+      <div className="rounded-xl bg-card border border-border p-4 flex items-center gap-3">
         <Moon className="w-[18px] h-[18px] text-primary" />
         <div className="flex-1">
           <p className="text-sm font-medium">Dark mode</p>
@@ -53,7 +53,7 @@ export default function Settings() {
       <NativeSettings />
 
       {user?.role === "admin" && (
-        <Link to="/admin/verifications" className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3 hover:border-primary/40">
+        <Link to="/admin/verifications" className="rounded-xl bg-card border border-border p-4 flex items-center gap-3 hover:border-primary/40">
           <ShieldCheck className="w-[18px] h-[18px] text-primary" />
           <div className="flex-1">
             <p className="text-sm font-medium">Verification review</p>
@@ -62,7 +62,7 @@ export default function Settings() {
         </Link>
       )}
 
-      <div className="rounded-2xl bg-card border border-border p-4">
+      <div className="rounded-xl bg-card border border-border p-4">
         <div className="flex items-center gap-2">
           <FileText className="w-[18px] h-[18px] text-primary" />
           <p className="text-sm font-medium">Legal</p>
@@ -79,7 +79,7 @@ export default function Settings() {
         <SignInPrompt title="Create your profile" cta="Get started" to="/onboarding" />
       ) : (
         <>
-          <div className="rounded-2xl bg-card border border-border p-4">
+          <div className="rounded-xl bg-card border border-border p-4">
             <div className="flex items-center gap-2">
               <Crown className="w-[18px] h-[18px] text-primary" />
               <p className="text-sm font-medium">Subscription</p>
@@ -97,7 +97,7 @@ export default function Settings() {
             </Button>
           </div>
 
-          <div className="rounded-2xl bg-card border border-border p-4 flex items-center gap-3">
+          <div className="rounded-xl bg-card border border-border p-4 flex items-center gap-3">
             <CheckCheck className="w-[18px] h-[18px] text-primary shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium">Read receipts</p>
@@ -115,7 +115,7 @@ export default function Settings() {
             />
           </div>
 
-          <div className="rounded-2xl bg-card border border-border p-4 flex items-start gap-3">
+          <div className="rounded-xl bg-card border border-border p-4 flex items-start gap-3">
             <ShieldCheck className="mt-0.5 w-[18px] h-[18px] text-primary shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium">Approval required</p>
@@ -126,7 +126,7 @@ export default function Settings() {
             </div>
           </div>
 
-          <div className="rounded-2xl bg-card border border-border p-5">
+          <div className="rounded-xl bg-card border border-border p-5">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Edit profile</h2>
             <p className="mt-1 text-xs text-muted-foreground">
               Everything we store about you is shown here and can be changed at any time.

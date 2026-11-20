@@ -82,7 +82,7 @@ export default function TraderForm({ initial = {}, onSave, saving, submitLabel =
   return (
     <form onSubmit={submit} className="space-y-5">
       <div className="flex items-center gap-4">
-        <div className="w-20 h-20 rounded-2xl overflow-hidden bg-secondary flex items-center justify-center">
+        <div className="w-20 h-20 rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
           {form.profile_photo ? (
             <Image src={form.profile_photo} alt="Profile" className="w-full h-full" />
           ) : (

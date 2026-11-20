@@ -30,7 +30,7 @@ export default function BottomNav({ badge = 0 }) {
   return (
     <nav
       aria-label="Main"
-      className="bg-background absolute inset-x-0 bottom-0 z-50 shadow-[0_-4px_12px_hsl(var(--neu-dark))]"
+      className="bg-background absolute inset-x-0 bottom-0 z-50 border-t border-border"
       style={{
         paddingBottom: "var(--safe-bottom)",
         paddingLeft: "var(--safe-left)",
@@ -52,10 +52,10 @@ export default function BottomNav({ badge = 0 }) {
                 className="tap-scale flex flex-col items-center justify-center"
                 style={{ height: "var(--tabbar-h)" }}
               >
-                <span className="neu-raised -mt-6 flex h-12 w-12 items-center justify-center rounded-full bg-primary ring-4 ring-background">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary shadow-float">
                   <Plus className="h-6 w-6 text-primary-foreground" aria-hidden="true" />
                 </span>
-                <span className="mt-1 text-[0.625rem] font-medium text-muted-foreground">Add</span>
+                <span className={`mt-0.5 text-[0.6875rem] font-medium ${active ? "text-primary" : "text-muted-foreground"}`}>Add</span>
               </Link>
             );
           }
@@ -73,7 +73,7 @@ export default function BottomNav({ badge = 0 }) {
               <div className="relative">
                 <Icon
                   aria-hidden="true"
-                  className={`h-[1.375rem] w-[1.375rem] ${active ? "text-primary" : "text-muted-foreground"}`}
+                  className={`h-6 w-6 ${active ? "text-primary" : "text-muted-foreground"}`}
                 />
                 {unread && (
                   <span className="absolute -right-2 -top-1.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-destructive px-1 text-[0.625rem] font-bold text-white">
@@ -81,7 +81,7 @@ export default function BottomNav({ badge = 0 }) {
                   </span>
                 )}
               </div>
-              <span className={`text-[0.625rem] font-medium ${active ? "text-primary" : "text-muted-foreground"}`}>
+              <span className={`text-[0.6875rem] font-medium ${active ? "text-primary" : "text-muted-foreground"}`}>
                 {label}
               </span>
             </Link>

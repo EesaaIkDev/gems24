@@ -20,7 +20,7 @@ export default function SuggestedTraders({ traders }) {
           <Link
             key={t.id}
             to={`/trader/${t.id}`}
-            className="w-36 shrink-0 rounded-2xl border border-border bg-card p-3 text-center hover:border-primary/40 transition-colors"
+            className="w-36 shrink-0 rounded-xl border border-border bg-card p-3 text-center hover:border-primary/40 transition-colors"
           >
             <div className="mx-auto w-14 h-14 rounded-full overflow-hidden bg-secondary flex items-center justify-center">
               {t.profile_photo ? (

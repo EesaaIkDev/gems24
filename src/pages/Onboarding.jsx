@@ -201,9 +201,9 @@ function Chooser({ title, subtitle, options, onPick, onBack }) {
               haptic("light");
               onPick(key);
             }}
-            className="w-full text-left rounded-2xl bg-card p-5 transition-all"
+            className="w-full text-left rounded-xl border border-border bg-card p-5 transition-colors hover:bg-secondary"
           >
-            <div className="neu-inset-sm w-11 h-11 rounded-xl bg-background flex items-center justify-center">
+            <div className="w-11 h-11 rounded-full bg-accent text-primary flex items-center justify-center">
               <Icon className="w-5 h-5 text-primary" />
             </div>
             <h3 className="mt-3.5 font-semibold text-lg">{label}</h3>

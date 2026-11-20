@@ -15,7 +15,7 @@ export default function PullIndicator({ pull, progress, refreshing, dragging }) 
       aria-hidden="true"
     >
       <div
-        className="neu-raised-sm flex h-10 w-10 items-center justify-center rounded-full bg-background"
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background shadow-float"
         style={{
           transform: `translate3d(0, ${pull - 44}px, 0) scale(${refreshing ? 1 : scale})`,
           opacity: visible ? Math.max(progress, refreshing ? 1 : 0) : 0,

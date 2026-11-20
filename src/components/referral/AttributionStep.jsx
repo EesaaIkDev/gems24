@@ -80,9 +80,9 @@ export default function AttributionStep({ onDone }) {
         <button
           key={key}
           onClick={() => key === "referral" ? setSource("referral") : onDone({ source: key, code: "" })}
-          className="flex w-full items-center gap-3 rounded-2xl bg-card px-4 py-4 text-left">
+          className="flex w-full items-center gap-3 rounded-xl border border-border bg-card px-4 py-4 text-left hover:bg-secondary">
           
-            <span className="neu-inset-sm flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-background">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent text-primary">
               <Icon className="h-[1.125rem] w-[1.125rem] text-primary" />
             </span>
             <span className="font-medium">{label}</span>

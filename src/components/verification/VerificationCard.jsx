@@ -145,7 +145,7 @@ export default function VerificationCard({ trader, onVerified }) {
   if (covered) {
     return (
       <>
-        <div className="rounded-2xl border border-primary/30 bg-card p-4">
+        <div className="rounded-xl border border-primary/30 bg-card p-4">
           <div className="flex items-center gap-2.5">
             <BadgeCheck className="h-[18px] w-[18px] text-primary" />
             <p className="text-sm font-semibold">{LEVEL_LABEL[held]}</p>
@@ -292,7 +292,7 @@ export default function VerificationCard({ trader, onVerified }) {
 
 function Card({ icon: Icon, title, badge, tone, children }) {
   return (
-    <div className={`rounded-2xl border bg-card p-5 ${tone === "destructive" ? "border-destructive/30" : "border-primary/30"}`}>
+    <div className={`rounded-xl border bg-card p-5 ${tone === "destructive" ? "border-destructive/30" : "border-primary/30"}`}>
       <div className="flex items-center gap-2.5">
         <Icon className={`h-[18px] w-[18px] ${tone === "destructive" ? "text-destructive" : "text-primary"}`} />
         <h2 className="text-sm font-semibold">{title}</h2>

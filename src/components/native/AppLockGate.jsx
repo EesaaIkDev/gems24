@@ -24,7 +24,7 @@ export default function AppLockGate({ children }) {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 px-8 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-accent flex items-center justify-center">
+      <div className="w-16 h-16 rounded-xl bg-accent flex items-center justify-center">
         <Fingerprint className="w-8 h-8 text-primary" />
       </div>
       <div>

@@ -25,7 +25,7 @@ export default function SheetSelect({ value, onChange, options, placeholder, tit
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`neu-inset flex h-11 w-full min-w-0 items-center justify-between gap-2 rounded-2xl bg-background px-3 text-left text-sm ${className}`}
+        className={`flex h-12 w-full min-w-0 items-center justify-between gap-2 rounded-lg border border-input bg-background px-3.5 text-left text-[15px] ${className}`}
       >
         <span className={`truncate ${selected || value ? "text-foreground" : "text-muted-foreground"}`}>
           {selected?.label || value || placeholder}

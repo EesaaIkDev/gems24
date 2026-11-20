@@ -13,9 +13,9 @@ export default function InvitePrompt({ trader }) {
   if (invitesLeft <= 0 || tierRank(trader?.subscription_tier) === 0) return null;
 
   return (
-    <div className="rounded-2xl bg-card p-5">
+    <div className="rounded-xl border border-border bg-card p-5">
       <div className="flex items-center gap-3">
-        <div className="neu-inset-sm flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-background">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-primary">
           <UserPlus className="h-5 w-5 text-primary" />
         </div>
         <div className="min-w-0">

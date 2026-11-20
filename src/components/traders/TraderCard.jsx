@@ -14,11 +14,11 @@ export default function TraderCard({ trader }) {
   return (
     <Link
       to={`/trader/${trader.id}`}
-      className={`block gem-corners gem-card gem-frame transition-colors ${
-        highlight ? "gem-frame-primary" : ""
+      className={`block rounded-xl border bg-card transition-colors hover:bg-secondary active:bg-secondary ${
+        highlight ? "border-primary/40" : "border-border"
       }`}
     >
-      <div className="flex gap-3.5 p-3.5 gem-corners gem-card bg-card">
+      <div className="flex gap-3.5 p-3.5">
         <div className="w-16 h-16 shrink-0 rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
           {trader.profile_photo ? (
             <Image src={trader.profile_photo} alt={trader.full_name} className="w-full h-full" />
@@ -55,7 +55,7 @@ export default function TraderCard({ trader }) {
           {trader.specialties?.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1">
               {trader.specialties.slice(0, 4).map((s) => (
-                <span key={s} className="rounded-md bg-accent px-1.5 py-0.5 text-[10px] font-medium text-accent-foreground">
+                <span key={s} className="rounded-full bg-secondary px-2 py-0.5 text-[11px] font-medium text-foreground">
                   {cap(s)}
                 </span>
               ))}

@@ -26,7 +26,7 @@ export default function NativeSettings() {
   };
 
   return (
-    <div className="rounded-2xl bg-card border border-border divide-y divide-border">
+    <div className="rounded-xl bg-card border border-border divide-y divide-border">
       <div className="p-4 flex items-center gap-3">
         <Fingerprint className="w-[18px] h-[18px] text-primary" />
         <div className="flex-1">

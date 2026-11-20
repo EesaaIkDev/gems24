@@ -54,7 +54,7 @@ export default function DeleteAccount({ trader }) {
   };
 
   return (
-    <div className="neu-raised rounded-2xl bg-background p-4">
+    <div className="rounded-xl border border-border bg-card p-4">
       <div className="flex items-center gap-2">
         <Trash2 className="h-[18px] w-[18px] text-destructive" />
         <p className="text-sm font-medium">Delete my account</p>
