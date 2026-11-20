@@ -9,7 +9,7 @@ import InviteButton from "@/components/referral/InviteButton";
 export default function AppHeader() {
   return (
     <header
-      className="bg-background absolute inset-x-0 top-0 z-50 shadow-[0_4px_12px_hsl(var(--neu-dark))]"
+      className="bg-background absolute inset-x-0 top-0 z-50 border-b border-border"
       style={{
         paddingTop: "var(--safe-top)",
         paddingLeft: "var(--safe-left)",
@@ -28,7 +28,7 @@ export default function AppHeader() {
           className="tap-scale flex h-11 w-11 items-center justify-center rounded-full hover:bg-secondary"
           aria-label="Settings"
         >
-          <Settings className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+          <Settings className="h-6 w-6 text-foreground/80" aria-hidden="true" />
         </Link>
         </div>
       </div>

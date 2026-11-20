@@ -14,7 +14,7 @@ export default function PasswordStrength({ value = "" }) {
 
   return (
     <div className="space-y-1.5">
-      <div className="neu-inset-sm h-2 w-full overflow-hidden rounded-full bg-background">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
         <div className={`h-full rounded-full transition-all ${tone}`} style={{ width: `${pct}%` }} />
       </div>
       <p className="text-xs text-muted-foreground">

@@ -29,7 +29,7 @@ export function useAppInfo() {
 export function MfaScreen({ children }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
-      <div className="w-full max-w-md bg-card rounded-2xl shadow-sm border border-border p-8">{children}</div>
+      <div className="w-full max-w-md bg-card rounded-xl border border-border p-8">{children}</div>
     </div>
   );
 }
@@ -39,7 +39,7 @@ export function MfaScreen({ children }) {
 export function MfaHeader({ title, description }) {
   return (
     <div className="flex flex-col items-center text-center mb-6">
-      <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary mb-4">
+      <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary mb-4">
         <ShieldCheck className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
       </div>
       <h1 className="text-2xl font-bold tracking-tight text-foreground min-h-[2rem]">{title}</h1>
@@ -134,7 +134,7 @@ function DialCodePicker({ value, onChange }) {
     <Popover open={open} onOpenChange={handleOpenChange} modal>
       <PopoverTrigger asChild>
         <Button type="button" variant="outline" role="combobox" aria-expanded={open} aria-label="Country code"
-          className="h-10 w-[100px] justify-between px-2.5 font-normal shadow-none">
+          className="h-10 w-[100px] justify-between px-2.5 font-normal">
           {value}
           <ChevronsUpDown className="ml-1 h-3.5 w-3.5 shrink-0 opacity-50" aria-hidden="true" />
         </Button>

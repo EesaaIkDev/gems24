@@ -108,9 +108,9 @@ export default function TraderProfile() {
       </div>
 
       <div className="px-4 mt-4">
-        <div className="rounded-2xl bg-card border border-border p-5">
+        <div className="rounded-xl bg-card border border-border p-5">
           <div className="flex items-start gap-4">
-            <div className="w-20 h-20 rounded-2xl overflow-hidden bg-secondary flex items-center justify-center shrink-0">
+            <div className="w-20 h-20 rounded-xl overflow-hidden bg-secondary flex items-center justify-center shrink-0">
               {trader.profile_photo ? (
                 <Image src={trader.profile_photo} alt={`${traderName}, gemstone trader on Gems24`} className="w-full h-full" />
               ) : (
@@ -157,7 +157,7 @@ export default function TraderProfile() {
           </div>
 
           {business && (
-            <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 rounded-2xl bg-secondary/70 p-4 text-sm">
+            <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 rounded-xl bg-secondary/70 p-4 text-sm">
               <BusinessFact label="Registered name" value={trader.legal_business_name} wide />
               <BusinessFact label="Business type" value={businessTypeLabel(trader.business_type)} />
               <BusinessFact label="Established" value={trader.year_founded} />
@@ -201,7 +201,7 @@ export default function TraderProfile() {
             </div>
           )}
 
-          <div className="mt-5 rounded-2xl bg-secondary/70 p-4">
+          <div className="mt-5 rounded-xl bg-secondary/70 p-4">
             <p className="text-[0.6875rem] uppercase tracking-wider text-muted-foreground font-semibold">Contact details</p>
             {showContact ? (
               <div className="mt-2 space-y-1.5">

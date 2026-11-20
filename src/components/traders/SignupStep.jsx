@@ -78,7 +78,7 @@ export default function SignupStep({ onVerified, onBack, working }) {
   if (otpSent)
     return (
       <div className="flex flex-col">
-        <div className="neu-inset-sm mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-background">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-accent text-primary">
           <Mail className="h-5 w-5 text-primary" />
         </div>
         <h2 className="mt-4 text-center text-[1.375rem] font-bold leading-snug">Verify your email</h2>

@@ -36,7 +36,7 @@ export default function Join() {
         </p>
 
         {code && (
-          <div className="mt-8 rounded-2xl border border-welcome-border bg-welcome-panel p-6">
+          <div className="mt-8 rounded-xl border border-welcome-border bg-welcome-panel p-6">
             <p className="text-xs uppercase tracking-wider text-welcome-subtle">Your referral code</p>
             <p className="mt-2 font-heading text-4xl font-bold tracking-[0.2em] text-welcome-green-bright">
               {code}

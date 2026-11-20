@@ -14,7 +14,7 @@ export default function CategoryLinks({ exclude, title = "Browse by gemstone" })
           <Link
             key={c.slug}
             to={`/gemstones/${c.slug}`}
-            className="neu-raised-sm tap-scale rounded-full bg-background px-3.5 py-1.5 text-xs font-medium"
+            className="tap-scale rounded-full border border-border bg-background px-3.5 py-2 text-[13px] font-medium hover:bg-secondary"
           >
             {c.name} for sale
           </Link>

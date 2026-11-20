@@ -4,106 +4,101 @@
 
 @layer base {
   :root {
-    /* Neomorphism: one single surface colour for page, cards, buttons,
-       inputs — all separation comes from the soft dual shadows below. */
-    --background: 214 22% 93%;
-    --foreground: 240 27% 14%;
-    --card: 214 22% 93%;
-    --card-foreground: 240 27% 14%;
-    --popover: 214 22% 93%;
-    --popover-foreground: 240 27% 14%;
-    --primary: 150 90% 33%;
+    /* Flat design system: white surfaces, 1px borders, one green accent. */
+    --background: 0 0% 100%;            /* #FFFFFF */
+    --foreground: 160 5% 11%;           /* #1A1D1C */
+    --card: 0 0% 100%;                  /* #FFFFFF */
+    --card-foreground: 160 5% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 5% 11%;
+    --primary: 147 68% 38%;             /* #1FA45B */
     --primary-foreground: 0 0% 100%;
-    --welcome-green: 152.5 100% 35.1%;
-    --welcome-green-bright: 150 100% 44%;
-    --welcome-ink: 220 18% 7%;
-    --welcome-panel: 220 15% 11%;
-    --welcome-border: 216 12% 22%;
-    --welcome-text: 0 0% 100%;
-    --welcome-muted: 216 14% 78%;
-    --welcome-subtle: 216 10% 58%;
-    --welcome-pattern: 157 62% 22%;
-    --secondary: 214 22% 93%;
-    --secondary-foreground: 240 27% 14%;
-    --muted: 214 22% 93%;
-    --muted-foreground: 215 16% 40%;
-    --accent: 214 22% 93%;
-    --accent-foreground: 152 68% 22%;
-    --destructive: 0 72% 45%;
+    --secondary: 150 11% 96%;           /* #F5F7F6 */
+    --secondary-foreground: 160 5% 11%;
+    --muted: 150 11% 96%;               /* #F5F7F6 */
+    --muted-foreground: 158 4% 44%;     /* #6B7370 */
+    --accent: 146 44% 94%;              /* #E8F6EE pale green tint */
+    --accent-foreground: 147 71% 28%;   /* deep green for text on the tint */
+    --destructive: 4 71% 50%;           /* #D93025 */
     --destructive-foreground: 0 0% 100%;
-    --border: 214 22% 93%;
-    --input: 214 22% 93%;
-    --ring: 150 90% 33%;
-    /* Soft light (top-left) and dark (bottom-right) shadow colours. */
-    --neu-light: 0 0% 100% / 0.9;
-    --neu-dark: 215 25% 68% / 0.55;
-    --chart-1: 150 100% 39%;
+    --border: 160 6% 91%;               /* #E6E9E8 */
+    --input: 160 6% 91%;
+    --ring: 147 68% 38%;
+    --disabled: 154 4% 68%;             /* #A9B0AD */
+    --switch-off: 154 4% 68%;
+    --welcome-green: 147 68% 38%;
+    --welcome-green-bright: 147 68% 33%;
+    --welcome-ink: 0 0% 100%;
+    --welcome-panel: 150 11% 96%;
+    --welcome-border: 160 6% 91%;
+    --welcome-text: 160 5% 11%;
+    --welcome-muted: 158 4% 44%;
+    --welcome-subtle: 158 4% 44%;
+    --welcome-pattern: 147 71% 28%;
+    --chart-1: 147 68% 38%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.875rem;
+    --radius: 0.625rem;                 /* 10px buttons + inputs */
     --font-heading: "Expletus Sans", ui-sans-serif, system-ui, sans-serif;
     --font-body: "Sofia Sans", "Expletus Sans", ui-sans-serif, system-ui, sans-serif;
     --font-display: "Expletus Sans", ui-sans-serif, system-ui, sans-serif;
-    /* Solid offset shadow behind faceted buttons — one green, everywhere. */
-    --primary-shadow: 150 100% 21%;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 150 100% 39%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 160 5% 11%;
+    --sidebar-primary: 147 68% 38%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 150 100% 39%;
+    --sidebar-accent: 150 11% 96%;
+    --sidebar-accent-foreground: 160 5% 11%;
+    --sidebar-border: 160 6% 91%;
+    --sidebar-ring: 147 68% 38%;
   }
 
   .dark {
-    --background: 215 18% 14%;
-    --foreground: 206 32% 93%;
-    --card: 215 18% 14%;
-    --card-foreground: 206 32% 93%;
-    --popover: 215 18% 14%;
-    --popover-foreground: 206 32% 93%;
-    --primary: 150 100% 45%;
-    --primary-foreground: 215 18% 10%;
-    --welcome-green: 152.5 100% 35.1%;
-    --welcome-green-bright: 150 100% 44%;
-    --welcome-ink: 220 18% 7%;
-    --welcome-panel: 220 15% 11%;
-    --welcome-border: 216 12% 22%;
-    --welcome-text: 0 0% 100%;
-    --welcome-muted: 216 14% 78%;
-    --welcome-subtle: 216 10% 58%;
-    --welcome-pattern: 157 62% 22%;
-    --secondary: 215 18% 14%;
-    --secondary-foreground: 206 32% 93%;
-    --muted: 215 18% 14%;
-    --muted-foreground: 214 15% 68%;
-    --accent: 215 18% 14%;
-    --accent-foreground: 150 80% 75%;
-    --destructive: 0 62% 50%;
+    --background: 165 10% 8%;           /* #121615 */
+    --foreground: 160 13% 95%;          /* #F2F5F4 */
+    --card: 160 10% 12%;                /* #1B211F */
+    --card-foreground: 160 13% 95%;
+    --popover: 160 10% 12%;
+    --popover-foreground: 160 13% 95%;
+    --primary: 147 68% 38%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 10% 12%;
+    --secondary-foreground: 160 13% 95%;
+    --muted: 160 10% 12%;
+    --muted-foreground: 158 6% 66%;
+    --accent: 147 40% 16%;
+    --accent-foreground: 147 60% 72%;
+    --destructive: 4 71% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 215 18% 14%;
-    --input: 215 18% 14%;
-    --ring: 150 100% 45%;
-    --neu-light: 215 18% 22% / 0.9;
-    --neu-dark: 215 30% 5% / 0.75;
-    --chart-1: 150 100% 41%;
+    --border: 165 9% 18%;               /* #2A3230 */
+    --input: 165 9% 18%;
+    --ring: 147 68% 45%;
+    --disabled: 158 5% 42%;
+    --switch-off: 165 7% 30%;
+    --welcome-green: 147 68% 42%;
+    --welcome-green-bright: 147 68% 48%;
+    --welcome-ink: 165 10% 8%;
+    --welcome-panel: 160 10% 12%;
+    --welcome-border: 165 9% 18%;
+    --welcome-text: 160 13% 95%;
+    --welcome-muted: 158 6% 66%;
+    --welcome-subtle: 158 6% 66%;
+    --welcome-pattern: 147 71% 22%;
+    --chart-1: 147 68% 45%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --sidebar-background: 215 21% 12%;
-    --sidebar-foreground: 206 32% 91%;
-    --sidebar-primary: 150 100% 41%;
-    --sidebar-primary-foreground: 213 25% 8%;
-    --sidebar-accent: 215 18% 16%;
-    --sidebar-accent-foreground: 206 32% 91%;
-    --sidebar-border: 213 12% 22%;
-    --sidebar-ring: 150 100% 41%;
-    --primary-shadow: 150 100% 22%;
+    --sidebar-background: 160 10% 12%;
+    --sidebar-foreground: 160 13% 95%;
+    --sidebar-primary: 147 68% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 165 9% 18%;
+    --sidebar-accent-foreground: 160 13% 95%;
+    --sidebar-border: 165 9% 18%;
+    --sidebar-ring: 147 68% 45%;
   }
 }
 
@@ -140,6 +135,8 @@
   body {
     @apply bg-background text-foreground font-body antialiased;
     font-optical-sizing: auto;
+    font-size: 15px;
+    line-height: 1.5;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     -webkit-user-select: none;
@@ -162,6 +159,11 @@
 
   h1, h2, h3 {
     @apply font-heading tracking-tight;
+  }
+
+  /* One consistent outline icon weight across the app. */
+  svg.lucide {
+    stroke-width: 1.5;
   }
 
   /* Visible keyboard focus for VoiceOver / TalkBack / keyboard users. */
@@ -200,127 +202,14 @@
     display: none;
   }
 
-  /* Frosted floating chrome (header + tab bar). */
-  .glass-chrome {
-    background-color: hsl(var(--background) / 0.72);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-  }
-
-  /* System-wide mapping so every existing surface inherits soft depth.
-     Declared before the neu-* utilities so explicit classes win. */
-  .bg-card {
-    box-shadow: -6px -6px 14px hsl(var(--neu-light)), 6px 6px 14px hsl(var(--neu-dark));
-  }
-
-  .bg-secondary,
-  .bg-muted {
-    box-shadow: inset -2px -2px 5px hsl(var(--neu-light)), inset 2px 2px 5px hsl(var(--neu-dark));
-  }
-
-  /* --- Neomorphic (soft UI) system ---------------------------------
-     Everything shares the page's surface colour; depth comes only from a
-     soft light shadow (top-left) plus a soft dark shadow (bottom-right).
-     Raised = shadows outside. Inset = the same pair flipped inside. */
-  .neu-raised {
-    box-shadow: -6px -6px 14px hsl(var(--neu-light)), 6px 6px 14px hsl(var(--neu-dark));
-  }
-
-  .neu-raised-sm {
-    box-shadow: -3px -3px 7px hsl(var(--neu-light)), 3px 3px 7px hsl(var(--neu-dark));
-  }
-
-  /* Tightest raise — for small overlay chips/badges, so they read as lifted
-     labels rather than glowing pills. */
-  .neu-raised-xs {
-    box-shadow: -1px -1px 3px hsl(var(--neu-light)), 2px 2px 4px hsl(var(--neu-dark));
-  }
-
-  .neu-inset {
-    box-shadow: inset -4px -4px 9px hsl(var(--neu-light)), inset 4px 4px 9px hsl(var(--neu-dark));
-  }
-
-  .neu-inset-sm {
-    box-shadow: inset -2px -2px 5px hsl(var(--neu-light)), inset 2px 2px 5px hsl(var(--neu-dark));
-  }
-
-  /* Legacy gem-* hooks are kept as names so the whole app inherits the new
-     soft language: rounded corners, no clip-paths, no borders. */
-  .gem-corners {
-    border-radius: 1.25rem;
-    clip-path: none;
-  }
-
-  .gem-card {
-    border-radius: 1.5rem;
-  }
-
-  .gem-chip {
-    border-radius: 9999px;
-  }
-
-  .gem-frame,
-  .gem-frame-primary {
-    background-color: transparent;
-    padding: 0;
-  }
-
-  /* Raised soft button that presses into the surface while tapped. */
-  .gem-btn {
-    position: relative;
-    box-shadow: -6px -6px 14px hsl(var(--neu-light)), 6px 6px 14px hsl(var(--neu-dark));
-    transition: box-shadow 0.16s ease, transform 0.16s ease;
-  }
-
-  .gem-btn::before,
-  .gem-btn::after {
-    content: none;
-  }
-
-  .gem-btn:active {
-    box-shadow: inset -4px -4px 9px hsl(var(--neu-light)), inset 4px 4px 9px hsl(var(--neu-dark));
-  }
-
-  .gem-btn-raised,
-  .gem-btn-raised-outline,
-  .gem-btn-raised-destructive {
-    filter: none;
-  }
-
-  /* GPU-only press feedback — transform/opacity, never layout. */
+  /* Flat press feedback — opacity only, no depth. */
   .tap-scale {
-    transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 140ms ease;
-    will-change: transform;
+    transition: opacity 140ms ease;
   }
 
   .tap-scale:active {
-    transform: scale(0.94);
-    opacity: 0.75;
+    opacity: 0.7;
   }
-}
-
-/* Welcome-only palette, independent of the rest of the app's theme. */
-.luxury-welcome {
-  --welcome-ink: 0 0% 100%;
-  --welcome-green: 145 100% 39.2%;
-  --welcome-green-bright: 145 100% 35%;
-  --welcome-text: 222 47% 11%;
-  --welcome-muted: 215 19% 40%;
-  --welcome-subtle: 215 16% 47%;
-  --welcome-surface: 207 33% 95%;
-  --welcome-shadow: 210 8% 81%;
-  background-color: #EDF2F6;
-  background-image: none;
-}
-
-.luxury-welcome .welcome-primary {
-  box-shadow: 0 4px 14px 0 hsl(var(--welcome-green) / 0.39);
-}
-
-.luxury-welcome .welcome-secondary {
-  background-color: hsl(var(--welcome-surface));
-  border-color: hsl(var(--welcome-ink) / 0.8);
-  box-shadow: 5px 5px 10px #cbcfd3, -5px -5px 10px #ffffff;
 }
 
 /* --- Payment success animation: gem under a loupe resolving into a tick --- */
@@ -411,9 +300,5 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-
-  .tap-scale:active {
-    transform: none;
   }
 }

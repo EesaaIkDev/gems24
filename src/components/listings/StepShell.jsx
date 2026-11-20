@@ -23,7 +23,7 @@ export default function StepShell({ step, total, title, hint, onBack, onNext, ne
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
-        <div className="neu-inset-sm h-1.5 flex-1 overflow-hidden rounded-full bg-background">
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-secondary">
           <div
             className="h-full rounded-full bg-primary transition-all duration-500"
             style={{ width: `${percent}%` }}

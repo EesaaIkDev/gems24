@@ -10,7 +10,7 @@ export default function AttachPhotoButton({ onPick, disabled }) {
         aria-label="Send a photo"
         disabled={disabled}
         onClick={() => input.current?.click()}
-        className="neu-raised-sm flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-foreground hover:text-primary disabled:opacity-50"
+        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-primary disabled:opacity-50"
       >
         <ImagePlus className="w-5 h-5" />
       </button>

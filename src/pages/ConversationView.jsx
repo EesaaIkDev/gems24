@@ -228,11 +228,11 @@ export default function ConversationView() {
       style={{ top: "calc(var(--safe-top) + var(--header-h))", bottom: `max(calc(var(--safe-bottom) + var(--tabbar-h) + 1.5rem), calc(${keyboardInset}px + 1rem))` }}
     >
       <div
-        className="relative z-10 shrink-0 bg-background px-4 py-2.5 shadow-[0_4px_12px_hsl(var(--neu-dark))]"
+        className="relative z-10 shrink-0 border-b border-border bg-background px-4 py-2.5"
         style={{ paddingLeft: "calc(var(--safe-left) + 1rem)", paddingRight: "calc(var(--safe-right) + 1rem)" }}
       >
         <div className="flex items-center gap-3">
-          <Link to="/messages" aria-label="Back" className="neu-raised-sm flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-foreground hover:text-primary">
+          <Link to="/messages" aria-label="Back" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-foreground hover:bg-secondary">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <Link

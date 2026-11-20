@@ -53,6 +53,8 @@ module.exports = {
   			},
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
+  			disabled: 'hsl(var(--disabled))',
+  			'switch-off': 'hsl(var(--switch-off))',
   			ring: 'hsl(var(--ring))',
   			chart: {
   				'1': 'hsl(var(--chart-1))',
@@ -71,6 +73,9 @@ module.exports = {
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
   			}
+  		},
+  		boxShadow: {
+  			float: '0 1px 3px rgba(0, 0, 0, 0.06)'
   		},
   		fontFamily: {
   			heading: ['var(--font-heading)'],

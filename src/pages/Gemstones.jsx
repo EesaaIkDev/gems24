@@ -107,20 +107,20 @@ export default function Gemstones() {
           isPartOf: { "@type": "WebSite", name: SITE.name, url: SITE.url },
         }}
       />
-      <h1 className="text-[1.375rem] font-bold leading-tight">Gemstone marketplace</h1>
+      <h1 className="text-2xl font-bold leading-tight">Gemstone marketplace</h1>
 
       <div className="relative">
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[15px] w-[15px] text-muted-foreground" />
         <Input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search marketplace"
-          className="h-10 rounded-xl pl-10 text-sm"
+          className="h-12 pl-4 pr-12"
         />
+        <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary" aria-hidden="true" />
       </div>
 
       <Tabs defaultValue="stones" onValueChange={() => haptic("light")}>
-        <TabsList className="grid grid-cols-2 w-full h-10 rounded-xl">
+        <TabsList className="grid grid-cols-2 w-full">
           <TabsTrigger value="stones">Stones</TabsTrigger>
           <TabsTrigger value="traders">Traders</TabsTrigger>
         </TabsList>

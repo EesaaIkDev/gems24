@@ -113,7 +113,7 @@ export default function ListingDetail() {
       </div>
 
       <div className="mt-3 px-4">
-        <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-secondary flex items-center justify-center">
+        <div className="aspect-[4/3] rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
           {photos.length ? (
             <Image src={photos[active]} alt={listingAlt(listing)} className="w-full h-full" />
           ) : (
@@ -174,7 +174,7 @@ export default function ListingDetail() {
         {owner && (
           <Link
             to={`/trader/${owner.id}`}
-            className="flex items-center gap-3 rounded-2xl bg-card border border-border p-3.5 hover:border-primary/40 transition-colors"
+            className="flex items-center gap-3 rounded-xl bg-card border border-border p-3.5 hover:border-primary/40 transition-colors"
           >
             <div className="w-12 h-12 rounded-xl overflow-hidden bg-secondary flex items-center justify-center shrink-0">
               {owner.profile_photo ? (
@@ -205,7 +205,7 @@ export default function ListingDetail() {
       </div>
 
       {viewer && owner && viewer.id !== owner.id && (
-        <div className="fixed bottom-16 inset-x-0 z-30 px-4 pb-3 pt-3 bg-gradient-to-t from-background via-background to-transparent">
+        <div className="fixed bottom-16 inset-x-0 z-30 px-4 pb-3 pt-3 border-t border-border bg-background">
           <div className="max-w-6xl mx-auto">
             <NetworkButton
               viewerId={viewer.id}

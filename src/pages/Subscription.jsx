@@ -176,7 +176,7 @@ export default function Subscription() {
 
       {pending && (
         <div className="mx-auto mt-6 max-w-lg space-y-3">
-          <div className="rounded-2xl border border-border bg-card p-4">
+          <div className="rounded-xl border border-border bg-card p-4">
             <div className="flex items-center gap-2">
               <CalendarClock className="h-4 w-4 text-primary" />
               <p className="text-sm font-semibold">
@@ -194,7 +194,7 @@ export default function Subscription() {
             )}
           </div>
           {overBy > 0 && (
-            <div className="rounded-2xl border border-destructive/40 bg-card p-4">
+            <div className="rounded-xl border border-destructive/40 bg-card p-4">
               <div className="flex items-center gap-2">
                 <TriangleAlert className="h-4 w-4 text-destructive" />
                 <p className="text-sm font-semibold">
@@ -221,7 +221,7 @@ export default function Subscription() {
       )}
 
       {business && tier !== "none" && tier !== "platinum" && (
-        <p className="mx-auto mt-6 max-w-lg rounded-2xl border border-border bg-card p-4 text-xs leading-relaxed text-muted-foreground">
+        <p className="mx-auto mt-6 max-w-lg rounded-xl border border-border bg-card p-4 text-xs leading-relaxed text-muted-foreground">
           Your {TIERS[tier].label} plan stays active until it ends. Business accounts renew on Platinum — choose it below
           whenever you're ready.
         </p>
@@ -245,7 +245,7 @@ export default function Subscription() {
       </div>
 
       {!business && (
-        <div className="mx-auto mt-4 max-w-lg rounded-2xl border border-border bg-card p-4">
+        <div className="mx-auto mt-4 max-w-lg rounded-xl border border-border bg-card p-4">
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4 text-primary" />
             <p className="text-sm font-semibold">Platinum is for registered businesses</p>

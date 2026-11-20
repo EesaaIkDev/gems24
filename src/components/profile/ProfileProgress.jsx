@@ -20,12 +20,12 @@ export default function ProfileProgress({ trader }) {
   const next = STEPS.find((s) => !s.done(trader));
 
   return (
-    <Link to="/settings" className="block rounded-2xl bg-card p-4">
+    <Link to="/settings" className="block rounded-xl border border-border bg-card p-4">
       <div className="flex items-baseline justify-between">
         <h2 className="text-sm font-semibold">Profile strength</h2>
         <span className="font-heading text-sm font-bold text-primary tabular-nums">{percent}%</span>
       </div>
-      <div className="neu-inset-sm mt-2.5 h-2 w-full overflow-hidden rounded-full bg-background">
+      <div className="mt-2.5 h-2 w-full overflow-hidden rounded-full bg-secondary">
         <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${percent}%` }} />
       </div>
       <div className="mt-2.5 flex items-center gap-1 text-xs text-muted-foreground">

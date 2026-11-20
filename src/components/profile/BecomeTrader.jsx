@@ -48,7 +48,7 @@ export default function BecomeTrader({ trader, onUpgraded }) {
 
   return (
     <>
-      <div className="rounded-2xl border border-primary/30 bg-card p-5">
+      <div className="rounded-xl border border-primary/30 bg-card p-5">
         <div className="flex items-center gap-2.5">
           <Gem className="h-[18px] w-[18px] text-primary" />
           <h2 className="text-sm font-semibold">Start selling on Gems24</h2>

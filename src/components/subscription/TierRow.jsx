@@ -14,8 +14,8 @@ export default function TierRow({ tier, capacity, placement, anchor, current, lo
   const filled = Math.min(5, t.rank + 1);
 
   return (
-    <div className={`gem-corners gem-card gem-frame ${recommended ? "gem-frame-primary" : ""}`}>
-      <div className="gem-corners gem-card bg-card px-4 py-4">
+    <div className={`rounded-xl border bg-card ${recommended ? "border-primary" : "border-border"}`}>
+      <div className="px-4 py-4">
         <div className="flex items-center gap-2.5">
           <span
             className={`rounded-full border px-2.5 py-1 text-[0.6875rem] font-bold uppercase tracking-wider ${TIER_STYLES[tier]}`}

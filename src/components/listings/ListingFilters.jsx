@@ -39,8 +39,8 @@ export default function ListingFilters({ filters, setFilters, countries }) {
             haptic("light");
             setOpen(true);
           }}
-          className={`gem-chip shrink-0 flex items-center gap-1.5 px-3 py-1 text-[0.6875rem] font-semibold ${
-            secondaryCount ? "neu-inset text-primary" : "neu-raised-xs text-muted-foreground"
+          className={`relative shrink-0 flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors before:absolute before:-inset-y-1 before:inset-x-0 before:content-[''] ${
+            secondaryCount ? "border-primary bg-accent text-accent-foreground" : "border-border bg-background text-muted-foreground hover:bg-secondary"
           }`}
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />

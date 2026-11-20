@@ -57,7 +57,7 @@ export default function BecomeBusiness({ trader, onUpgraded }) {
 
   return (
     <>
-      <div className="rounded-2xl border border-border bg-card p-5">
+      <div className="rounded-xl border border-border bg-card p-5">
         <div className="flex items-center gap-2.5">
           <Building2 className="h-[18px] w-[18px] text-primary" />
           <h2 className="text-sm font-semibold">Trading as a business?</h2>

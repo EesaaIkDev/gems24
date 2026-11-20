@@ -18,14 +18,14 @@ export default function PhotoStep({ value, onChange }) {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="neu-inset flex h-28 w-28 items-center justify-center overflow-hidden rounded-3xl bg-background">
+      <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border border-border bg-secondary">
         {value ? (
           <Image src={value} alt="Profile" className="h-full w-full" />
         ) : (
           <User className="h-10 w-10 text-muted-foreground/50" />
         )}
       </div>
-      <label className="neu-raised-sm tap-scale inline-flex h-11 cursor-pointer items-center gap-2 rounded-xl bg-background px-5 text-sm font-medium">
+      <label className="tap-scale inline-flex h-12 cursor-pointer items-center gap-2 rounded-lg border border-primary bg-background px-5 text-[15px] font-semibold text-primary hover:bg-accent">
         {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
         {value ? "Change photo" : "Upload photo"}
         <input type="file" accept="image/*" className="hidden" onChange={upload} disabled={uploading} />

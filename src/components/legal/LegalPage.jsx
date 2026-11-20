@@ -19,7 +19,7 @@ export default function LegalPage({ title, updated, children }) {
       </Link>
       <h1 className="mt-3 text-[1.625rem] font-bold leading-tight">{title}</h1>
       <p className="mt-1 text-xs text-muted-foreground">Last updated {updated}</p>
-      <div className="neu-raised mt-5 space-y-5 rounded-2xl bg-background p-5">{children}</div>
+      <div className="mt-5 space-y-5 rounded-xl border border-border bg-card p-5">{children}</div>
     </div>
   );
 }
