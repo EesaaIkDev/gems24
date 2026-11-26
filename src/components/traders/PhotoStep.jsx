@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import { Camera, Loader2, User } from "lucide-react";
+import { toPhotoFile } from "@/lib/photoFile";
 
 /** Optional profile photo upload, used as the final wizard step. */
 export default function PhotoStep({ value, onChange }) {
   const [uploading, setUploading] = useState(false);
 
   const upload = async (e) => {
-    const file = e.target.files?.[0];
+    const picked = e.target.files?.[0];
+    e.target.value = "";
+    const file = picked && toPhotoFile(picked);
     if (!file) return;
     setUploading(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });

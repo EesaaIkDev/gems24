@@ -1,0 +1,100 @@
+{
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "photo_guard",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "which_record": {
+          "switch": [
+            {
+              "when": "${ .trigger.data.entity_name == \"Trader\" }",
+              "then": "check_profile_photo",
+              "x-base44": {
+                "title": "Profile photo changed"
+              }
+            },
+            {
+              "when": "${ all((.trigger.data.proposed.photos // [])[]; type == \"string\" and (startswith(\"https://base44.app/api/apps/6a661583e07cf311ecceee39/files/mp/public/\") or startswith(\"https://media.base44.com/images/public/6a661583e07cf311ecceee39/\"))) | not }",
+              "then": "reject_listing_photos",
+              "x-base44": {
+                "title": "Photo not from the app's storage"
+              }
+            },
+            {
+              "when": "${ true }",
+              "then": "check_listing_photos"
+            }
+          ],
+          "x-base44": {
+            "title": "Which photo changed"
+          }
+        }
+      },
+      {
+        "check_profile_photo": {
+          "call": "calculate_field",
+          "with": {
+            "field": "response",
+            "value": {
+              "allow": "${ (.trigger.data.proposed.profile_photo | type == \"string\") and ((.trigger.data.proposed.profile_photo | startswith(\"https://base44.app/api/apps/6a661583e07cf311ecceee39/files/mp/public/\")) or (.trigger.data.proposed.profile_photo | startswith(\"https://media.base44.com/images/public/6a661583e07cf311ecceee39/\"))) and (.trigger.data.proposed.profile_photo | endswith(\".jpg\") or endswith(\".jpeg\") or endswith(\".png\") or endswith(\".webp\") or endswith(\".heic\") or endswith(\".JPG\") or endswith(\".JPEG\") or endswith(\".PNG\") or endswith(\".HEIC\")) }",
+              "reason": "Profile photos must be an image uploaded in the app."
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Allow only uploaded images",
+            "description": "Profile photo"
+          }
+        }
+      },
+      {
+        "reject_listing_photos": {
+          "call": "calculate_field",
+          "with": {
+            "field": "response",
+            "value": {
+              "allow": false,
+              "reason": "Listing photos must be images uploaded in the app."
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Block the save",
+            "description": "Listing photos"
+          }
+        }
+      },
+      {
+        "check_listing_photos": {
+          "call": "calculate_field",
+          "with": {
+            "field": "response",
+            "value": {
+              "allow": "${ all((.trigger.data.proposed.photos // [])[]; endswith(\".jpg\") or endswith(\".jpeg\") or endswith(\".png\") or endswith(\".webp\")) }",
+              "reason": "Listing photos must be images uploaded in the app."
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Allow only image files",
+            "description": "Listing photos"
+          }
+        }
+      }
+    ]
+  },
+  "trigger": {
+    "condition": "${ (.trigger.data.service_role // false) == false and ((.trigger.data.entity_name == \"Trader\" and (.trigger.data.proposed.profile_photo // \"\") != \"\" and (.trigger.data.proposed.profile_photo // \"\") != (.trigger.data.existing.profile_photo // \"\")) or (.trigger.data.entity_name == \"Listing\" and (.trigger.data.proposed.photos // []) != (.trigger.data.existing.photos // []))) }",
+    "config": {
+      "trigger_type": "hook",
+      "events": [],
+      "hook_type": "entity_before_write"
+    }
+  },
+  "description": "Before a profile photo or listing photos are saved, makes sure each one is an image file uploaded to Gems24's own storage",
+  "name": "Photo guard"
+}

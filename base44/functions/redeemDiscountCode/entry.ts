@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.44';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.63';
 import { CYCLE_MONTHS, MONTH_MS, TIER_KEYS, callerTrader, planLapsed, tierAllowed, tierRank } from '../../shared/traders.ts';
 
 /**
@@ -75,7 +75,7 @@ export default async function (req: Request): Promise<Response> {
     const now = new Date();
     const endsAt = new Date(now.getTime() + CYCLE_MONTHS * MONTH_MS).toISOString();
 
-    await base44.asServiceRole.entities.CodeRedemption.create({
+    const mine = await base44.asServiceRole.entities.CodeRedemption.create({
       code,
       trader_id: trader.id,
       user_email: trader.user_email || user.email,
@@ -83,9 +83,20 @@ export default async function (req: Request): Promise<Response> {
       redeemed_at: now.toISOString(),
       access_ends_at: endsAt,
     });
-    await base44.asServiceRole.entities.DiscountCode.update(found.id, {
-      times_used: (found.times_used || 0) + 1,
-    });
+
+    // Re-check after claiming, so simultaneous redemptions can't overshoot the
+    // code's limit or grant the same trader twice. Overshooting claims roll back.
+    const [used, byTrader] = await Promise.all([
+      base44.asServiceRole.entities.CodeRedemption.count({ code }),
+      base44.asServiceRole.entities.CodeRedemption.count({ code, trader_id: trader.id }),
+    ]);
+    if (byTrader > 1 || (found.max_uses && used > found.max_uses)) {
+      await base44.asServiceRole.entities.CodeRedemption.delete(mine.id);
+      return byTrader > 1
+        ? Response.json({ state: 'already_used', reason: "You've already used that code." })
+        : Response.json({ state: 'exhausted', reason: 'That code has already been fully used.' });
+    }
+    await base44.asServiceRole.entities.DiscountCode.update(found.id, { times_used: used });
     await base44.asServiceRole.entities.Trader.update(trader.id, {
       subscription_tier: tier,
       subscription_start_date: now.toISOString(),

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Camera, Loader2, User } from "lucide-react";
 import { detectCountry } from "@/lib/locale";
+import { toPhotoFile } from "@/lib/photoFile";
 import { countWords, limitWords } from "@/lib/words";
 import CountrySelect from "./CountrySelect";
 import PhoneRegionSelect from "./PhoneRegionSelect";
@@ -45,7 +46,9 @@ export default function TraderForm({ initial = {}, onSave, saving, submitLabel =
   const set = (k, v) => setForm({ ...form, [k]: v });
 
   const uploadPhoto = async (e) => {
-    const file = e.target.files?.[0];
+    const picked = e.target.files?.[0];
+    e.target.value = "";
+    const file = picked && toPhotoFile(picked);
     if (!file) return;
     setUploading(true);
     const { file_url } = await base44.integrations.Core.UploadFile({ file });

@@ -3,12 +3,14 @@ import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import { ImagePlus, Camera, X, Loader2 } from "lucide-react";
 import { haptic } from "@/lib/despia";
+import { toPhotoFile } from "@/lib/photoFile";
 
 export default function PhotoUploader({ photos = [], onChange }) {
   const [uploading, setUploading] = useState(false);
 
   const handleFiles = async (e) => {
-    const files = Array.from(e.target.files || []);
+    const files = Array.from(e.target.files || []).map(toPhotoFile).filter(Boolean);
+    e.target.value = "";
     if (!files.length) return;
     setUploading(true);
     const urls = [];
