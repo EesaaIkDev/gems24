@@ -34,6 +34,7 @@ import About from '@/pages/About';
 import OAuthConsent from '@/pages/OAuthConsent';
 import AdminVerifications from '@/pages/AdminVerifications';
 import SavedListings from '@/pages/SavedListings';
+import GlassLab from '@/pages/GlassLab';
 import RouteSeo from '@/components/seo/RouteSeo';
 import PushInit from '@/components/native/PushInit';
 import { GoldMembershipProvider } from '@/lib/GoldMembership';
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
       <Route path="/oauth/consent" element={<OAuthConsent />} />
       <Route path="/welcome" element={<Welcome />} />
       <Route path="/join" element={<Join />} />
+      <Route path="/glass-lab" element={<GlassLab />} />
       {!isAuthenticated && <Route path="/" element={<Welcome />} />}
       <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />

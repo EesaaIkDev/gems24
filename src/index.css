@@ -272,6 +272,17 @@
     .glass-emerald { background-color: oklch(var(--primary)); }
   }
 
+  /* Liquid Glass, Tailwind 4 → 3: GlassCard's frost before WebGL draws (or without it).
+     The library's own [data-glass-ready] rule clears this once the optical glass is up. */
+  [data-glass-host][style*="--glass-card-tint"] {
+    background-color: rgb(255 255 255 / var(--glass-card-tint));
+    -webkit-backdrop-filter: blur(var(--glass-card-blur));
+    backdrop-filter: blur(var(--glass-card-blur));
+  }
+  .dark [data-glass-host][style*="--glass-card-tint"] {
+    background-color: rgb(0 0 0 / var(--glass-card-tint));
+  }
+
   /* Tactile press: quick compress, springy recovery. */
   .glass-press {
     transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
