@@ -24,7 +24,7 @@ export default function ListingCard({ listing }) {
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
         {photo ? (
-          <Image src={photo} alt={listingAlt(listing)} className="h-full w-full" />
+          <Image src={photo} alt={listingAlt(listing)} className="h-full w-full mix-blend-multiply dark:mix-blend-normal" />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <Gem className="h-8 w-8 text-muted-foreground/40" />

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
+import IconSwap from "@/components/common/IconSwap";
 import { LOGO_URL } from "@/lib/gems";
 import { setPendingReferralCode } from "@/lib/referral";
 
@@ -42,7 +43,7 @@ export default function Join() {
               {code}
             </p>
             <Button onClick={copy} className="mt-5 h-12 w-full font-semibold">
-              {copied ? <Check className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
+              <IconSwap show={copied} className="mr-2" on={<Check className="h-4 w-4" />} off={<Copy className="h-4 w-4" />} />
               {copied ? "Code copied" : "Copy code"}
             </Button>
           </div>

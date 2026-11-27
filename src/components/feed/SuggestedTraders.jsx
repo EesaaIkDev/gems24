@@ -15,7 +15,7 @@ export default function SuggestedTraders({ traders }) {
       <h2 className="px-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         Suggested traders
       </h2>
-      <div className="mt-3 flex gap-3 overflow-x-auto px-4 pb-1 scrollbar-none">
+      <div className="mt-3 flex gap-3 overflow-x-auto px-4 pb-1 scrollbar-none fade-x">
         {traders.map((t) => (
           <Link
             key={t.id}

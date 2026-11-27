@@ -32,7 +32,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
     <>
       {/* The primary choice stays one tap away; everything used less often is
           grouped behind Filters so the results start higher on the screen. */}
-      <div className="flex gap-1.5 overflow-x-auto -mx-3.5 px-3.5 pb-1 scrollbar-none">
+      <div className="flex gap-1.5 overflow-x-auto -mx-3.5 px-3.5 pb-1 scrollbar-none fade-x">
         <button
           type="button"
           onClick={() => {

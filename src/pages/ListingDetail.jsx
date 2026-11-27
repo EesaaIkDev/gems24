@@ -115,22 +115,22 @@ export default function ListingDetail() {
       <div className="mt-3 px-4">
         <div className="aspect-[4/3] rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
           {photos.length ? (
-            <Image src={photos[active]} alt={listingAlt(listing)} className="w-full h-full" />
+            <Image src={photos[active]} alt={listingAlt(listing)} className="w-full h-full mix-blend-multiply dark:mix-blend-normal" />
           ) : (
             <Gem className="w-10 h-10 text-muted-foreground/40" />
           )}
         </div>
         {photos.length > 1 && (
-          <div className="mt-2.5 flex gap-2 overflow-x-auto scrollbar-none">
+          <div className="mt-2.5 flex gap-2 overflow-x-auto scrollbar-none fade-x -mx-4 px-4">
             {photos.map((p, i) => (
               <button
                 key={p}
                 onClick={() => setActive(i)}
-                className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 ${
+                className={`w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2 bg-secondary ${
                   i === active ? "border-primary" : "border-transparent"
                 }`}
               >
-                <Image src={p} alt={`${listingAlt(listing)} — photo ${i + 1}`} className="w-full h-full" />
+                <Image src={p} alt={`${listingAlt(listing)} — photo ${i + 1}`} className="w-full h-full rounded-[calc(var(--radius)-2px)] mix-blend-multiply dark:mix-blend-normal" />
               </button>
             ))}
           </div>

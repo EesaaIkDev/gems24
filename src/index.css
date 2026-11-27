@@ -2,103 +2,112 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Colors are OKLCH channels ("L C H") so lightness steps look even to the eye.
+   Use them as oklch(var(--token)). Borders are a tinted ink at low alpha
+   (--border-alpha) so they blend into whatever surface sits behind them. */
 @layer base {
   :root {
     /* Flat design system: white surfaces, 1px borders, one green accent. */
-    --background: 0 0% 100%;            /* #FFFFFF */
-    --foreground: 160 5% 11%;           /* #1A1D1C */
-    --card: 0 0% 100%;                  /* #FFFFFF */
-    --card-foreground: 160 5% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 160 5% 11%;
-    --primary: 147 68% 38%;             /* #1FA45B */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 150 11% 96%;           /* #F5F7F6 */
-    --secondary-foreground: 160 5% 11%;
-    --muted: 150 11% 96%;               /* #F5F7F6 */
-    --muted-foreground: 158 4% 44%;     /* #6B7370 */
-    --accent: 146 44% 94%;              /* #E8F6EE pale green tint */
-    --accent-foreground: 147 71% 28%;   /* deep green for text on the tint */
-    --destructive: 4 71% 50%;           /* #D93025 */
-    --destructive-foreground: 0 0% 100%;
-    --border: 160 6% 91%;               /* #E6E9E8 */
-    --input: 160 6% 91%;
-    --ring: 147 68% 38%;
-    --disabled: 154 4% 68%;             /* #A9B0AD */
-    --switch-off: 154 4% 68%;
-    --welcome-green: 147 68% 38%;
-    --welcome-green-bright: 147 68% 33%;
-    --welcome-ink: 0 0% 100%;
-    --welcome-panel: 150 11% 96%;
-    --welcome-border: 160 6% 91%;
-    --welcome-text: 160 5% 11%;
-    --welcome-muted: 158 4% 44%;
-    --welcome-subtle: 158 4% 44%;
-    --welcome-pattern: 147 71% 28%;
-    --chart-1: 147 68% 38%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.625rem;                 /* 10px buttons + inputs */
+    --background: 100% 0 0;                 /* #FFFFFF */
+    --foreground: 22.9% 0.005 174;          /* #1A1D1C */
+    --card: 100% 0 0;
+    --card-foreground: 22.9% 0.005 174;
+    --popover: 100% 0 0;
+    --popover-foreground: 22.9% 0.005 174;
+    --primary: 63% 0.153 153;               /* #1FA45B */
+    --primary-foreground: 100% 0 0;
+    --secondary: 97.1% 0.003 165.1;         /* #F5F7F6 */
+    --secondary-foreground: 22.9% 0.005 174;
+    --muted: 97.1% 0.003 165.1;
+    --muted-foreground: 55.3% 0.012 171.9;  /* #6B7370 */
+    --accent: 96.2% 0.017 161.4;            /* #E8F6EE pale green tint */
+    --accent-foreground: 51.1% 0.124 153;
+    --destructive: 58.1% 0.206 29.2;        /* #D93025 */
+    --destructive-foreground: 100% 0 0;
+    --border: 22.9% 0.005 174;              /* ink, used at --border-alpha */
+    --border-alpha: 0.11;
+    --input: 22.9% 0.005 174;
+    --input-alpha: 0.14;
+    --ring: 63% 0.153 153;
+    --disabled: 75.3% 0.008 168.4;
+    --switch-off: 75.3% 0.008 168.4;
+    --welcome-green: 63% 0.153 153;
+    --welcome-green-bright: 56.9% 0.137 153.1;
+    --welcome-ink: 100% 0 0;
+    --welcome-panel: 97.1% 0.003 165.1;
+    --welcome-border: 93.3% 0.003 174.5;
+    --welcome-text: 22.9% 0.005 174;
+    --welcome-muted: 55.3% 0.012 171.9;
+    --welcome-subtle: 55.3% 0.012 171.9;
+    --welcome-pattern: 51.1% 0.124 153;
+    --chart-1: 63% 0.153 153;
+    --chart-2: 63.1% 0.101 183.5;
+    --chart-3: 37.9% 0.044 225.5;
+    --chart-4: 83.4% 0.119 88.1;
+    --chart-5: 78.3% 0.126 58.7;
+    --radius: 0.625rem;                     /* 10px buttons + inputs */
     --font-heading: "Expletus Sans", ui-sans-serif, system-ui, sans-serif;
     --font-body: "Sofia Sans", "Expletus Sans", ui-sans-serif, system-ui, sans-serif;
     --font-display: "Expletus Sans", ui-sans-serif, system-ui, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 160 5% 11%;
-    --sidebar-primary: 147 68% 38%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 150 11% 96%;
-    --sidebar-accent-foreground: 160 5% 11%;
-    --sidebar-border: 160 6% 91%;
-    --sidebar-ring: 147 68% 38%;
+    --sidebar-background: 100% 0 0;
+    --sidebar-foreground: 22.9% 0.005 174;
+    --sidebar-primary: 63% 0.153 153;
+    --sidebar-primary-foreground: 100% 0 0;
+    --sidebar-accent: 97.1% 0.003 165.1;
+    --sidebar-accent-foreground: 22.9% 0.005 174;
+    --sidebar-border: 93.3% 0.003 174.5;
+    --sidebar-ring: 63% 0.153 153;
   }
 
+  /* Dark mode: depth comes from lighter surfaces, not shadows.
+     background < card/secondary < popover (floating layers are lightest). */
   .dark {
-    --background: 165 10% 8%;           /* #121615 */
-    --foreground: 160 13% 95%;          /* #F2F5F4 */
-    --card: 160 10% 12%;                /* #1B211F */
-    --card-foreground: 160 13% 95%;
-    --popover: 160 10% 12%;
-    --popover-foreground: 160 13% 95%;
-    --primary: 147 68% 38%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 160 10% 12%;
-    --secondary-foreground: 160 13% 95%;
-    --muted: 160 10% 12%;
-    --muted-foreground: 158 6% 66%;
-    --accent: 147 40% 16%;
-    --accent-foreground: 147 60% 72%;
-    --destructive: 4 71% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 165 9% 18%;               /* #2A3230 */
-    --input: 165 9% 18%;
-    --ring: 147 68% 45%;
-    --disabled: 158 5% 42%;
-    --switch-off: 165 7% 30%;
-    --welcome-green: 147 68% 42%;
-    --welcome-green-bright: 147 68% 48%;
-    --welcome-ink: 165 10% 8%;
-    --welcome-panel: 160 10% 12%;
-    --welcome-border: 165 9% 18%;
-    --welcome-text: 160 13% 95%;
-    --welcome-muted: 158 6% 66%;
-    --welcome-subtle: 158 6% 66%;
-    --welcome-pattern: 147 71% 22%;
-    --chart-1: 147 68% 45%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 160 10% 12%;
-    --sidebar-foreground: 160 13% 95%;
-    --sidebar-primary: 147 68% 42%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 165 9% 18%;
-    --sidebar-accent-foreground: 160 13% 95%;
-    --sidebar-border: 165 9% 18%;
-    --sidebar-ring: 147 68% 45%;
+    --background: 19.7% 0.007 178.9;        /* #121615 */
+    --foreground: 96.4% 0.004 174.5;
+    --card: 24.4% 0.01 173.4;
+    --card-foreground: 96.4% 0.004 174.5;
+    --popover: 28.5% 0.011 173.4;
+    --popover-foreground: 96.4% 0.004 174.5;
+    --primary: 63% 0.153 153;
+    --primary-foreground: 100% 0 0;
+    --secondary: 24.4% 0.01 173.4;
+    --secondary-foreground: 96.4% 0.004 174.5;
+    --muted: 24.4% 0.01 173.4;
+    --muted-foreground: 74% 0.013 172.1;
+    --accent: 31.4% 0.051 157.6;
+    --accent-foreground: 84.7% 0.107 158.9;
+    --destructive: 60.9% 0.191 28.2;
+    --destructive-foreground: 100% 0 0;
+    --border: 100% 0 0;                     /* light ink, used at --border-alpha */
+    --border-alpha: 0.1;
+    --input: 100% 0 0;
+    --input-alpha: 0.13;
+    --ring: 71.4% 0.175 152.8;
+    --disabled: 53.6% 0.014 171.8;
+    --switch-off: 42.8% 0.014 178.9;
+    --welcome-green: 67.9% 0.166 152.9;
+    --welcome-green-bright: 74.9% 0.184 152.8;
+    --welcome-ink: 19.7% 0.007 178.9;
+    --welcome-panel: 24.4% 0.01 173.4;
+    --welcome-border: 30.9% 0.012 178.7;
+    --welcome-text: 96.4% 0.004 174.5;
+    --welcome-muted: 74% 0.013 172.1;
+    --welcome-subtle: 74% 0.013 172.1;
+    --welcome-pattern: 43.2% 0.103 153.4;
+    --chart-1: 71.4% 0.175 152.8;
+    --chart-2: 69.8% 0.134 165.5;
+    --chart-3: 72.3% 0.15 60.6;
+    --chart-4: 61.9% 0.204 312.7;
+    --chart-5: 61.2% 0.209 6.4;
+    --sidebar-background: 24.4% 0.01 173.4;
+    --sidebar-foreground: 96.4% 0.004 174.5;
+    --sidebar-primary: 67.9% 0.166 152.9;
+    --sidebar-primary-foreground: 100% 0 0;
+    --sidebar-accent: 30.9% 0.012 178.7;
+    --sidebar-accent-foreground: 96.4% 0.004 174.5;
+    --sidebar-border: 30.9% 0.012 178.7;
+    --sidebar-ring: 71.4% 0.175 152.8;
   }
 }
 
@@ -161,9 +170,20 @@
     @apply font-heading tracking-tight;
   }
 
-  /* One consistent outline icon weight across the app. */
+  /* Icon stroke follows the weight of the text beside it:
+     regular text → 1.5, semibold → 1.75, bold → 2. */
   svg.lucide {
     stroke-width: 1.5;
+  }
+  button svg.lucide,
+  .font-semibold svg.lucide,
+  .font-medium svg.lucide {
+    stroke-width: 1.75;
+  }
+  .font-bold svg.lucide,
+  .font-extrabold svg.lucide,
+  .font-black svg.lucide {
+    stroke-width: 2;
   }
 
   /* Visible keyboard focus for VoiceOver / TalkBack / keyboard users. */
@@ -202,6 +222,17 @@
     display: none;
   }
 
+  /* Horizontal carousels fade out at both edges instead of hard-clipping. */
+  .fade-x {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 1rem, #000 calc(100% - 1.5rem), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 1rem, #000 calc(100% - 1.5rem), transparent);
+  }
+
+  /* Gradients interpolate in OKLCH so the midpoint stays vivid, not gray. */
+  .bg-gradient-oklch {
+    background-image: linear-gradient(to right in oklch, var(--tw-gradient-stops));
+  }
+
   /* Flat press feedback — opacity only, no depth. */
   .tap-scale {
     transition: opacity 140ms ease;
@@ -216,23 +247,23 @@
 .gs-loading-group { animation: gs-fade-out 0.4s ease forwards; animation-delay: 2.35s; }
 .gs-shake { transform-box: view-box; transform-origin: 50px 48px; animation: gs-shake 1.95s ease-in-out infinite; }
 .gs-gem {
-  fill: hsl(var(--primary));
+  fill: oklch(var(--primary));
   transform-box: view-box;
   transform-origin: 50px 48px;
   animation: gs-compress 0.4s ease forwards, gs-fade-out 0.2s ease forwards;
   animation-delay: 2.35s, 2.75s;
 }
 .gs-glass { transform-box: view-box; transform-origin: 50px 48px; animation: gs-pulse 2.35s ease-in-out infinite; }
-.gs-ring { fill: none; stroke: hsl(var(--primary)); stroke-width: 5.76; }
+.gs-ring { fill: none; stroke: oklch(var(--primary)); stroke-width: 5.76; }
 .gs-handle { transform-box: view-box; transform-origin: 50px 48px; animation: gs-spin 2.35s linear 1 forwards; }
 .gs-handle-retract { transform-box: view-box; transform-origin: 73px 71px; animation: gs-retract 0.4s ease forwards; animation-delay: 2.35s; }
-.gs-handle line { stroke: hsl(var(--primary)); stroke-width: 5.76; stroke-linecap: round; }
-.gs-sparkle { fill: hsl(var(--background)); opacity: 0; animation: gs-twinkle 3s ease-in-out infinite; }
+.gs-handle line { stroke: oklch(var(--primary)); stroke-width: 5.76; stroke-linecap: round; }
+.gs-sparkle { fill: oklch(var(--background)); opacity: 0; animation: gs-twinkle 3s ease-in-out infinite; }
 .gs-sparkle.s2 { animation-delay: 0.8s; }
 .gs-sparkle.s3 { animation-delay: 1.6s; }
 .gs-success-circle {
   fill: none;
-  stroke: hsl(var(--primary));
+  stroke: oklch(var(--primary));
   stroke-width: 4;
   opacity: 0;
   transform-box: view-box;
@@ -242,7 +273,7 @@
 }
 .gs-check {
   fill: none;
-  stroke: hsl(var(--primary));
+  stroke: oklch(var(--primary));
   stroke-width: 8;
   stroke-linecap: round;
   stroke-linejoin: round;

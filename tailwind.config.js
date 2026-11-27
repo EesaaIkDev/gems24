@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const c = (token) => `oklch(var(--${token}) / <alpha-value>)`;
+
 module.exports = {
     darkMode: ["class"],
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
@@ -7,71 +9,77 @@ module.exports = {
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
+  			sm: 'calc(var(--radius) - 4px)',
+  			xs: 'calc(var(--radius) - 6px)'
   		},
+  		/* 100vh misbehaves in mobile Safari; screen heights use dvh. */
+  		height: { screen: '100dvh' },
+  		minHeight: { screen: '100dvh' },
+  		maxHeight: { screen: '100dvh' },
   		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
+  			background: c('background'),
+  			foreground: c('foreground'),
   			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
+  				DEFAULT: c('card'),
+  				foreground: c('card-foreground')
   			},
   			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
+  				DEFAULT: c('popover'),
+  				foreground: c('popover-foreground')
   			},
   			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
+  				DEFAULT: c('primary'),
+  				foreground: c('primary-foreground')
   			},
   			welcome: {
-  				green: 'hsl(var(--welcome-green))',
-  				'green-bright': 'hsl(var(--welcome-green-bright))',
-  				ink: 'hsl(var(--welcome-ink))',
-  				panel: 'hsl(var(--welcome-panel))',
-  				border: 'hsl(var(--welcome-border))',
-  				text: 'hsl(var(--welcome-text))',
-  				muted: 'hsl(var(--welcome-muted))',
-  				subtle: 'hsl(var(--welcome-subtle))',
-  				pattern: 'hsl(var(--welcome-pattern))'
+  				green: c('welcome-green'),
+  				'green-bright': c('welcome-green-bright'),
+  				ink: c('welcome-ink'),
+  				panel: c('welcome-panel'),
+  				border: c('welcome-border'),
+  				text: c('welcome-text'),
+  				muted: c('welcome-muted'),
+  				subtle: c('welcome-subtle'),
+  				pattern: c('welcome-pattern')
   			},
   			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
+  				DEFAULT: c('secondary'),
+  				foreground: c('secondary-foreground')
   			},
   			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
+  				DEFAULT: c('muted'),
+  				foreground: c('muted-foreground')
   			},
   			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
+  				DEFAULT: c('accent'),
+  				foreground: c('accent-foreground')
   			},
   			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
+  				DEFAULT: c('destructive'),
+  				foreground: c('destructive-foreground')
   			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			disabled: 'hsl(var(--disabled))',
-  			'switch-off': 'hsl(var(--switch-off))',
-  			ring: 'hsl(var(--ring))',
+  			/* Alpha borders: a tinted ink at low opacity blends into any surface. */
+  			border: 'oklch(var(--border) / calc(var(--border-alpha) * <alpha-value>))',
+  			input: 'oklch(var(--input) / calc(var(--input-alpha) * <alpha-value>))',
+  			disabled: c('disabled'),
+  			'switch-off': c('switch-off'),
+  			ring: c('ring'),
   			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
+  				'1': c('chart-1'),
+  				'2': c('chart-2'),
+  				'3': c('chart-3'),
+  				'4': c('chart-4'),
+  				'5': c('chart-5')
   			},
   			sidebar: {
-  				DEFAULT: 'hsl(var(--sidebar-background))',
-  				foreground: 'hsl(var(--sidebar-foreground))',
-  				primary: 'hsl(var(--sidebar-primary))',
-  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-  				accent: 'hsl(var(--sidebar-accent))',
-  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-  				border: 'hsl(var(--sidebar-border))',
-  				ring: 'hsl(var(--sidebar-ring))'
+  				DEFAULT: c('sidebar-background'),
+  				foreground: c('sidebar-foreground'),
+  				primary: c('sidebar-primary'),
+  				'primary-foreground': c('sidebar-primary-foreground'),
+  				accent: c('sidebar-accent'),
+  				'accent-foreground': c('sidebar-accent-foreground'),
+  				border: c('sidebar-border'),
+  				ring: c('sidebar-ring')
   			}
   		},
   		boxShadow: {

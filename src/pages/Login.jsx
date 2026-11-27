@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import EmeraldCutIcon from "@/components/auth/EmeraldCutIcon";
 import { Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
+import IconSwap from "@/components/common/IconSwap";
 import useErrorHaptic from "@/hooks/useErrorHaptic";
 import AuthLayout from "@/components/AuthLayout";
 import { LOCK_MINUTES, clearFailures, lockedMinutes, recordFailure } from "@/lib/loginLockout";
@@ -112,7 +113,7 @@ export default function Login() {
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              <IconSwap show={showPassword} on={<EyeOff className="w-4 h-4" />} off={<Eye className="w-4 h-4" />} />
             </button>
           </div>
         </div>

@@ -25,7 +25,7 @@ export default function TraderFilters({ filters, setFilters, countries, specialt
 
   return (
     <>
-      <div className="flex gap-1.5 overflow-x-auto -mx-3.5 px-3.5 pb-1 scrollbar-none">
+      <div className="flex gap-1.5 overflow-x-auto -mx-3.5 px-3.5 pb-1 scrollbar-none fade-x">
         <button
           type="button"
           onClick={() => {

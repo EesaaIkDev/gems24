@@ -44,7 +44,7 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
       <Link to={listingPath(listing)} className="block bg-secondary">
         <div className="aspect-square w-full flex items-center justify-center">
           {photo ? (
-            <Image src={photo} alt={listingAlt(listing)} className="w-full h-full" />
+            <Image src={photo} alt={listingAlt(listing)} className="w-full h-full mix-blend-multiply dark:mix-blend-normal" />
           ) : (
             <Gem className="w-10 h-10 text-muted-foreground/40" />
           )}

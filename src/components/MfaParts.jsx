@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Check, ChevronsUpDown, Copy, ShieldCheck } from "lucide-react";
+import IconSwap from "@/components/common/IconSwap";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
@@ -200,7 +201,7 @@ export function CopyKeyButton({ text, wide = false }) {
   return (
     <button type="button" onClick={copy} title="Copy to clipboard" aria-label="Copy to clipboard"
       className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-muted">
-      {copied ? <Check className="w-4 h-4" aria-hidden="true" /> : <Copy className="w-4 h-4" aria-hidden="true" />}
+      <IconSwap show={copied} on={<Check className="w-4 h-4" aria-hidden="true" />} off={<Copy className="w-4 h-4" aria-hidden="true" />} />
     </button>
   );
 }
