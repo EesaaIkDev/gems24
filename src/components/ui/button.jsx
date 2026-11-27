@@ -1,8 +1,8 @@
 import * as React from "react"
-import { cva } from "class-variance-authority";
-import { Children, cloneElement } from "react";
+import { cva } from "class-variance-authority"
+import { Children, cloneElement } from "react"
 
-import { GlassLayer } from "@/components/liquid-glass/glass-layer"
+import { GlassButton } from "@/components/liquid-glass/glass-button"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -10,7 +10,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "glass-emerald text-primary-foreground hover:opacity-95",
+        default: "bg-primary text-primary-foreground hover:opacity-95",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline: "border border-primary bg-background text-primary hover:bg-accent active:bg-accent",
         secondary: "border border-border bg-background text-foreground hover:bg-secondary active:bg-secondary",
@@ -31,15 +31,37 @@ const buttonVariants = cva(
   }
 )
 
-// Solid variants get the liquid-glass surface; ghost/link stay plain text buttons.
+// Solid variants use GlassButton for liquid glass; ghost/link stay plain text buttons
 const GLASS_VARIANTS = new Set(["default", "destructive", "outline", "secondary"])
 
 const Button = React.forwardRef(({ className, variant, size, asChild = false, children, disabled, ...props }, ref) => {
   const effectiveVariant = variant ?? "default"
-  const glass = GLASS_VARIANTS.has(effectiveVariant) ? (
-    <GlassLayer material="tinted" tint={0.55} disabled={disabled} />
-  ) : null
   const classes = cn(buttonVariants({ variant, size, className }))
+
+  // For solid variants, use GlassButton instead of wrapper + GlassLayer
+  if (GLASS_VARIANTS.has(effectiveVariant) && !asChild) {
+    const glassVariant = effectiveVariant === "default" ? "clear" : "tinted"
+    const glassClassName = effectiveVariant === "default" 
+      ? "bg-primary text-primary-foreground"
+      : effectiveVariant === "destructive"
+      ? "bg-destructive text-destructive-foreground"
+      : effectiveVariant === "outline"
+      ? "border border-primary bg-background text-primary"
+      : "border border-border bg-background text-foreground"
+    
+    return (
+      <GlassButton
+        ref={ref}
+        material={glassVariant}
+        size={size === "icon" ? "md" : size === "sm" ? "sm" : size === "lg" ? "lg" : "md"}
+        className={cn(className, glassClassName)}
+        disabled={disabled}
+        {...props}
+      >
+        {children}
+      </GlassButton>
+    )
+  }
 
   if (asChild) {
     const child = Children.only(children)
@@ -47,9 +69,8 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, ch
       ...props,
       ref,
       disabled,
-      "data-glass-host": glass ? "" : undefined,
       className: cn(classes, child.props.className),
-    }, <>{glass}{child.props.children}</>)
+    }, <>{child.props.children}</>)
   }
 
   return (
@@ -57,9 +78,7 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, ch
       className={classes}
       ref={ref}
       disabled={disabled}
-      data-glass-host={glass ? "" : undefined}
       {...props}>
-      {glass}
       {children}
     </button>)
   );
