@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import { SlidersHorizontal } from "lucide-react";
 import { GEM_TYPES, TIER_ORDER, TIERS, cap } from "@/lib/gems";
@@ -7,6 +6,7 @@ import { chipClass as chip } from "@/components/common/filterChip";
 import CountryFilter from "@/components/common/CountryFilter";
 import { values, selected, toggle } from "@/components/common/filterValues";
 import { haptic } from "@/lib/despia";
+import { GlassButtonGroup, GlassButtonGroupItem } from "@/components/liquid-glass";
 
 export default function TraderFilters({ filters, setFilters, countries, specialties = GEM_TYPES }) {
   const [open, setOpen] = useState(false);
@@ -55,10 +55,20 @@ export default function TraderFilters({ filters, setFilters, countries, specialt
         title="Filter traders"
         description="Choose a membership grade or location."
         footer={
-          <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" onClick={clearAll}>Clear all</Button>
-            <Button onClick={() => { haptic("heavy"); setOpen(false); }}>Show results</Button>
-          </div>
+          <GlassButtonGroup aria-label="Filter actions">
+            <GlassButtonGroupItem
+              onClick={clearAll}
+              className="text-sm font-medium"
+            >
+              Clear all
+            </GlassButtonGroupItem>
+            <GlassButtonGroupItem
+              onClick={() => { haptic("heavy"); setOpen(false); }}
+              className="text-sm font-medium"
+            >
+              Show results
+            </GlassButtonGroupItem>
+          </GlassButtonGroup>
         }
       >
         <div className="space-y-5 pb-4">

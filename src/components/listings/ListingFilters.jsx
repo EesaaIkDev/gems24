@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import { SlidersHorizontal } from "lucide-react";
 import { GlassSelect } from "@/components/liquid-glass/glass-select";
+import { GlassButtonGroup, GlassButtonGroupItem } from "@/components/liquid-glass";
 import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
 import CountryFilter from "@/components/common/CountryFilter";
 import { values } from "@/components/common/filterValues";
@@ -80,10 +80,20 @@ export default function ListingFilters({ filters, setFilters, countries }) {
         title="Filter stones"
         description="Narrow the marketplace without losing your search."
         footer={
-          <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" onClick={clearAll}>Clear all</Button>
-            <Button onClick={() => { haptic("heavy"); setOpen(false); }}>Show results</Button>
-          </div>
+          <GlassButtonGroup aria-label="Filter actions">
+            <GlassButtonGroupItem
+              onClick={clearAll}
+              className="text-sm font-medium"
+            >
+              Clear all
+            </GlassButtonGroupItem>
+            <GlassButtonGroupItem
+              onClick={() => { haptic("heavy"); setOpen(false); }}
+              className="text-sm font-medium"
+            >
+              Show results
+            </GlassButtonGroupItem>
+          </GlassButtonGroup>
         }
       >
         <div className="space-y-5 pb-4">
