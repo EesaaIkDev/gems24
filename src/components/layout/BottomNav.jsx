@@ -66,10 +66,13 @@ export default function BottomNav({ badge = 0 }) {
                 onClick={(e) => onTab(e, to)}
                 aria-label="Add a gemstone listing"
                 aria-current={active ? "page" : undefined}
-                className="glass-press flex items-center justify-center"
+                className="glass-press flex flex-col items-center justify-center gap-0.5"
               >
-                <span className="glass-emerald flex h-11 w-11 items-center justify-center rounded-full">
-                  <Plus className="h-6 w-6" strokeWidth={2.25} aria-hidden="true" />
+                <span className="glass-emerald flex h-9 w-9 items-center justify-center rounded-full">
+                  <Plus className="h-5 w-5" strokeWidth={2.25} aria-hidden="true" />
+                </span>
+                <span className={`text-[0.6875rem] font-medium leading-none ${active ? "text-primary" : "text-muted-foreground"}`}>
+                  {label}
                 </span>
               </Link>
             );

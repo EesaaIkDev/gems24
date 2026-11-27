@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { useLocation, useNavigationType, useOutlet } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { useLocation, useOutlet } from "react-router-dom";
 import AppHeader from "./AppHeader";
 import BottomNav from "./BottomNav";
-import PageTransition from "./PageTransition";
 import useTheme from "@/hooks/useTheme";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import useMessageNotifications from "@/hooks/useMessageNotifications";
@@ -23,7 +21,6 @@ export default function AppLayout() {
   const unreadMessages = useMessageNotifications(trader?.id);
   useActivityHeartbeat(trader?.id);
   const { pathname } = useLocation();
-  const navigationType = useNavigationType();
   const outlet = useOutlet();
   const scrollRef = useRef(null);
 
@@ -84,11 +81,8 @@ export default function AppLayout() {
           }}
         >
           <main className="mx-auto max-w-6xl">
-            <AnimatePresence mode="popLayout" initial={false}>
-              <PageTransition key={pathname} direction={navigationType === "POP" ? -1 : 1}>
-                {outlet}
-              </PageTransition>
-            </AnimatePresence>
+            {/* No route animation: exiting pages were left mounted and pushed new pages off-screen. */}
+            {outlet}
           </main>
         </div>
 
