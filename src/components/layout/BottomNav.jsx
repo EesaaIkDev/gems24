@@ -3,8 +3,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Home, Search, Plus, MessageCircle, User } from "lucide-react";
 import { haptic } from "@/lib/despia";
 import NumberFlow from "@number-flow/react";
-import { GlassLayer } from "@/components/liquid-glass/glass-layer";
-import { GlassLens } from "@/components/liquid-glass/glass-lens";
 
 const TABS = [
   { to: "/", label: "Home", icon: Home },
@@ -14,7 +12,7 @@ const TABS = [
   { to: "/profile", label: "Profile", icon: User },
 ];
 
-/** Floating frosted-glass tab bar. The selection lens glides between tabs. */
+/** Floating frosted-glass tab bar with clean pill selection indicator. */
 export default function BottomNav({ badge = 0 }) {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
@@ -32,8 +30,6 @@ export default function BottomNav({ badge = 0 }) {
   };
 
   const isActive = (to) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
-  // The glass lens sits behind the active tab; the Add button carries its own emphasis.
-  const activeTo = TABS.find((t) => !t.raised && isActive(t.to))?.to ?? null;
 
   return (
     <nav
@@ -45,74 +41,65 @@ export default function BottomNav({ badge = 0 }) {
         paddingRight: "calc(var(--safe-right) + 0.75rem)",
       }}
     >
-      <div
-        data-glass-host=""
-        className="glass-frost pointer-events-auto mx-auto max-w-md rounded-full px-1"
-        style={{ height: "calc(var(--tabbar-h) - 0.5rem)" }}
-      >
-        <GlassLayer material="tinted" tint={0.4} swell={false} />
-      <GlassLens value={activeTo} />
-      <div role="radiogroup" aria-label="Main sections" className="relative grid h-full grid-cols-5">
-        {TABS.map(({ to, label, icon: Icon, raised }) => {
-          const active = isActive(to);
-          const unread = label === "Chats" && badge > 0;
+      <div className="glass-frost pointer-events-auto mx-auto max-w-md rounded-full px-1" style={{ height: "calc(var(--tabbar-h) - 0.5rem)" }}>
+        <div className="relative grid h-full grid-cols-5">
+          {TABS.map(({ to, label, icon: Icon, raised }) => {
+            const active = isActive(to);
+            const unread = label === "Chats" && badge > 0;
 
-          if (raised) {
+            if (raised) {
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  onClick={(e) => onTab(e, to)}
+                  aria-label="Add a gemstone listing"
+                  aria-current={active ? "page" : undefined}
+                  className="glass-press flex flex-col items-center justify-end gap-1 pb-1.5"
+                >
+                  <span className="glass-emerald -mt-5 flex h-12 w-12 items-center justify-center rounded-full shadow-lg shadow-emerald-500/25">
+                    <Plus className="h-6 w-6 text-white" strokeWidth={2.25} aria-hidden="true" />
+                  </span>
+                  <span className={`text-[0.6875rem] font-medium leading-none ${active ? "text-primary" : "text-muted-foreground"}`}>
+                    {label}
+                  </span>
+                </Link>
+              );
+            }
+
             return (
               <Link
                 key={to}
                 to={to}
                 onClick={(e) => onTab(e, to)}
-                aria-label="Add a gemstone listing"
+                aria-label={unread ? `${label}, ${badge} unread` : label}
                 aria-current={active ? "page" : undefined}
-                className="glass-press flex flex-col items-center justify-end gap-1 pb-1.5"
+                className="tap-scale relative flex flex-col items-center justify-center gap-0.5"
               >
-                <span className="glass-emerald -mt-5 flex h-12 w-12 items-center justify-center rounded-full">
-                  <Plus className="h-6 w-6" strokeWidth={2.25} aria-hidden="true" />
-                </span>
-                <span className={`text-[0.6875rem] font-medium leading-none ${active ? "text-primary" : "text-muted-foreground"}`}>
+                {active && (
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-y-1.5 w-10 rounded-full bg-primary/10"
+                  />
+                )}
+                <div className="relative z-10">
+                  <Icon
+                    aria-hidden="true"
+                    className={`h-[1.375rem] w-[1.375rem] transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
+                  />
+                  {unread && (
+                    <span className="absolute -right-2 -top-1.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-destructive px-1 text-[0.625rem] font-bold text-white">
+                      {badge > 9 ? "9+" : <NumberFlow value={badge} />}
+                    </span>
+                  )}
+                </div>
+                <span className={`relative text-[0.6875rem] font-medium leading-none transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
                   {label}
                 </span>
               </Link>
             );
-          }
-
-          return (
-            <Link
-              key={to}
-              to={to}
-              onClick={(e) => onTab(e, to)}
-              aria-label={unread ? `${label}, ${badge} unread` : label}
-              aria-current={active ? "page" : undefined}
-              role="radio"
-              aria-checked={active}
-              className="tap-scale relative flex flex-col items-center justify-center gap-0.5"
-            >
-              {active && (
-                <span
-                  aria-hidden="true"
-                  data-glass-highlight=""
-                  className="pointer-events-none absolute inset-x-1 inset-y-1 rounded-full bg-primary/15 [[data-glass-moving]_&]:opacity-0"
-                />
-              )}
-              <div className="relative z-20">
-                <Icon
-                  aria-hidden="true"
-                  className={`h-[1.375rem] w-[1.375rem] transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
-                />
-                {unread && (
-                  <span className="absolute -right-2 -top-1.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-destructive px-1 text-[0.625rem] font-bold text-white">
-                    {badge > 9 ? "9+" : <NumberFlow value={badge} />}
-                  </span>
-                )}
-              </div>
-              <span className={`relative text-[0.6875rem] font-medium leading-none transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
-                {label}
-              </span>
-            </Link>
-          );
-        })}
-      </div>
+          })}
+        </div>
       </div>
     </nav>
   );
