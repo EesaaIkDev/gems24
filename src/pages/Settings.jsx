@@ -44,7 +44,7 @@ export default function Settings() {
 
       <SettingsGroup title="Appearance">
         <SettingsRow icon={Moon} label="Dark mode" description="Easier on the eyes at the trade show.">
-          <Switch aria-label="Dark mode" checked={dark} onCheckedChange={setDark} />
+          <Switch aria-label="Dark mode" checked={dark} onCheckedChange={setDark} color="oklch(63% 0.153 153)" />
         </SettingsRow>
       </SettingsGroup>
 

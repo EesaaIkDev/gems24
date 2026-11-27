@@ -33,7 +33,7 @@ export default function NativeSettings() {
           <p className="text-sm font-medium">Biometric app lock</p>
           <p className="text-xs text-muted-foreground">Require Face ID or fingerprint to open Gems24.</p>
         </div>
-        <PreferenceSwitch label="Biometric app lock" checked={lock} onSave={toggle} />
+        <PreferenceSwitch label="Biometric app lock" checked={lock} onSave={toggle} color="oklch(63% 0.153 153)" />
       </div>
       {version && (
         <div className="p-4 flex items-center gap-3">

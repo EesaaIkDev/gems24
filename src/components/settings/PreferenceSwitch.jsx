@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 
-export default function PreferenceSwitch({ checked, onSave, label }) {
+export default function PreferenceSwitch({ checked, onSave, label, color }) {
   const [value, setValue] = useState(checked);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -22,7 +22,7 @@ export default function PreferenceSwitch({ checked, onSave, label }) {
     }
   };
   return <div className="flex shrink-0 flex-col items-end gap-2">
-    <Switch aria-label={label} aria-busy={busy} checked={value} disabled={busy} onCheckedChange={change} />
+    <Switch aria-label={label} aria-busy={busy} checked={value} disabled={busy} onCheckedChange={change} color={color} />
     {error && <p role="alert" className="max-w-28 text-right text-xs text-destructive">{error}</p>}
   </div>;
 }

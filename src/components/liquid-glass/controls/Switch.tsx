@@ -40,7 +40,7 @@ const heights = { sm: 22, md: 28, lg: 36 }
 export function Switch({
   checked = false,
   onChange,
-  label = 'Notifications',
+  label,
   description,
   theme,
   color,
