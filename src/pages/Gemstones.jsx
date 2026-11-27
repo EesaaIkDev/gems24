@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { Input } from "@/components/ui/input";
+import GlassSearch from "@/components/common/GlassSearch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Gem, Search, Users } from "lucide-react";
+import { Gem, Users } from "lucide-react";
 import ListingCard from "@/components/listings/ListingCard";
 import ListingFilters from "@/components/listings/ListingFilters";
 import TraderCard from "@/components/traders/TraderCard";
@@ -109,15 +109,7 @@ export default function Gemstones() {
       />
       <h1 className="text-2xl font-bold leading-tight">Gemstone marketplace</h1>
 
-      <div className="relative">
-        <Input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search marketplace"
-          className="h-12 pl-4 pr-12"
-        />
-        <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-primary" aria-hidden="true" />
-      </div>
+      <GlassSearch value={q} onChange={setQ} placeholder="Search marketplace" />
 
       <Tabs defaultValue="stones" onValueChange={() => haptic("light")}>
         <TabsList className="grid grid-cols-2 w-full">

@@ -17,10 +17,10 @@ export default function InviteButton() {
     <>
       <button
         onClick={() => { haptic("light"); setOpen(true); }}
-        className="tap-scale flex h-11 w-11 items-center justify-center rounded-full hover:bg-secondary"
+        className="glass-clear glass-press flex h-10 w-10 items-center justify-center rounded-full"
         aria-label="Invite a trader"
       >
-        <Ticket className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+        <Ticket className="h-5 w-5 text-foreground/80" aria-hidden="true" />
       </button>
       <InviteSheet
         open={open}

@@ -11,6 +11,7 @@ const TABS = [
   { to: "/profile", label: "Profile", icon: User },
 ];
 
+/** Floating frosted-glass tab bar. The selection lens glides between tabs. */
 export default function BottomNav({ badge = 0 }) {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
@@ -27,19 +28,34 @@ export default function BottomNav({ badge = 0 }) {
     navigate(to, { replace: nested, state: null });
   };
 
+  const isActive = (to) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
+  // The lens sits behind the active tab; the Add button carries its own emphasis.
+  const lensIndex = TABS.findIndex((t) => !t.raised && isActive(t.to));
+
   return (
     <nav
       aria-label="Main"
-      className="bg-background absolute inset-x-0 bottom-0 z-50 border-t border-border"
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-50"
       style={{
-        paddingBottom: "var(--safe-bottom)",
-        paddingLeft: "var(--safe-left)",
-        paddingRight: "var(--safe-right)",
+        paddingBottom: "calc(var(--safe-bottom) + 0.5rem)",
+        paddingLeft: "calc(var(--safe-left) + 0.75rem)",
+        paddingRight: "calc(var(--safe-right) + 0.75rem)",
       }}
     >
-      <div className="mx-auto grid max-w-md grid-cols-5">
+      <div
+        className="glass-frost pointer-events-auto mx-auto max-w-md rounded-full px-1"
+        style={{ height: "calc(var(--tabbar-h) - 0.5rem)" }}
+      >
+      <div className="relative grid h-full grid-cols-5">
+        <span
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-y-1 left-0 w-1/5 px-0.5 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.34,1.3,0.64,1)] ${lensIndex < 0 ? "opacity-0" : ""}`}
+          style={{ transform: `translateX(${Math.max(lensIndex, 0) * 100}%)` }}
+        >
+          <span className="block h-full rounded-full bg-primary/[0.12]" />
+        </span>
         {TABS.map(({ to, label, icon: Icon, raised }) => {
-          const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
+          const active = isActive(to);
           const unread = label === "Chats" && badge > 0;
 
           if (raised) {
@@ -49,13 +65,12 @@ export default function BottomNav({ badge = 0 }) {
                 to={to}
                 onClick={(e) => onTab(e, to)}
                 aria-label="Add a gemstone listing"
-                className="tap-scale flex flex-col items-center justify-center"
-                style={{ height: "var(--tabbar-h)" }}
+                aria-current={active ? "page" : undefined}
+                className="glass-press flex items-center justify-center"
               >
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary shadow-float">
-                  <Plus className="h-6 w-6 text-primary-foreground" aria-hidden="true" />
+                <span className="glass-emerald flex h-11 w-11 items-center justify-center rounded-full">
+                  <Plus className="h-6 w-6" strokeWidth={2.25} aria-hidden="true" />
                 </span>
-                <span className={`mt-0.5 text-[0.6875rem] font-medium ${active ? "text-primary" : "text-muted-foreground"}`}>Add</span>
               </Link>
             );
           }
@@ -67,13 +82,12 @@ export default function BottomNav({ badge = 0 }) {
               onClick={(e) => onTab(e, to)}
               aria-label={unread ? `${label}, ${badge} unread` : label}
               aria-current={active ? "page" : undefined}
-              className="tap-scale relative flex flex-col items-center justify-center gap-1"
-              style={{ height: "var(--tabbar-h)" }}
+              className="tap-scale relative flex flex-col items-center justify-center gap-0.5"
             >
               <div className="relative">
                 <Icon
                   aria-hidden="true"
-                  className={`h-6 w-6 ${active ? "text-primary" : "text-muted-foreground"}`}
+                  className={`h-[1.375rem] w-[1.375rem] transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
                 />
                 {unread && (
                   <span className="absolute -right-2 -top-1.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-destructive px-1 text-[0.625rem] font-bold text-white">
@@ -81,12 +95,13 @@ export default function BottomNav({ badge = 0 }) {
                   </span>
                 )}
               </div>
-              <span className={`text-[0.6875rem] font-medium ${active ? "text-primary" : "text-muted-foreground"}`}>
+              <span className={`relative text-[0.6875rem] font-medium leading-none transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
                 {label}
               </span>
             </Link>
           );
         })}
+      </div>
       </div>
     </nav>
   );
