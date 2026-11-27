@@ -111,7 +111,9 @@ export default function Gemstones() {
 
       <GlassSearch value={q} onChange={setQ} placeholder="Search marketplace" />
 
-      <Tabs defaultValue="stones" onValueChange={() => haptic("light")}>
+      <Tabs
+        defaultValue={new URLSearchParams(window.location.search).get("tab") === "traders" ? "traders" : "stones"}
+        onValueChange={() => haptic("light")}>
         <TabsList className="grid grid-cols-2 w-full">
           <TabsTrigger value="stones">Stones</TabsTrigger>
           <TabsTrigger value="traders">Traders</TabsTrigger>
@@ -124,7 +126,7 @@ export default function Gemstones() {
           ) : filteredStones.length === 0 && !stones.hasMore ? (
             <EmptyState icon={Gem} title="No stones match" description="Try clearing a filter or widening the carat range." />
           ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
               {filteredStones.map((l) => (
                 <ListingCard key={l.id} listing={l} />
               ))}

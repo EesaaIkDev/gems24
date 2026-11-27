@@ -113,6 +113,8 @@ export default function Home() {
 
       <ActivityStrip items={activity} />
 
+      {!q && <SuggestedTraders traders={suggested} />}
+
       {posts.length === 0 && !feed.hasMore ? (
         <EmptyState
           icon={Gem}
@@ -134,14 +136,11 @@ export default function Home() {
                 viewer?.id ? findConnection(connections || [], viewer.id, l.trader_id) || null : null
               }
             />
-            {i === 2 && <SuggestedTraders traders={suggested} />}
           </React.Fragment>
         ))
       )}
 
       <LoadMore hasMore={feed.hasMore} loading={feed.loadingMore} onLoad={feed.loadMore} watch={listings.length} />
-
-      {posts.length <= 2 && <SuggestedTraders traders={suggested} />}
     </div>
   );
 }

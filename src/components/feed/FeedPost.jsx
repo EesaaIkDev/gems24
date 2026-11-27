@@ -13,7 +13,7 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
   const photo = listing.photos?.[0];
 
   return (
-    <article className="border-b-8 border-secondary bg-background pb-4">
+    <article className="mx-4 mb-4 overflow-hidden rounded-xl border border-border bg-card pb-4">
       <div className="flex items-center gap-3 px-4 py-3">
         <Link to={`/trader/${listing.trader_id}`} className="shrink-0">
           <div className="w-10 h-10 rounded-full overflow-hidden bg-secondary flex items-center justify-center">
@@ -34,7 +34,7 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
           {(trader?.business_name || listing.trader_country) && (
             <p className="flex items-center gap-1 text-xs text-muted-foreground truncate">
               {listing.trader_country && <MapPin className="w-3 h-3" />}
-              {[trader?.business_name, listing.trader_country].filter(Boolean).join(" • ")}
+              {[trader?.business_name, listing.trader_country].filter(Boolean).join(" · ")}
             </p>
           )}
         </div>
@@ -42,7 +42,7 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
       </div>
 
       <Link to={listingPath(listing)} className="block bg-secondary">
-        <div className="aspect-square w-full flex items-center justify-center">
+        <div className="aspect-[4/3] w-full flex items-center justify-center">
           {photo ? (
             <Image src={photo} alt={listingAlt(listing)} className="w-full h-full mix-blend-multiply dark:mix-blend-normal" />
           ) : (
@@ -52,11 +52,11 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
       </Link>
 
       <div className="px-4 pt-3">
-        <Link to={listingPath(listing)} className="font-semibold text-[0.9375rem] hover:text-primary">
+        <Link to={listingPath(listing)} className="font-heading text-base font-bold hover:text-primary">
           {listing.weight_carats} ct {cap(listing.gemstone_type)}
         </Link>
         <p className="mt-0.5 text-sm text-muted-foreground">
-          {[cap(listing.treatment), listing.color, listing.origin].filter(Boolean).join(" • ")}
+          {[cap(listing.treatment), listing.color, listing.origin].filter(Boolean).join(" · ")}
         </p>
         {trader && (
           <NetworkButton

@@ -9,7 +9,7 @@ import InviteButton from "@/components/referral/InviteButton";
 export default function AppHeader() {
   return (
     <header
-      className="glass-frost absolute inset-x-0 top-0 z-50 rounded-none border-x-0 border-t-0 shadow-none"
+      className="glass-frost absolute inset-x-0 top-0 z-50 rounded-none border-0 shadow-none"
       style={{
         paddingTop: "var(--safe-top)",
         paddingLeft: "var(--safe-left)",
@@ -26,7 +26,7 @@ export default function AppHeader() {
         <Link
           to="/settings"
           onClick={() => haptic("light")}
-          className="glass-clear glass-press flex h-10 w-10 items-center justify-center rounded-full"
+          className="glass-press flex h-10 w-10 items-center justify-center rounded-full"
           aria-label="Settings"
         >
           <Settings className="h-5 w-5 text-foreground/80" aria-hidden="true" />
