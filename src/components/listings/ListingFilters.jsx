@@ -3,23 +3,20 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import { SlidersHorizontal } from "lucide-react";
+import { GlassSelect } from "@/components/liquid-glass/glass-select";
 import { GEM_TYPES, TREATMENTS, cap } from "@/lib/gems";
-import { chipClass as chip } from "@/components/common/filterChip";
 import CountryFilter from "@/components/common/CountryFilter";
-import { values, selected, toggle } from "@/components/common/filterValues";
+import { values } from "@/components/common/filterValues";
 import { haptic } from "@/lib/despia";
+
+const ALL = "all";
 
 export default function ListingFilters({ filters, setFilters, countries }) {
   const [open, setOpen] = useState(false);
   const set = (k, v) => setFilters((f) => ({ ...f, [k]: v }));
-  // Toggles tick; typing carat values doesn't.
   const choose = (k, v) => {
     haptic("light");
     set(k, v);
-  };
-  const pick = (k, v) => {
-    haptic("light");
-    setFilters((f) => ({ ...f, [k]: toggle(f[k], v) }));
   };
   const secondaryCount = values(filters.treatment).length + values(filters.country).length + (filters.minCt || filters.maxCt ? 1 : 0);
 
@@ -27,6 +24,10 @@ export default function ListingFilters({ filters, setFilters, countries }) {
     haptic("heavy");
     setFilters({ q: filters.q, type: [], treatment: [], country: [], minCt: "", maxCt: "" });
   };
+
+  // GlassSelect is single-value; the filters state stays an array for the query layer.
+  const typeValue = filters.type.length === 1 ? filters.type[0] : ALL;
+  const treatmentValue = filters.treatment.length === 1 ? filters.treatment[0] : ALL;
 
   return (
     <>
@@ -46,13 +47,19 @@ export default function ListingFilters({ filters, setFilters, countries }) {
           <SlidersHorizontal className="h-3.5 w-3.5" />
           Filters{secondaryCount ? ` · ${secondaryCount}` : ""}
         </button>
-        <button aria-pressed={!values(filters.type).length} className={chip(!values(filters.type).length)} onClick={() => choose("type", [])}>All</button>
-        {GEM_TYPES.map((t) => (
-          <button key={t} aria-pressed={selected(filters.type, t)} className={chip(selected(filters.type, t))} onClick={() => pick("type", t)}>
-            {cap(t)}
-          </button>
-        ))}
       </div>
+
+      <GlassSelect
+        label="Gem type"
+        placeholder="All types"
+        className="mt-2 !w-full"
+        value={typeValue}
+        onValueChange={(v) => choose("type", !v || v === ALL ? [] : [v])}
+        options={[
+          { value: ALL, label: "All types" },
+          ...GEM_TYPES.map((t) => ({ value: t, label: cap(t) })),
+        ]}
+      />
 
       <BottomSheet
         open={open}
@@ -62,18 +69,17 @@ export default function ListingFilters({ filters, setFilters, countries }) {
       >
         <div className="space-y-5">
           <FilterSection label="Treatment">
-            <div className="flex flex-wrap gap-2">
-              {TREATMENTS.map((t) => (
-                <button
-                  key={t}
-                  className={chip(selected(filters.treatment, t))}
-                  aria-pressed={selected(filters.treatment, t)}
-                  onClick={() => pick("treatment", t)}
-                >
-                  {cap(t)}
-                </button>
-              ))}
-            </div>
+            <GlassSelect
+              label="Treatment"
+              placeholder="Any treatment"
+              className="!w-full"
+              value={treatmentValue}
+              onValueChange={(v) => choose("treatment", !v || v === ALL ? [] : [v])}
+              options={[
+                { value: ALL, label: "Any treatment" },
+                ...TREATMENTS.map((t) => ({ value: t, label: cap(t) })),
+              ]}
+            />
           </FilterSection>
 
           <FilterSection label="Seller location">
