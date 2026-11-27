@@ -348,7 +348,14 @@ export function GlassLens({ value, disabled = false }: GlassLensProps) {
       const b = el.getBoundingClientRect()
       if (b.width < 2 || b.height < 2) return null
       const c = engine.resolveColor(getComputedStyle(hl).backgroundColor)
-      color = [c[0], c[1], c[2]]
+      // If highlight is transparent, use the brand primary color instead of defaulting to black
+      const isTransparent = c[3] < 0.01
+      if (isTransparent) {
+        const primary = engine.resolveColor('oklch(63% 0.153 153)')
+        color = [primary[0], primary[1], primary[2]]
+      } else {
+        color = [c[0], c[1], c[2]]
+      }
       const s = engine.resolveColor(surfaceColorOf(root.parentElement))
       surface = [s[0], s[1], s[2]]
       const st = getComputedStyle(el)
