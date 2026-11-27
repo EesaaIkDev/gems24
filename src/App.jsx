@@ -33,6 +33,7 @@ import GemstoneCategory from '@/pages/GemstoneCategory';
 import About from '@/pages/About';
 import OAuthConsent from '@/pages/OAuthConsent';
 import AdminVerifications from '@/pages/AdminVerifications';
+import SavedListings from '@/pages/SavedListings';
 import RouteSeo from '@/components/seo/RouteSeo';
 import PushInit from '@/components/native/PushInit';
 import { GoldMembershipProvider } from '@/lib/GoldMembership';
@@ -89,6 +90,7 @@ const AuthenticatedApp = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/admin/verifications" element={<AdminVerifications />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/saved" element={<SavedListings />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />

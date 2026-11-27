@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Crown, Gem, MessageCircle, Plus, Settings as SettingsIcon, Users, User } from "lucide-react";
+import { Bookmark, ChevronRight, Crown, Gem, MessageCircle, Plus, Settings as SettingsIcon, Users, User } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import TierBadge from "@/components/common/TierBadge";
@@ -50,6 +50,7 @@ export default function Profile() {
   const business = isBusiness(trader);
   const links = [
     { to: `/trader/${trader.id}`, icon: User, label: "View public profile" },
+    { to: "/saved", icon: Bookmark, label: "Saved gemstones" },
     { to: "/messages", icon: MessageCircle, label: "Chats" },
     { to: "/connections", icon: Users, label: "My network" },
     ...(isTrader ? [{ to: "/subscription", icon: Crown, label: "Subscription & upgrade" }] : []),

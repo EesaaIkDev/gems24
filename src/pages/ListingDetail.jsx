@@ -9,6 +9,8 @@ import useLoader from "@/hooks/useLoader";
 import SellerVerification from "@/components/common/SellerVerification";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import NetworkButton from "@/components/chat/NetworkButton";
+import BookmarkButton from "@/components/listings/BookmarkButton";
+import ListingMenu from "@/components/listings/ListingMenu";
 import useCurrentTrader from "@/hooks/useCurrentTrader";
 import { cap } from "@/lib/gems";
 import { heldLevel, isVerified } from "@/lib/verification";
@@ -97,7 +99,7 @@ export default function ListingDetail() {
   ];
 
   return (
-    <div className="pb-6">
+    <div className="pb-24">
       <Seo
         title={`${heading} | Gems24`}
         description={`${heading}. ${cap(listing.treatment)}, listed by a verified gemstone trader on the Gems24 marketplace.`}
@@ -112,8 +114,10 @@ export default function ListingDetail() {
         </Link>
       </div>
 
-      <div className="mt-3 px-4">
-        <div className="aspect-[4/3] rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
+      <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:px-4">
+      <div className="mt-3 px-4 lg:px-0">
+        <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
+          <BookmarkButton listing={listing} className="absolute right-3 top-3 z-10 h-10 w-10" />
           {photos.length ? (
             <Image src={photos[active]} alt={listingAlt(listing)} className="w-full h-full mix-blend-multiply dark:mix-blend-normal" />
           ) : (
@@ -137,10 +141,11 @@ export default function ListingDetail() {
         )}
       </div>
 
-      <div className="px-4 mt-5 space-y-5">
+      <div className="px-4 mt-5 space-y-5 lg:mt-3 lg:px-0">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">{heading}</h1>
+          <div className="flex items-start gap-2">
+            <h1 className="flex-1 text-2xl font-bold">{heading}</h1>
+            <ListingMenu listing={listing} isOwner={!!viewer && viewer.id === listing.trader_id} />
           </div>
           <SellerVerification
             verified={owner ? isVerified(owner) : listing.trader_verified}
@@ -203,10 +208,14 @@ export default function ListingDetail() {
           </p>
         )}
       </div>
+      </div>
 
       {viewer && owner && viewer.id !== owner.id && (
-        <div className="fixed bottom-16 inset-x-0 z-30 px-4 pb-3 pt-3 border-t border-border bg-background">
-          <div className="max-w-6xl mx-auto">
+        <div
+          className="fixed inset-x-0 z-30 px-3"
+          style={{ bottom: "calc(var(--safe-bottom) + var(--tabbar-h) + 0.75rem)" }}
+        >
+          <div className="glass-frost mx-auto max-w-md rounded-full p-1.5">
             <NetworkButton
               viewerId={viewer.id}
               other={owner}
@@ -214,7 +223,7 @@ export default function ListingDetail() {
                 label: `${listing.weight_carats} ct ${cap(listing.gemstone_type)}`,
                 path: listingPath(listing),
               }}
-              className="w-full"
+              className="w-full rounded-full"
               size="lg"
             />
           </div>

@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, CheckCheck, Crown, FileText, LogOut, Moon, ShieldCheck } from "lucide-react";
+import { SettingsGroup, SettingsRow } from "@/components/settings/SettingsGroup";
+import { ArrowLeft, CheckCheck, ChevronRight, Crown, FileText, LogOut, Moon, ShieldCheck } from "lucide-react";
 import DeleteAccount from "@/components/settings/DeleteAccount";
 import TraderForm from "@/components/traders/TraderForm";
 import Spinner from "@/components/common/Spinner";
@@ -41,37 +42,30 @@ export default function Settings() {
       </Link>
       <h1 className="text-[1.625rem] font-bold leading-tight">Settings</h1>
 
-      <div className="rounded-xl bg-card border border-border p-4 flex items-center gap-3">
-        <Moon className="w-[18px] h-[18px] text-primary" />
-        <div className="flex-1">
-          <p className="text-sm font-medium">Dark mode</p>
-          <p className="text-xs text-muted-foreground">Easier on the eyes at the trade show.</p>
-        </div>
-        <Switch aria-label="Dark mode" checked={dark} onCheckedChange={setDark} />
-      </div>
+      <SettingsGroup title="Appearance">
+        <SettingsRow icon={Moon} label="Dark mode" description="Easier on the eyes at the trade show.">
+          <Switch aria-label="Dark mode" checked={dark} onCheckedChange={setDark} />
+        </SettingsRow>
+      </SettingsGroup>
 
       <NativeSettings />
 
       {user?.role === "admin" && (
-        <Link to="/admin/verifications" className="rounded-xl bg-card border border-border p-4 flex items-center gap-3 hover:border-primary/40">
-          <ShieldCheck className="w-[18px] h-[18px] text-primary" />
-          <div className="flex-1">
-            <p className="text-sm font-medium">Verification review</p>
-            <p className="text-xs text-muted-foreground">AML matches waiting on an admin decision.</p>
-          </div>
-        </Link>
+        <SettingsGroup title="Admin">
+          <SettingsRow as={Link} to="/admin/verifications" icon={ShieldCheck} label="Verification review" description="AML matches waiting on an admin decision.">
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </SettingsRow>
+        </SettingsGroup>
       )}
 
-      <div className="rounded-xl bg-card border border-border p-4">
-        <div className="flex items-center gap-2">
-          <FileText className="w-[18px] h-[18px] text-primary" />
-          <p className="text-sm font-medium">Legal</p>
-        </div>
-        <div className="mt-2 flex gap-4 text-sm">
-          <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>
-          <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
-        </div>
-      </div>
+      <SettingsGroup title="Legal">
+        <SettingsRow as={Link} to="/terms" icon={FileText} label="Terms of Service">
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </SettingsRow>
+        <SettingsRow as={Link} to="/privacy" icon={FileText} label="Privacy Policy">
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </SettingsRow>
+      </SettingsGroup>
 
       {!user ? (
         <SignInPrompt title="Log in to manage your account" />
@@ -97,14 +91,12 @@ export default function Settings() {
             </Button>
           </div>
 
-          <div className="rounded-xl bg-card border border-border p-4 flex items-center gap-3">
-            <CheckCheck className="w-[18px] h-[18px] text-primary shrink-0" />
-            <div className="flex-1">
-              <p className="text-sm font-medium">Read receipts</p>
-              <p className="text-xs text-muted-foreground">
-                Let traders see when you've read their messages. If you turn this off, you also won't see theirs.
-              </p>
-            </div>
+          <SettingsGroup title="Privacy">
+            <SettingsRow
+              icon={CheckCheck}
+              label="Read receipts"
+              description="Let traders see when you've read their messages. If you turn this off, you also won't see theirs."
+            >
             <PreferenceSwitch
               label="Read receipts"
               checked={trader.read_receipts !== false}
@@ -113,18 +105,13 @@ export default function Settings() {
                 await reload();
               }}
             />
-          </div>
-
-          <div className="rounded-xl bg-card border border-border p-4 flex items-start gap-3">
-            <ShieldCheck className="mt-0.5 w-[18px] h-[18px] text-primary shrink-0" />
-            <div className="flex-1">
-              <p className="text-sm font-medium">Approval required</p>
-              <p className="text-xs text-muted-foreground">
-                Every trader must send you a network request and be accepted by you before they can
-                message you or see your contact details. This always applies and can't be turned off.
-              </p>
-            </div>
-          </div>
+            </SettingsRow>
+            <SettingsRow
+              icon={ShieldCheck}
+              label="Approval required"
+              description="Every trader must send you a network request and be accepted by you before they can message you or see your contact details. This always applies and can't be turned off."
+            />
+          </SettingsGroup>
 
           <div className="rounded-xl bg-card border border-border p-5">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Edit profile</h2>

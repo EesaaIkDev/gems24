@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Gem } from "lucide-react";
 import ListingCard from "@/components/listings/ListingCard";
-import Spinner from "@/components/common/Spinner";
+import ListingGridSkeleton from "@/components/listings/ListingGridSkeleton";
 import EmptyState from "@/components/common/EmptyState";
 import Seo from "@/components/seo/Seo";
 import CategoryLinks from "@/components/seo/CategoryLinks";
@@ -96,7 +96,7 @@ export default function GemstoneCategory() {
           Available {category.name.toLowerCase()} listings ({count})
         </h2>
         {listings === null ? (
-          <Spinner />
+          <ListingGridSkeleton />
         ) : stones.length === 0 ? (
           <EmptyState
             icon={Gem}

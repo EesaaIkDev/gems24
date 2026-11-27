@@ -5,6 +5,7 @@ import { Gem, MapPin, User } from "lucide-react";
 import TierBadge from "@/components/common/TierBadge";
 import VerifiedBadge from "@/components/common/VerifiedBadge";
 import NetworkButton from "@/components/chat/NetworkButton";
+import ListingMenu from "@/components/listings/ListingMenu";
 import { cap } from "@/lib/gems";
 import { listingAlt, listingPath } from "@/lib/seo";
 
@@ -52,12 +53,17 @@ export default function FeedPost({ listing, trader, viewerId, connection }) {
       </Link>
 
       <div className="px-4 pt-3">
-        <Link to={listingPath(listing)} className="font-heading text-base font-bold hover:text-primary">
-          {listing.weight_carats} ct {cap(listing.gemstone_type)}
-        </Link>
-        <p className="mt-0.5 text-sm text-muted-foreground">
-          {[cap(listing.treatment), listing.color, listing.origin].filter(Boolean).join(" · ")}
-        </p>
+        <div className="flex items-start gap-2">
+          <div className="min-w-0 flex-1">
+            <Link to={listingPath(listing)} className="font-heading text-base font-bold hover:text-primary">
+              {listing.weight_carats} ct {cap(listing.gemstone_type)}
+            </Link>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              {[cap(listing.treatment), listing.color, listing.origin].filter(Boolean).join(" · ")}
+            </p>
+          </div>
+          <ListingMenu listing={listing} isOwner={!!viewerId && viewerId === listing.trader_id} />
+        </div>
         {trader && (
           <NetworkButton
             viewerId={viewerId}

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Spinner from "@/components/common/Spinner";
+import ConversationListSkeleton from "@/components/chat/ConversationListSkeleton";
 import EmptyState from "@/components/common/EmptyState";
 import SignInPrompt from "@/components/common/SignInPrompt";
 import ConversationRow from "@/components/chat/ConversationRow";
@@ -69,16 +70,16 @@ export default function Messages() {
         to="/onboarding"
       />
     );
-  if (rows === null) return <Spinner />;
+  if (rows === null) return <ConversationListSkeleton />;
 
   return (
     <div className="pt-5">
       <h1 className="px-4 text-[1.625rem] font-bold leading-tight">Chats</h1>
 
       <Tabs defaultValue="chats" className="mt-4" onValueChange={() => haptic("light")}>
-        <TabsList className="mx-4 grid grid-cols-2 h-11 rounded-xl" style={{ width: "calc(100% - 2rem)" }}>
-          <TabsTrigger value="chats" className="rounded-lg">Chats</TabsTrigger>
-          <TabsTrigger value="requests" className="rounded-lg">
+        <TabsList className="mx-4 grid grid-cols-2" style={{ width: "calc(100% - 2rem)" }}>
+          <TabsTrigger value="chats">Chats</TabsTrigger>
+          <TabsTrigger value="requests">
             Requests{requests.length ? ` (${requests.length})` : ""}
           </TabsTrigger>
         </TabsList>

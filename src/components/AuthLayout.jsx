@@ -1,12 +1,15 @@
 import React from "react";
+import { LOGO_URL } from "@/lib/gems";
 
-export default function AuthLayout({ icon: Icon, title, subtitle, footer, children }) {
+/** Shared sign-in / sign-up frame: official Gems24 lockup above one solid card. */
+export default function AuthLayout({ title, subtitle, footer, children }) {
   return (
     <div className="h-full overflow-y-auto bg-background px-4 py-6 sm:flex sm:items-center sm:justify-center">
       <div className="mx-auto w-full max-w-md">
         <div className="mb-5 text-center sm:mb-8">
-          <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary sm:h-14 sm:w-14">
-            <Icon className="h-6 w-6 text-primary-foreground sm:h-7 sm:w-7" aria-hidden="true" />
+          <div className="mb-4 inline-flex items-center gap-2">
+            <img src={LOGO_URL} alt="" className="h-10 w-10" />
+            <span className="font-heading text-xl font-bold tracking-tight">Gems24</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">{title}</h1>
           {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}

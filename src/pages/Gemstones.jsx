@@ -7,7 +7,8 @@ import ListingCard from "@/components/listings/ListingCard";
 import ListingFilters from "@/components/listings/ListingFilters";
 import TraderCard from "@/components/traders/TraderCard";
 import TraderFilters from "@/components/traders/TraderFilters";
-import Spinner from "@/components/common/Spinner";
+import ListingGridSkeleton from "@/components/listings/ListingGridSkeleton";
+import TraderListSkeleton from "@/components/traders/TraderListSkeleton";
 import EmptyState from "@/components/common/EmptyState";
 import usePopularDefaults from "@/hooks/usePopularDefaults";
 import useOfflineEntity from "@/hooks/useOfflineEntity";
@@ -122,7 +123,7 @@ export default function Gemstones() {
         <TabsContent value="stones" className="mt-3 space-y-3">
           <ListingFilters filters={stoneFilters} setFilters={setStoneFilters} countries={countryNames} />
           {listings === null ? (
-            <Spinner />
+            <ListingGridSkeleton />
           ) : filteredStones.length === 0 && !stones.hasMore ? (
             <EmptyState icon={Gem} title="No stones match" description="Try clearing a filter or widening the carat range." />
           ) : (
@@ -138,11 +139,11 @@ export default function Gemstones() {
         <TabsContent value="traders" className="mt-3 space-y-3">
           <TraderFilters filters={traderFilters} setFilters={setTraderFilters} countries={countryNames} specialties={specialties} />
           {traders === null ? (
-            <Spinner />
+            <TraderListSkeleton />
           ) : filteredTraders.length === 0 ? (
             <EmptyState icon={Users} title="No traders found" description="Try a different search or clear your filters." />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {filteredTraders.map((t) => (
                 <TraderCard key={t.id} trader={t} />
               ))}

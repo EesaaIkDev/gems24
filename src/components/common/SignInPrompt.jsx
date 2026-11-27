@@ -13,17 +13,17 @@ export default function SignInPrompt({ title, description, cta = "Log in", to, s
         {description || "Join Gems24 to publish listings, chat with buyers and grow your trader network."}
       </p>
       {to ? (
-        <Button asChild size="lg" className="mt-6">
+        <Button asChild size="lg" className="mt-6 w-full max-w-xs">
           <Link to={to}>{cta}</Link>
         </Button>
       ) : (
-        <Button size="lg" className="mt-6" onClick={() => base44.auth.redirectToLogin()}>
+        <Button size="lg" className="mt-6 w-full max-w-xs" onClick={() => base44.auth.redirectToLogin()}>
           {cta}
         </Button>
       )}
       {/* Guests always get a way back into an existing account. */}
       {showLogin && to && (
-        <Button asChild variant="outline" size="lg" className="mt-3">
+        <Button asChild variant="outline" size="lg" className="mt-3 w-full max-w-xs">
           <Link to="/login">Log in</Link>
         </Button>
       )}

@@ -96,7 +96,7 @@ export default function Home() {
   if (listings === null) return <Spinner />;
 
   return (
-    <div className="pb-4">
+    <div className="mx-auto max-w-2xl pb-4">
       <div className="px-4 pt-5 pb-3">
         {/* Refreshing is pull-to-refresh only — see the app:refresh listener in useOfflineEntity. */}
         <h1 className="text-[1.625rem] font-bold leading-tight">Your feed</h1>

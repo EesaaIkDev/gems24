@@ -67,7 +67,7 @@ export default function MessageComposer({ onSend, canAttach = false }) {
       onSubmit={submit}
       onFocusCapture={() => setFocused(true)}
       onBlurCapture={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false); }}
-      className="shrink-0 border-t border-border bg-background px-3 py-2"
+      className="glass-frost shrink-0 rounded-none border-x-0 border-b-0 px-3 py-2 shadow-none"
       style={{ paddingLeft: "calc(var(--safe-left) + 0.75rem)", paddingRight: "calc(var(--safe-right) + 0.75rem)" }}
     >
       <div className="max-w-6xl mx-auto">
@@ -79,15 +79,15 @@ export default function MessageComposer({ onSend, canAttach = false }) {
             ref={ref}
             aria-label="Message"
             disabled={busy}
-            rows={2}
+            rows={1}
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={onKeyDown}
             enterKeyHint="send"
             placeholder="Write a message…"
-            className="min-h-[3.75rem] max-h-36 flex-1 min-w-0 resize-none rounded-xl bg-secondary px-4 py-2.5 text-base"
+            className="min-h-11 max-h-36 flex-1 min-w-0 resize-none rounded-[1.375rem] border-border bg-card px-4 py-2.5 text-base"
           />
-          <Button type="submit" size="icon" aria-label="Send" className="h-12 w-12 shrink-0 rounded-full" disabled={!text.trim() || busy}>
+          <Button type="submit" size="icon" aria-label="Send" className="h-11 w-11 shrink-0 rounded-full" disabled={!text.trim() || busy}>
             <Send className="w-4 h-4" />
           </Button>
         </div>
