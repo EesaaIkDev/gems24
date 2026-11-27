@@ -2,7 +2,9 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Home, Search, Plus, MessageCircle, User } from "lucide-react";
 import { haptic } from "@/lib/despia";
+import NumberFlow from "@number-flow/react";
 import { GlassLayer } from "@/components/liquid-glass/glass-layer";
+import { GlassLens } from "@/components/liquid-glass/glass-lens";
 
 const TABS = [
   { to: "/", label: "Home", icon: Home },
@@ -30,8 +32,8 @@ export default function BottomNav({ badge = 0 }) {
   };
 
   const isActive = (to) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
-  // The lens sits behind the active tab; the Add button carries its own emphasis.
-  const lensIndex = TABS.findIndex((t) => !t.raised && isActive(t.to));
+  // The glass lens sits behind the active tab; the Add button carries its own emphasis.
+  const activeTo = TABS.find((t) => !t.raised && isActive(t.to))?.to ?? null;
 
   return (
     <nav
@@ -49,14 +51,8 @@ export default function BottomNav({ badge = 0 }) {
         style={{ height: "calc(var(--tabbar-h) - 0.5rem)" }}
       >
         <GlassLayer material="tinted" tint={0.4} swell={false} />
-      <div className="relative grid h-full grid-cols-5">
-        <span
-          aria-hidden="true"
-          className={`pointer-events-none absolute inset-y-1 left-0 w-1/5 px-0.5 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.34,1.3,0.64,1)] ${lensIndex < 0 ? "opacity-0" : ""}`}
-          style={{ transform: `translateX(${Math.max(lensIndex, 0) * 100}%)` }}
-        >
-          <span className="block h-full rounded-full bg-primary/[0.12]" />
-        </span>
+      <GlassLens value={activeTo} />
+      <div role="radiogroup" aria-label="Main sections" className="relative grid h-full grid-cols-5">
         {TABS.map(({ to, label, icon: Icon, raised }) => {
           const active = isActive(to);
           const unread = label === "Chats" && badge > 0;
@@ -88,16 +84,25 @@ export default function BottomNav({ badge = 0 }) {
               onClick={(e) => onTab(e, to)}
               aria-label={unread ? `${label}, ${badge} unread` : label}
               aria-current={active ? "page" : undefined}
+              role="radio"
+              aria-checked={active}
               className="tap-scale relative flex flex-col items-center justify-center gap-0.5"
             >
-              <div className="relative">
+              {active && (
+                <span
+                  aria-hidden="true"
+                  data-glass-highlight=""
+                  className="pointer-events-none absolute inset-x-1 inset-y-1 rounded-full bg-primary/15 [[data-glass-moving]_&]:opacity-0"
+                />
+              )}
+              <div className="relative z-20">
                 <Icon
                   aria-hidden="true"
                   className={`h-[1.375rem] w-[1.375rem] transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
                 />
                 {unread && (
                   <span className="absolute -right-2 -top-1.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-destructive px-1 text-[0.625rem] font-bold text-white">
-                    {badge > 9 ? "9+" : badge}
+                    {badge > 9 ? "9+" : <NumberFlow value={badge} />}
                   </span>
                 )}
               </div>

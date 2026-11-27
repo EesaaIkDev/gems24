@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import GlassSearch from "@/components/common/GlassSearch";
-import { Switch } from "@/components/liquid-glass/controls/Switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Gem, Users } from "lucide-react";
 import ListingCard from "@/components/listings/ListingCard";
 import ListingFilters from "@/components/listings/ListingFilters";
@@ -53,9 +53,6 @@ export default function Gemstones() {
   const [traderFilters, setTraderFilters] = useState({ specialty: [], tier: [], country: [] });
   const { countries } = useCountries();
   const [q, setQ] = useState("");
-  const [view, setView] = useState(
-    () => (new URLSearchParams(window.location.search).get("tab") === "traders" ? "traders" : "stones")
-  );
   const popular = usePopularDefaults();
 
   // Smart defaults: land on the most-listed stone type instead of a blank grid.
@@ -115,27 +112,15 @@ export default function Gemstones() {
 
       <GlassSearch value={q} onChange={setQ} placeholder="Search marketplace" />
 
-      <div className="flex items-center justify-between rounded-full border border-white/50 bg-white/55 px-4 py-2 backdrop-blur-md dark:border-white/15 dark:bg-white/5">
-        <span className={`text-sm font-semibold transition-colors ${view === "stones" ? "text-primary" : "text-muted-foreground"}`}>
-          Stones
-        </span>
-        <Switch
-          aria-label="Show traders instead of stones"
-          checked={view === "traders"}
-          onChange={(on) => {
-            haptic("light");
-            setView(on ? "traders" : "stones");
-          }}
-          color="#08a054"
-          size="lg"
-        />
-        <span className={`text-sm font-semibold transition-colors ${view === "traders" ? "text-primary" : "text-muted-foreground"}`}>
-          Traders
-        </span>
-      </div>
+      <Tabs
+        defaultValue={new URLSearchParams(window.location.search).get("tab") === "traders" ? "traders" : "stones"}
+        onValueChange={() => haptic("light")}>
+        <TabsList className="grid grid-cols-2 w-full">
+          <TabsTrigger value="stones">Stones</TabsTrigger>
+          <TabsTrigger value="traders">Traders</TabsTrigger>
+        </TabsList>
 
-      {view === "stones" ? (
-        <div className="mt-3 space-y-3">
+        <TabsContent value="stones" className="mt-3 space-y-3">
           <ListingFilters filters={stoneFilters} setFilters={setStoneFilters} countries={countryNames} />
           {listings === null ? (
             <ListingGridSkeleton />
@@ -149,9 +134,9 @@ export default function Gemstones() {
             </div>
           )}
           <LoadMore hasMore={stones.hasMore} loading={stones.loadingMore} onLoad={stones.loadMore} watch={listings?.length} />
-        </div>
-      ) : (
-        <div className="mt-3 space-y-3">
+        </TabsContent>
+
+        <TabsContent value="traders" className="mt-3 space-y-3">
           <TraderFilters filters={traderFilters} setFilters={setTraderFilters} countries={countryNames} specialties={specialties} />
           {traders === null ? (
             <TraderListSkeleton />
@@ -164,8 +149,8 @@ export default function Gemstones() {
               ))}
             </div>
           )}
-        </div>
-      )}
+        </TabsContent>
+      </Tabs>
 
       <CategoryLinks />
     </div>
