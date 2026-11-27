@@ -1,17 +1,18 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, Search, Plus, MessageCircle, User } from "lucide-react";
+import { Plus } from "lucide-react";
 import { haptic } from "@/lib/despia";
 import NumberFlow from "@number-flow/react";
 import { GlassLayer } from "@/components/liquid-glass/glass-layer";
 import { GlassLens } from "@/components/liquid-glass/glass-lens";
+import { NavIcons } from "@/components/navigation/icons";
 
 const TABS = [
-  { to: "/", label: "Home", icon: Home },
-  { to: "/gemstones", label: "Gemstones", icon: Search },
+  { to: "/", label: "Home", icon: NavIcons.Home },
+  { to: "/gemstones", label: "Gemstones", icon: NavIcons.Gemstones },
   { to: "/add", label: "Add", icon: Plus, raised: true },
-  { to: "/messages", label: "Chats", icon: MessageCircle },
-  { to: "/profile", label: "Profile", icon: User },
+  { to: "/messages", label: "Chats", icon: NavIcons.Chats },
+  { to: "/profile", label: "Profile", icon: NavIcons.Profile },
 ];
 
 /** Floating frosted-glass tab bar. The selection lens glides between tabs. */
@@ -53,7 +54,7 @@ export default function BottomNav({ badge = 0 }) {
         <GlassLayer material="tinted" tint={0.4} swell={false} />
         <GlassLens value={activeTo} />
         <div role="radiogroup" aria-label="Main sections" className="relative grid h-full grid-cols-5">
-          {TABS.map(({ to, label, icon: Icon, raised }) => {
+          {TABS.map(({ to, label, icon: IconData, raised }) => {
             const active = isActive(to);
             const unread = label === "Chats" && badge > 0;
 
@@ -68,9 +69,9 @@ export default function BottomNav({ badge = 0 }) {
                   className="glass-press flex flex-col items-center justify-end gap-1 pb-1.5"
                 >
                   <span className="glass-emerald -mt-5 flex h-12 w-12 items-center justify-center rounded-full">
-                    <Plus className="h-6 w-6" strokeWidth={2.25} aria-hidden="true" />
+                    <Plus className="h-6 w-6 text-white" strokeWidth={2.25} aria-hidden="true" />
                   </span>
-                  <span className={`text-[0.6875rem] font-medium leading-none ${active ? "text-primary" : "text-muted-foreground"}`}>
+                  <span className={`text-[0.6875rem] font-medium leading-none ${active ? "text-foreground" : "text-muted-foreground"}`}>
                     {label}
                   </span>
                 </Link>
@@ -92,21 +93,31 @@ export default function BottomNav({ badge = 0 }) {
                   <span
                     aria-hidden="true"
                     data-glass-highlight=""
-                    className="pointer-events-none absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 [[data-glass-moving]_&]:opacity-0"
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent [[data-glass-moving]_&]:opacity-0"
                   />
                 )}
-                <div className="relative z-20">
-                  <Icon
-                    aria-hidden="true"
-                    className={`h-[1.375rem] w-[1.375rem] transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
-                  />
+                <div className="relative z-20 flex h-6 w-6 items-center justify-center">
+                  {/* Inactive icon */}
+                  <span
+                    className={`absolute transition-all duration-200 ${active ? "opacity-0 scale-75" : "opacity-100 scale-100"}`}
+                    aria-hidden={active}
+                  >
+                    <IconData.Inactive className="h-6 w-6 text-muted-foreground" />
+                  </span>
+                  {/* Active icon */}
+                  <span
+                    className={`absolute transition-all duration-200 ${active ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}
+                    aria-hidden={!active}
+                  >
+                    <IconData.Active className="h-6 w-6" />
+                  </span>
                   {unread && (
                     <span className="absolute -right-2 -top-1.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-destructive px-1 text-[0.625rem] font-bold text-white">
                       {badge > 9 ? "9+" : <NumberFlow value={badge} />}
                     </span>
                   )}
                 </div>
-                <span className="relative z-10 text-[0.6875rem] font-medium leading-none transition-colors text-muted-foreground mt-1">
+                <span className={`relative text-[0.6875rem] font-medium leading-none transition-colors ${active ? "text-foreground" : "text-muted-foreground"}`}>
                   {label}
                 </span>
               </Link>
