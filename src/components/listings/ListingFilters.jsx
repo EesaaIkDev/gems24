@@ -41,7 +41,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
             haptic("light");
             choose("type", []);
           }}
-          className="shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors border-border bg-background text-muted-foreground hover:bg-secondary aria-pressed:border-primary aria-pressed:bg-accent aria-pressed:text-accent-foreground"
+          className="shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors border-border bg-background text-muted-foreground hover:bg-secondary aria-pressed:border-primary aria-pressed:bg-primary/10 aria-pressed:text-primary"
         >
           All
         </button>
@@ -54,7 +54,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
               haptic("light");
               choose("type", values(filters.type).includes(t) ? [] : [t]);
             }}
-            className="shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors border-border bg-background text-muted-foreground hover:bg-secondary aria-pressed:border-primary aria-pressed:bg-accent aria-pressed:text-accent-foreground"
+            className="shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors border-border bg-background text-muted-foreground hover:bg-secondary aria-pressed:border-primary aria-pressed:bg-primary/10 aria-pressed:text-primary"
           >
             {cap(t)}
           </button>
@@ -65,8 +65,8 @@ export default function ListingFilters({ filters, setFilters, countries }) {
             haptic("light");
             setOpen(true);
           }}
-          className={`relative shrink-0 flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors before:absolute before:-inset-y-1 before:inset-x-0 before:content-[''] ${
-            secondaryCount ? "border-primary bg-accent text-accent-foreground" : "border-border bg-background text-muted-foreground hover:bg-secondary"
+          className={`relative shrink-0 flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
+            secondaryCount ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-muted-foreground hover:bg-secondary"
           }`}
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
