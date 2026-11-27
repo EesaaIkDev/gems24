@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Home, Search, Plus, MessageCircle, User } from "lucide-react";
 import { haptic } from "@/lib/despia";
 import NumberFlow from "@number-flow/react";
+import { GlassLayer } from "@/components/liquid-glass/glass-layer";
+import { GlassLens } from "@/components/liquid-glass/glass-lens";
 
 const TABS = [
   { to: "/", label: "Home", icon: Home },
@@ -12,7 +14,7 @@ const TABS = [
   { to: "/profile", label: "Profile", icon: User },
 ];
 
-/** Floating frosted-glass tab bar with clean pill selection indicator. */
+/** Floating frosted-glass tab bar. The selection lens glides between tabs. */
 export default function BottomNav({ badge = 0 }) {
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
@@ -30,6 +32,8 @@ export default function BottomNav({ badge = 0 }) {
   };
 
   const isActive = (to) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
+  // The glass lens sits behind the active tab; the Add button carries its own emphasis.
+  const activeTo = TABS.find((t) => !t.raised && isActive(t.to))?.to ?? null;
 
   return (
     <nav
@@ -41,8 +45,14 @@ export default function BottomNav({ badge = 0 }) {
         paddingRight: "calc(var(--safe-right) + 0.75rem)",
       }}
     >
-      <div className="glass-frost pointer-events-auto mx-auto max-w-md rounded-full px-1" style={{ height: "calc(var(--tabbar-h) - 0.5rem)" }}>
-        <div className="relative grid h-full grid-cols-5">
+      <div
+        data-glass-host=""
+        className="glass-frost pointer-events-auto mx-auto max-w-md rounded-full px-1"
+        style={{ height: "calc(var(--tabbar-h) - 0.5rem)" }}
+      >
+        <GlassLayer material="tinted" tint={0.4} swell={false} />
+        <GlassLens value={activeTo} />
+        <div role="radiogroup" aria-label="Main sections" className="relative grid h-full grid-cols-5">
           {TABS.map(({ to, label, icon: Icon, raised }) => {
             const active = isActive(to);
             const unread = label === "Chats" && badge > 0;
@@ -57,8 +67,8 @@ export default function BottomNav({ badge = 0 }) {
                   aria-current={active ? "page" : undefined}
                   className="glass-press flex flex-col items-center justify-end gap-1 pb-1.5"
                 >
-                  <span className="glass-emerald -mt-5 flex h-12 w-12 items-center justify-center rounded-full shadow-lg shadow-emerald-500/25">
-                    <Plus className="h-6 w-6 text-white" strokeWidth={2.25} aria-hidden="true" />
+                  <span className="glass-emerald -mt-5 flex h-12 w-12 items-center justify-center rounded-full">
+                    <Plus className="h-6 w-6" strokeWidth={2.25} aria-hidden="true" />
                   </span>
                   <span className={`text-[0.6875rem] font-medium leading-none ${active ? "text-primary" : "text-muted-foreground"}`}>
                     {label}
@@ -74,15 +84,18 @@ export default function BottomNav({ badge = 0 }) {
                 onClick={(e) => onTab(e, to)}
                 aria-label={unread ? `${label}, ${badge} unread` : label}
                 aria-current={active ? "page" : undefined}
+                role="radio"
+                aria-checked={active}
                 className="tap-scale relative flex flex-col items-center justify-center gap-0.5"
               >
                 {active && (
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-y-1.5 w-10 rounded-full bg-primary/10"
+                    data-glass-highlight=""
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/15 [[data-glass-moving]_&]:opacity-0"
                   />
                 )}
-                <div className="relative z-10">
+                <div className="relative z-20">
                   <Icon
                     aria-hidden="true"
                     className={`h-[1.375rem] w-[1.375rem] transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
@@ -93,7 +106,7 @@ export default function BottomNav({ badge = 0 }) {
                     </span>
                   )}
                 </div>
-                <span className={`relative text-[0.6875rem] font-medium leading-none transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}>
+                <span className="relative z-10 text-[0.6875rem] font-medium leading-none transition-colors text-muted-foreground mt-1">
                   {label}
                 </span>
               </Link>
