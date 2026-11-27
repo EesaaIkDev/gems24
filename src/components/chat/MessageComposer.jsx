@@ -8,6 +8,7 @@ import FormattingToolbar from "@/components/chat/FormattingToolbar";
 import formatSelection from "@/components/chat/formatSelection";
 import AttachPhotoButton from "@/components/chat/AttachPhotoButton";
 import { base44 } from "@/api/base44Client";
+import { GlassLayer } from "@/components/liquid-glass/glass-layer";
 
 export default function MessageComposer({ onSend, canAttach = false }) {
   const [text, setText] = useState("");
@@ -67,9 +68,11 @@ export default function MessageComposer({ onSend, canAttach = false }) {
       onSubmit={submit}
       onFocusCapture={() => setFocused(true)}
       onBlurCapture={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false); }}
+      data-glass-host=""
       className="glass-frost shrink-0 rounded-none border-x-0 border-b-0 px-3 py-2 shadow-none"
       style={{ paddingLeft: "calc(var(--safe-left) + 0.75rem)", paddingRight: "calc(var(--safe-right) + 0.75rem)" }}
     >
+      <GlassLayer material="tinted" tint={0.4} swell={false} />
       <div className="max-w-6xl mx-auto">
         {focused && <FormattingToolbar onApply={apply} />}
         {error && <p role="alert" className="pb-2 text-xs text-destructive">{error}</p>}

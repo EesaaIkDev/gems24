@@ -5,10 +5,12 @@ import { Image } from "@/components/ui/image";
 import { LOGO_URL } from "@/lib/gems";
 import { haptic } from "@/lib/despia";
 import InviteButton from "@/components/referral/InviteButton";
+import { GlassLayer } from "@/components/liquid-glass/glass-layer";
 
 export default function AppHeader() {
   return (
     <header
+      data-glass-host=""
       className="glass-frost absolute inset-x-0 top-0 z-50 rounded-none border-0 shadow-none"
       style={{
         paddingTop: "var(--safe-top)",
@@ -16,6 +18,7 @@ export default function AppHeader() {
         paddingRight: "var(--safe-right)",
       }}
     >
+      <GlassLayer material="tinted" tint={0.4} swell={false} />
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4" style={{ height: "var(--header-h)" }}>
         <Link to="/" className="tap-scale flex items-center" onClick={() => haptic("light")} aria-label="Gems24 home">
           <Image src={LOGO_URL} alt="" className="h-8 w-8" fittingType="fit" />

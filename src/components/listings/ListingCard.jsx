@@ -5,6 +5,7 @@ import { BadgeCheck, Gem, ShieldQuestion } from "lucide-react";
 import BookmarkButton from "./BookmarkButton";
 import { cap } from "@/lib/gems";
 import { listingAlt, listingPath } from "@/lib/seo";
+import { GlassLayer } from "@/components/liquid-glass/glass-layer";
 
 const STATUS = {
   available: "text-primary",
@@ -25,9 +26,11 @@ export default function ListingCard({ listing }) {
   return (
     <Link
       to={listingPath(listing)}
-      className="flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-colors active:bg-secondary"
+      data-glass-host=""
+      className="flex h-full flex-col rounded-xl border border-border bg-card transition-colors active:bg-secondary"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
+      <GlassLayer material="tinted" tint={0.5} swell={false} />
+      <div className="relative aspect-[4/3] overflow-hidden rounded-t-[0.75rem] bg-secondary">
         {photo ? (
           <Image src={photo} alt={listingAlt(listing)} className="h-full w-full mix-blend-multiply dark:mix-blend-normal" />
         ) : (

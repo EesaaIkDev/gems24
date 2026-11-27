@@ -1,7 +1,8 @@
 import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
 import { cva } from "class-variance-authority";
+import { Children, cloneElement } from "react";
 
+import { GlassLayer } from "@/components/liquid-glass/glass-layer"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -30,13 +31,37 @@ const buttonVariants = cva(
   }
 )
 
-const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
-  const Comp = asChild ? Slot : "button"
+// Solid variants get the liquid-glass surface; ghost/link stay plain text buttons.
+const GLASS_VARIANTS = new Set(["default", "destructive", "outline", "secondary"])
+
+const Button = React.forwardRef(({ className, variant, size, asChild = false, children, disabled, ...props }, ref) => {
+  const effectiveVariant = variant ?? "default"
+  const glass = GLASS_VARIANTS.has(effectiveVariant) ? (
+    <GlassLayer material="tinted" tint={0.55} disabled={disabled} />
+  ) : null
+  const classes = cn(buttonVariants({ variant, size, className }))
+
+  if (asChild) {
+    const child = Children.only(children)
+    return cloneElement(child, {
+      ...props,
+      ref,
+      disabled,
+      "data-glass-host": glass ? "" : undefined,
+      className: cn(classes, child.props.className),
+    }, <>{glass}{child.props.children}</>)
+  }
+
   return (
-    (<Comp
-      className={cn(buttonVariants({ variant, size, className }))}
+    (<button
+      className={classes}
       ref={ref}
-      {...props} />)
+      disabled={disabled}
+      data-glass-host={glass ? "" : undefined}
+      {...props}>
+      {glass}
+      {children}
+    </button>)
   );
 })
 Button.displayName = "Button"

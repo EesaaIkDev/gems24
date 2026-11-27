@@ -1,22 +1,20 @@
 import * as React from "react"
-import * as SwitchPrimitives from "@radix-ui/react-switch"
 
-import { cn } from "@/lib/utils"
+import { Switch as GlassSwitch } from "@/components/liquid-glass/controls/Switch"
 
-const Switch = React.forwardRef(({ className, ...props }, ref) => (
-  <SwitchPrimitives.Root
-    className={cn(
-      "peer relative inline-flex h-7 w-12 shrink-0 cursor-pointer touch-manipulation items-center rounded-full border-0 bg-switch-off px-0.5 data-[state=checked]:bg-primary transition-colors duration-200 ease-out before:absolute before:-inset-y-2.5 before:-inset-x-1 before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50",
-      className
-    )}
-    {...props}
-    ref={ref}>
-    <SwitchPrimitives.Thumb
-      className={cn(
-        "pointer-events-none block h-6 w-6 rounded-full bg-white shadow-[0_1px_3px_rgb(0_0_0/0.28)] ring-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.4,0.64,1)] will-change-transform motion-reduce:transition-none data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
-      )} />
-  </SwitchPrimitives.Root>
+// Radix-style API (checked / onCheckedChange) on top of the liquid-glass switch.
+// Extra DOM props (aria-*, data-*) land on the wrapper; `name` goes to the control.
+const Switch = React.forwardRef(({ className, checked, onCheckedChange, disabled, name, ...props }, ref) => (
+  <span ref={ref} className={className} {...props}>
+    <GlassSwitch
+      checked={checked}
+      onChange={onCheckedChange}
+      disabled={disabled}
+      name={name}
+      size="md"
+    />
+  </span>
 ))
-Switch.displayName = SwitchPrimitives.Root.displayName
+Switch.displayName = "Switch"
 
 export { Switch }

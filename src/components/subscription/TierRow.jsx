@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { LOYALTY_STEP, TIERS, TIER_STYLES } from "@/lib/gems";
 import { haptic } from "@/lib/despia";
+import { GlassLayer } from "@/components/liquid-glass/glass-layer";
 
 /**
  * A subscription tier presented like a gemstone grade card: the same tier badge
@@ -14,7 +15,8 @@ export default function TierRow({ tier, capacity, placement, anchor, current, lo
   const filled = Math.min(5, t.rank + 1);
 
   return (
-    <div className={`rounded-xl border bg-card ${recommended ? "border-primary" : "border-border"}`}>
+    <div data-glass-host="" className={`rounded-xl border bg-card ${recommended ? "border-primary" : "border-border"}`}>
+      <GlassLayer material="tinted" tint={0.5} swell={false} />
       <div className="px-4 py-4">
         <div className="flex items-center gap-2.5">
           <span

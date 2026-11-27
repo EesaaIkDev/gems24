@@ -1,6 +1,7 @@
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 
+import { GlassLayer } from "@/components/liquid-glass/glass-layer"
 import { cn } from "@/lib/utils"
 
 const TabsContext = React.createContext(null)
@@ -42,6 +43,7 @@ const TabsList = React.forwardRef(({ className, children, ...props }, ref) => {
 
   return (
     <TabsPrimitive.List
+      data-glass-host=""
       ref={(node) => {
         listRef.current = node
         if (typeof ref === "function") ref(node)
@@ -52,6 +54,7 @@ const TabsList = React.forwardRef(({ className, children, ...props }, ref) => {
         className
       )}
       {...props}>
+      <GlassLayer material="tinted" tint={0.4} swell={false} />
       {lens && (
         <span
           aria-hidden="true"

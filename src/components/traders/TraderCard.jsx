@@ -7,6 +7,7 @@ import VerifiedBadge from "@/components/common/VerifiedBadge";
 import { cap, isBusiness } from "@/lib/gems";
 import BusinessTag from "@/components/common/BusinessTag";
 import { isVerified } from "@/lib/verification";
+import { GlassLayer } from "@/components/liquid-glass/glass-layer";
 
 export default function TraderCard({ trader }) {
   const highlight = ["platinum", "gold"].includes(trader.subscription_tier);
@@ -17,7 +18,9 @@ export default function TraderCard({ trader }) {
       className={`block rounded-xl border bg-card transition-colors hover:bg-secondary active:bg-secondary ${
         highlight ? "border-primary/40" : "border-border"
       }`}
+      data-glass-host=""
     >
+      <GlassLayer material="tinted" tint={0.5} swell={false} />
       <div className="flex gap-3.5 p-3.5">
         <div className="w-16 h-16 shrink-0 rounded-xl overflow-hidden bg-secondary flex items-center justify-center">
           {trader.profile_photo ? (

@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Home, Search, Plus, MessageCircle, User } from "lucide-react";
 import { haptic } from "@/lib/despia";
+import { GlassLayer } from "@/components/liquid-glass/glass-layer";
 
 const TABS = [
   { to: "/", label: "Home", icon: Home },
@@ -43,9 +44,11 @@ export default function BottomNav({ badge = 0 }) {
       }}
     >
       <div
+        data-glass-host=""
         className="glass-frost pointer-events-auto mx-auto max-w-md rounded-full px-1"
         style={{ height: "calc(var(--tabbar-h) - 0.5rem)" }}
       >
+        <GlassLayer material="tinted" tint={0.4} swell={false} />
       <div className="relative grid h-full grid-cols-5">
         <span
           aria-hidden="true"

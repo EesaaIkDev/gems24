@@ -1,11 +1,12 @@
 import * as React from "react"
 
+import { GlassCard } from "@/components/liquid-glass/glass-card"
 import { cn } from "@/lib/utils"
 
 const Card = React.forwardRef(({ className, ...props }, ref) => (
-  <div
+  <GlassCard
     ref={ref}
-    className={cn("rounded-xl border bg-card text-card-foreground", className)}
+    className={cn("rounded-xl text-card-foreground", className)}
     {...props} />
 ))
 Card.displayName = "Card"
