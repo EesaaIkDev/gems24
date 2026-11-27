@@ -47,7 +47,7 @@ export function GlassSelect({ label, options, value, defaultValue, onValueChange
         <SelectLabel className="text-sm font-medium text-neutral-900 dark:text-white">{label}</SelectLabel>
         <SelectTrigger
           data-glass-host=""
-          className="flex h-12 w-full cursor-pointer items-center justify-between rounded-full border border-black/10 bg-white/60 pr-4 pl-5 text-[15px] font-medium text-neutral-900 outline-none select-none focus-visible:ring-2 focus-visible:ring-[#3291FF] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/10 dark:text-white data-[glass-tone=dark]:text-white data-[glass-tone=light]:text-neutral-900"
+          className="flex h-12 w-full cursor-pointer items-center justify-between rounded-full border border-border bg-background pr-4 pl-5 text-[15px] font-medium text-foreground outline-none select-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <GlassPopupAnchor popup={popup} />
           <SelectValue />
@@ -60,7 +60,7 @@ export function GlassSelect({ label, options, value, defaultValue, onValueChange
         data-glass-popup=""
         data-glass-skip=""
         sideOffset={12}
-        className="rounded-3xl p-1.5 text-[15px] text-neutral-900 outline-none data-[glass-tone=dark]:text-white data-[glass-tone=light]:text-neutral-900"
+        className="rounded-3xl p-1.5 text-[15px] text-foreground outline-none"
       >
         <GlassPopupSurface popup={popup} />
         <SelectList className="max-h-72 overflow-y-auto rounded-[18px] outline-none">
@@ -70,7 +70,7 @@ export function GlassSelect({ label, options, value, defaultValue, onValueChange
               value={o.value}
               disabled={o.disabled}
               style={{ '--glass-i': i } as CSSProperties}
-              className="relative flex h-10 cursor-pointer items-center rounded-2xl px-3.5 font-medium outline-none select-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-40 data-[highlighted]:bg-black/8 data-[selected]:font-semibold dark:data-[highlighted]:bg-white/12"
+              className="relative flex h-10 cursor-pointer items-center rounded-2xl px-3.5 font-medium outline-none select-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-40 data-[highlighted]:bg-primary/10 data-[selected]:font-semibold data-[selected]:text-primary"
             >
               {o.label}
             </SelectItem>
