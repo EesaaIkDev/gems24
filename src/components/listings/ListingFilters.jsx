@@ -19,6 +19,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
     set(k, v);
   };
   const secondaryCount = values(filters.treatment).length + values(filters.country).length + (filters.minCt || filters.maxCt ? 1 : 0);
+  const primaryCount = values(filters.type).length;
 
   const clearAll = () => {
     haptic("heavy");
@@ -31,9 +32,33 @@ export default function ListingFilters({ filters, setFilters, countries }) {
 
   return (
     <>
-      {/* The primary choice stays one tap away; everything used less often is
-          grouped behind Filters so the results start higher on the screen. */}
+      {/* Gem type chips and Filters button */}
       <div className="flex gap-1.5 overflow-x-auto -mx-3.5 px-3.5 pb-1 scrollbar-none fade-x">
+        <button
+          type="button"
+          aria-pressed={!primaryCount}
+          onClick={() => {
+            haptic("light");
+            choose("type", []);
+          }}
+          className="shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors border-border bg-background text-muted-foreground hover:bg-secondary aria-pressed:border-primary aria-pressed:bg-accent aria-pressed:text-accent-foreground"
+        >
+          All
+        </button>
+        {GEM_TYPES.map((t) => (
+          <button
+            key={t}
+            type="button"
+            aria-pressed={values(filters.type).includes(t)}
+            onClick={() => {
+              haptic("light");
+              choose("type", values(filters.type).includes(t) ? [] : [t]);
+            }}
+            className="shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors border-border bg-background text-muted-foreground hover:bg-secondary aria-pressed:border-primary aria-pressed:bg-accent aria-pressed:text-accent-foreground"
+          >
+            {cap(t)}
+          </button>
+        ))}
         <button
           type="button"
           onClick={() => {
@@ -49,25 +74,19 @@ export default function ListingFilters({ filters, setFilters, countries }) {
         </button>
       </div>
 
-      <GlassSelect
-        label="Gem type"
-        placeholder="All types"
-        className="mt-2 !w-full"
-        value={typeValue}
-        onValueChange={(v) => choose("type", !v || v === ALL ? [] : [v])}
-        options={[
-          { value: ALL, label: "All types" },
-          ...GEM_TYPES.map((t) => ({ value: t, label: cap(t) })),
-        ]}
-      />
-
       <BottomSheet
         open={open}
         onOpenChange={setOpen}
         title="Filter stones"
         description="Narrow the marketplace without losing your search."
+        footer={
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant="outline" onClick={clearAll}>Clear all</Button>
+            <Button onClick={() => { haptic("heavy"); setOpen(false); }}>Show results</Button>
+          </div>
+        }
       >
-        <div className="space-y-5">
+        <div className="space-y-5 pb-4">
           <FilterSection label="Treatment">
             <GlassSelect
               label="Treatment"
@@ -109,11 +128,6 @@ export default function ListingFilters({ filters, setFilters, countries }) {
               />
             </div>
           </FilterSection>
-
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <Button variant="outline" onClick={clearAll}>Clear all</Button>
-            <Button onClick={() => { haptic("heavy"); setOpen(false); }}>Show results</Button>
-          </div>
         </div>
       </BottomSheet>
     </>

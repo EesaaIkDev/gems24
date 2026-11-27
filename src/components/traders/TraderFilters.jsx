@@ -54,8 +54,14 @@ export default function TraderFilters({ filters, setFilters, countries, specialt
         onOpenChange={setOpen}
         title="Filter traders"
         description="Choose a membership grade or location."
+        footer={
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant="outline" onClick={clearAll}>Clear all</Button>
+            <Button onClick={() => { haptic("heavy"); setOpen(false); }}>Show results</Button>
+          </div>
+        }
       >
-        <div className="space-y-5">
+        <div className="space-y-5 pb-4">
           <FilterSection label="Membership grade">
             <div className="flex flex-wrap gap-2">
               {[...TIER_ORDER, "none"].map((t) => (
@@ -69,11 +75,6 @@ export default function TraderFilters({ filters, setFilters, countries, specialt
           <FilterSection label="Location">
             <CountryFilter countries={countries} selected={values(filters.country)} onChange={(v) => update((f) => ({ ...f, country: v }))} />
           </FilterSection>
-
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <Button variant="outline" onClick={clearAll}>Clear all</Button>
-            <Button onClick={() => { haptic("heavy"); setOpen(false); }}>Show results</Button>
-          </div>
         </div>
       </BottomSheet>
     </>
