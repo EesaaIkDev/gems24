@@ -72,6 +72,37 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, ch
 
   if (asChild) {
     const child = Children.only(children)
+    
+    // For glass variants, use GlassButton with asChild to wrap the link
+    if (GLASS_VARIANTS.has(effectiveVariant)) {
+      const glassVariant = effectiveVariant === "default" ? "clear" : "tinted"
+      const glassClassName = effectiveVariant === "default" 
+        ? "bg-primary text-primary-foreground"
+        : effectiveVariant === "destructive"
+        ? "bg-destructive text-destructive-foreground"
+        : effectiveVariant === "outline"
+        ? "border border-primary bg-background text-primary"
+        : "border border-border bg-background text-foreground"
+      
+      const glassSize = size === "icon" ? "sm" : size === "sm" ? "sm" : size === "lg" ? "lg" : "md"
+      const glassProps = effectiveVariant === "default" ? { tint: 0 } : {}
+      
+      return (
+        <GlassButton
+          ref={ref}
+          material={glassVariant}
+          size={glassSize}
+          className={cn(className, glassClassName)}
+          asChild
+          {...glassProps}
+          {...props}
+        >
+          {child}
+        </GlassButton>
+      )
+    }
+    
+    // Non-glass variants just clone the child with classes
     return cloneElement(child, {
       ...props,
       ref,
