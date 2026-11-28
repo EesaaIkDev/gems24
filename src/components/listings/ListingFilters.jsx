@@ -41,7 +41,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
             haptic("light");
             choose("type", []);
           }}
-          className="shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors border-border bg-background text-muted-foreground hover:bg-secondary aria-pressed:border-primary aria-pressed:bg-primary/10 aria-pressed:text-primary"
+          className="shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors border-border bg-background text-muted-foreground hover:bg-secondary aria-pressed:border-primary aria-pressed:bg-primary/10 aria-pressed:text-primary dark:aria-pressed:border-primary/50 dark:aria-pressed:bg-popover"
         >
           All
         </button>
@@ -54,7 +54,7 @@ export default function ListingFilters({ filters, setFilters, countries }) {
               haptic("light");
               choose("type", values(filters.type).includes(t) ? [] : [t]);
             }}
-            className="shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors border-border bg-background text-muted-foreground hover:bg-secondary aria-pressed:border-primary aria-pressed:bg-primary/10 aria-pressed:text-primary"
+            className="shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors border-border bg-background text-muted-foreground hover:bg-secondary aria-pressed:border-primary aria-pressed:bg-primary/10 aria-pressed:text-primary dark:aria-pressed:border-primary/50 dark:aria-pressed:bg-popover"
           >
             {cap(t)}
           </button>

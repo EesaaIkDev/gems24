@@ -1,7 +1,8 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
-import { LOYALTY_STEP, TIERS, TIER_STYLES } from "@/lib/gems";
+import { LOYALTY_STEP, TIERS } from "@/lib/gems";
+import TierBadge from "@/components/common/TierBadge";
 import { haptic } from "@/lib/despia";
 import { GlassLayer } from "@/components/liquid-glass/glass-layer";
 
@@ -19,11 +20,7 @@ export default function TierRow({ tier, capacity, placement, anchor, current, lo
       <GlassLayer material="tinted" tint={0.5} swell={false} />
       <div className="px-4 py-4">
         <div className="flex items-center gap-2.5">
-          <span
-            className={`rounded-full border px-2.5 py-1 text-[0.6875rem] font-bold uppercase tracking-wider ${TIER_STYLES[tier]}`}
-          >
-            {t.label}
-          </span>
+          <TierBadge tier={tier} />
           {(tag || recommended) && (
             <span className="text-[0.625rem] font-bold uppercase tracking-wider text-primary">
               {tag || "Most chosen"}

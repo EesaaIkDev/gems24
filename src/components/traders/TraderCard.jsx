@@ -14,7 +14,7 @@ export default function TraderCard({ trader }) {
   return (
     <Link
       to={`/trader/${trader.id}`}
-      className={`block rounded-xl border bg-card transition-colors hover:bg-secondary active:bg-secondary ${
+      className={`block rounded-xl border bg-card transition-colors hover:bg-secondary active:bg-secondary dark:border-transparent dark:hover:bg-popover dark:active:bg-popover ${
         highlight ? "border-primary/40" : "border-border"
       }`}
     >

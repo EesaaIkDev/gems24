@@ -25,7 +25,7 @@ export default function ListingCard({ listing }) {
   return (
     <Link
       to={listingPath(listing)}
-      className="flex h-full flex-col rounded-xl border border-border bg-card transition-colors active:bg-secondary"
+      className="flex h-full flex-col rounded-xl border border-border bg-card transition-colors active:bg-secondary dark:border-transparent dark:active:bg-popover"
     >
       <div className="relative aspect-[4/3] overflow-hidden rounded-t-[0.75rem] bg-secondary">
         {photo ? (

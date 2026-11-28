@@ -16,6 +16,7 @@ module.exports = {
   		height: { screen: '100dvh' },
   		minHeight: { screen: '100dvh' },
   		maxHeight: { screen: '100dvh' },
+    textColor: { primary: c('primary-ink') },
   		colors: {
   			background: c('background'),
   			foreground: c('foreground'),

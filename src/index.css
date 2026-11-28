@@ -16,6 +16,7 @@
     --popover-foreground: 22.9% 0.005 174;
     --primary: 63% 0.153 153;               /* #1FA45B */
     --primary-foreground: 100% 0 0;
+    --primary-ink: var(--primary);
     --secondary: 97.1% 0.003 165.1;         /* #F5F7F6 */
     --secondary-foreground: 22.9% 0.005 174;
     --muted: 97.1% 0.003 165.1;
@@ -67,55 +68,57 @@
   /* Dark mode: depth comes from lighter surfaces, not shadows.
      background < card/secondary < popover (floating layers are lightest). */
   .dark {
-    --background: 19.7% 0.007 178.9;        /* #121615 */
-    --foreground: 96.4% 0.004 174.5;
-    --card: 24.4% 0.01 173.4;
-    --card-foreground: 96.4% 0.004 174.5;
-    --popover: 28.5% 0.011 173.4;
-    --popover-foreground: 96.4% 0.004 174.5;
+    --background: 17.39% 0.0041 286;       /* #101012 */
+    --foreground: 97.07% 0.0027 286.4;
+    --card: 22.73% 0.0038 286.1;           /* #1C1C1E */
+    --card-foreground: var(--foreground);
+    --popover: 26.53% 0.0037 286.1;        /* #252527 */
+    --popover-foreground: var(--foreground);
     --primary: 63% 0.153 153;
-    --primary-foreground: 100% 0 0;
-    --secondary: 24.4% 0.01 173.4;
-    --secondary-foreground: 96.4% 0.004 174.5;
-    --muted: 24.4% 0.01 173.4;
-    --muted-foreground: 74% 0.013 172.1;
-    --accent: 31.4% 0.051 157.6;
-    --accent-foreground: 84.7% 0.107 158.9;
+    --primary-foreground: var(--background);
+    --primary-ink: 74.91% 0.1452 158.7;   /* #48C98B */
+    --secondary: var(--card);
+    --secondary-foreground: var(--foreground);
+    --muted: var(--card);
+    --muted-foreground: 71.05% 0.0072 286.2;
+    --accent: var(--popover);
+    --accent-foreground: var(--primary-ink);
     --destructive: 60.9% 0.191 28.2;
     --destructive-foreground: 100% 0 0;
-    --border: 100% 0 0;                     /* light ink, used at --border-alpha */
-    --border-alpha: 0.1;
+    --border: 100% 0 0;
+    --border-alpha: 0.11;                  /* approximately #303032 over graphite */
     --input: 100% 0 0;
-    --input-alpha: 0.13;
-    --ring: 71.4% 0.175 152.8;
-    --disabled: 53.6% 0.014 171.8;
-    --switch-off: 42.8% 0.014 178.9;
-    --glass-frost: 26% 0.012 173.4 / 0.82;
-    --glass-clear: 32% 0.012 173.4 / 0.42;
-    --glass-edge: 100% 0 0 / 0.1;
-    --glass-rim: 100% 0 0 / 0.1;
-    --welcome-green: 67.9% 0.166 152.9;
-    --welcome-green-bright: 74.9% 0.184 152.8;
-    --welcome-ink: 19.7% 0.007 178.9;
-    --welcome-panel: 24.4% 0.01 173.4;
-    --welcome-border: 30.9% 0.012 178.7;
-    --welcome-text: 96.4% 0.004 174.5;
-    --welcome-muted: 74% 0.013 172.1;
-    --welcome-subtle: 74% 0.013 172.1;
+    --input-alpha: 0.15;
+    --ring: var(--primary-ink);
+    --disabled: 51.2% 0.0078 286.1;
+    --switch-off: 35% 0.0069 286;
+    --glass-frost: 26.53% 0.0037 286.1 / 0.68;
+    --glass-clear: 26.53% 0.0037 286.1 / 0.42;
+    --glass-edge: 100% 0 0 / 0.065;
+    --glass-rim: 100% 0 0 / 0.08;
+    --glass-tint: oklch(var(--popover));
+    --welcome-green: var(--primary-ink);
+    --welcome-green-bright: var(--primary-ink);
+    --welcome-ink: var(--background);
+    --welcome-panel: var(--card);
+    --welcome-border: 30.99% 0.0035 286.2;
+    --welcome-text: var(--foreground);
+    --welcome-muted: var(--muted-foreground);
+    --welcome-subtle: 64.9% 0.0103 286.1;
     --welcome-pattern: 43.2% 0.103 153.4;
     --chart-1: 71.4% 0.175 152.8;
     --chart-2: 69.8% 0.134 165.5;
     --chart-3: 72.3% 0.15 60.6;
     --chart-4: 61.9% 0.204 312.7;
     --chart-5: 61.2% 0.209 6.4;
-    --sidebar-background: 24.4% 0.01 173.4;
-    --sidebar-foreground: 96.4% 0.004 174.5;
-    --sidebar-primary: 67.9% 0.166 152.9;
-    --sidebar-primary-foreground: 100% 0 0;
-    --sidebar-accent: 30.9% 0.012 178.7;
-    --sidebar-accent-foreground: 96.4% 0.004 174.5;
-    --sidebar-border: 30.9% 0.012 178.7;
-    --sidebar-ring: 71.4% 0.175 152.8;
+    --sidebar-background: var(--card);
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: var(--popover);
+    --sidebar-accent-foreground: var(--foreground);
+    --sidebar-border: var(--welcome-border);
+    --sidebar-ring: var(--ring);
   }
 }
 
@@ -208,6 +211,18 @@
     scrollbar-width: none;
   }
 
+  /* Membership metals are ink, not fills; verification uses brand green. */
+  .membership-emblem[data-membership="platinum"] { color: #4D596A; }
+  .membership-emblem[data-membership="gold"] { color: #73591F; }
+  .membership-emblem[data-membership="silver"] { color: #515E6C; }
+  .membership-emblem[data-membership="bronze"] { color: #79533F; }
+  .membership-emblem[data-membership="none"] { color: #606067; }
+  .dark .membership-emblem[data-membership="platinum"] { color: #D4DBE5; }
+  .dark .membership-emblem[data-membership="gold"] { color: #C9AB72; }
+  .dark .membership-emblem[data-membership="silver"] { color: #A7B0BC; }
+  .dark .membership-emblem[data-membership="bronze"] { color: #B68B70; }
+  .dark .membership-emblem[data-membership="none"] { color: #929298; }
+
   /* Opt-in selection for descriptions and chat messages. */
   .selectable {
     -webkit-user-select: text;
@@ -265,6 +280,9 @@
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3), 0 6px 14px -8px oklch(var(--primary) / 0.7);
     -webkit-backdrop-filter: blur(10px) saturate(160%);
     backdrop-filter: blur(10px) saturate(160%);
+  }
+  .dark .glass-emerald {
+    box-shadow: inset 0 1px 0 oklch(var(--glass-edge));
   }
   /* No backdrop blur available: fall back to solid, readable surfaces. */
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {

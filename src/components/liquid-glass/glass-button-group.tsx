@@ -82,8 +82,8 @@ const items: Record<GlassButtonGroupSize, string> = {
 // back to about one item's.
 const STACKED = { shadowOffset: 0.35, shadowSoftness: 0.35 }
 
-// Tinted glass with no `bg-*` class of your own is white, in light and dark.
-const WHITE = 'bg-white text-neutral-900'
+// Tinted glass without a custom fill uses the theme's control surface.
+const DEFAULT_FILL = 'bg-white text-neutral-900 dark:bg-popover dark:text-popover-foreground'
 
 // The look before the glass draws (first paint, and the permanent look without WebGL2).
 const fallback: Record<GlassMaterial, string> = {
@@ -114,7 +114,7 @@ export function GlassButtonGroup({
       </div>
     )
   }
-  const white = material === 'tinted' && !/(^|\s)!?bg-/.test(className) ? WHITE : ''
+  const fill = material === 'tinted' && !/(^|\s)!?bg-/.test(className) ? DEFAULT_FILL : ''
   // Any `rounded-*` class of your own replaces the group's corners.
   const corners = /(^|\s)!?rounded-/.test(className) ? '' : vertical ? bodies[size].stacked : 'rounded-full'
   return (
@@ -123,7 +123,7 @@ export function GlassButtonGroup({
       data-glass-host=""
       data-orientation={orientation}
       data-glass-fill={popup && material === 'tinted' ? '' : undefined}
-      className={`inline-flex shrink-0 ${vertical ? 'flex-col items-stretch' : 'items-center'} ${corners} ${bodies[size].pad} font-semibold whitespace-nowrap select-none ${fallback[material]} ${white} ${className}`}
+      className={`inline-flex shrink-0 ${vertical ? 'flex-col items-stretch' : 'items-center'} ${corners} ${bodies[size].pad} font-semibold whitespace-nowrap select-none ${fallback[material]} ${fill} ${className}`}
       {...rest}
     >
       {/* The glass layer must be the host's first child. */}

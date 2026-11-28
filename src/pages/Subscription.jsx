@@ -161,13 +161,9 @@ export default function Subscription() {
             ? "Platinum is the Gems24 plan for registered businesses: a company profile, room for your full inventory and the highest placement across the network."
             : "Gems24 grades traders the way the trade grades stones. The higher your grade, the more parcels you can list and the earlier buyers see them. Gold is the highest plan for individual traders."}
         </p>
-        <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5">
+        <div className="mt-5 inline-flex items-center gap-2 py-1.5">
           <span className="text-xs text-muted-foreground">Current grade</span>
-          {tier === "none" ? (
-            <span className="text-xs font-semibold">Ungraded</span>
-          ) : (
-            <TierBadge tier={tier} />
-          )}
+          <TierBadge tier={tier} />
         </div>
         {tier !== "none" && !pending && trader?.plan_renews_at && (
           <p className="mt-2 text-xs text-muted-foreground">Billed every 3 months · next renewal {renewalLabel(trader)}</p>

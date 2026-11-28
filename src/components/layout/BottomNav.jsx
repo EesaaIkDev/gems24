@@ -69,7 +69,7 @@ export default function BottomNav({ badge = 0 }) {
                   className="glass-press flex flex-col items-center justify-end gap-1 pb-1.5"
                 >
                   <span className="glass-emerald -mt-5 flex h-12 w-12 items-center justify-center rounded-full">
-                    <Plus className="h-6 w-6 text-white" strokeWidth={2.25} aria-hidden="true" />
+                    <Plus className="h-6 w-6 text-primary-foreground" strokeWidth={2.25} aria-hidden="true" />
                   </span>
                   <span className={`text-[0.6875rem] font-medium leading-none ${active ? "text-foreground" : "text-muted-foreground"}`}>
                     {label}
@@ -93,7 +93,7 @@ export default function BottomNav({ badge = 0 }) {
                   <span
                     aria-hidden="true"
                     data-glass-highlight=""
-                    className="pointer-events-none absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent [[data-glass-moving]_&]:opacity-0"
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent dark:bg-popover [[data-glass-moving]_&]:opacity-0"
                   />
                 )}
                 <div className="relative z-20 flex h-6 w-6 items-center justify-center">

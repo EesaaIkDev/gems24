@@ -12,10 +12,10 @@ export default function BottomSheet({ open, onOpenChange, title, description, ch
         <Drawer.Overlay className="fixed inset-0 z-50 bg-black/40" />
         <Drawer.Content
           className={cn(
-            "fixed bottom-0 inset-x-0 z-50 flex flex-col rounded-t-2xl border-t border-border bg-background shadow-float outline-none",
+            "fixed bottom-0 inset-x-0 z-50 flex flex-col rounded-t-2xl border-t border-border bg-background shadow-float outline-none dark:bg-popover",
             className
           )}
-          style={{ height: `${(snap || 0.85) * 100}dvh`, maxHeight: `${(snap || 0.85) * 100}dvh` }}
+          style={{ height: "100dvh", paddingBottom: `calc(100dvh * (1 - ${snap || 0.85}))` }}
         >
           <Drawer.Handle aria-label="Drag to resize or close" className="mx-auto mt-4 mb-1 h-1 w-10 shrink-0 rounded-full bg-border" />
           <div className="flex items-center justify-between px-5 pt-3 pb-2 border-b border-border">
@@ -38,7 +38,7 @@ export default function BottomSheet({ open, onOpenChange, title, description, ch
             {children}
           </div>
           {footer && (
-            <div className="px-5 pt-3 pb-6 border-t border-border bg-background">
+            <div className="px-5 pt-3 pb-6 border-t border-border bg-background dark:bg-popover">
               {footer}
             </div>
           )}

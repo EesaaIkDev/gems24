@@ -71,7 +71,7 @@ const CARD = { tint: 0.7, blur: 5, bendCurve: 9.75, bendDepth: 1.35 }
 /** Under a control painted in its own colour, the surface's tint covers this much. */
 const FILLED = 0.92
 /** The surface has no light of its own: this thin white line draws its edge, a soft CSS shadow lifts it. */
-const LINE = { alpha: 0.6, darkAlpha: 0.25, width: 1.3 }
+const LINE = { alpha: 0.6, darkAlpha: 0.12, width: 1.3 }
 /** Room around the trigger's own canvas, and around the popup's. */
 const TRIGGER_PAD = 16
 /** How far (px) the control's canvas reaches past the seam, under the popup's, so no line shows where they meet. */
@@ -910,7 +910,9 @@ function createMorph(matchWidth: boolean, opening: GlassPopupOpening, from: Glas
     const s = engine.resolveColor(surfaceColorOf(host.parentElement))
     surface = [s[0], s[1], s[2]]
     let light = 0.2126 * s[0] + 0.7152 * s[1] + 0.0722 * s[2] > 0.5
-    tint = light ? [1, 1, 1] : [0, 0, 0]
+    const darkTint = getComputedStyle(host).getPropertyValue('--glass-tint').trim()
+    const graphite = darkTint ? engine.resolveColor(darkTint) : [0, 0, 0]
+    tint = light ? [1, 1, 1] : [graphite[0], graphite[1], graphite[2]]
     cover = TINT
     cardCover = CARD.tint
     if ('glassFill' in host.dataset) {

@@ -51,7 +51,7 @@ const TabsTrigger = React.forwardRef(({ className, value, ...props }, ref) => {
       ref={ref}
       value={value}
       className={cn(
-        "relative inline-flex h-full items-center justify-center whitespace-nowrap rounded-full px-3 text-sm font-semibold ring-offset-background transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:text-primary-foreground [[data-glass-traveling]_&]:text-muted-foreground",
+        "relative inline-flex h-full items-center justify-center whitespace-nowrap rounded-full px-3 text-sm font-semibold ring-offset-background transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:text-primary-foreground dark:data-[state=active]:text-accent-foreground [[data-glass-traveling]_&]:text-muted-foreground",
         className
       )}
       {...props}>
@@ -59,7 +59,7 @@ const TabsTrigger = React.forwardRef(({ className, value, ...props }, ref) => {
         <span
           aria-hidden="true"
           data-glass-highlight=""
-          className="glass-emerald pointer-events-none absolute inset-0 rounded-full [[data-glass-moving]_&]:opacity-0"
+          className="glass-emerald pointer-events-none absolute inset-0 rounded-full dark:border-border dark:bg-popover [[data-glass-moving]_&]:opacity-0"
         />
       )}
       <span className="relative z-20">{props.children}</span>

@@ -55,14 +55,6 @@ export const REFERRALS_PER_YEAR = 2;
 // reasonable choice rather than the expensive end of a build-up from Bronze.
 export const TIER_ORDER = ["platinum", "gold", "silver", "bronze"];
 
-// Flat tier pills: a tinted background with a coloured label, no gradients.
-export const TIER_STYLES = {
-  bronze: "border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-900 dark:bg-orange-950 dark:text-orange-300",
-  silver: "border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200",
-  gold: "border-amber-100 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-300",
-  platinum: "border-indigo-100 bg-indigo-50 text-indigo-800 dark:border-indigo-900 dark:bg-indigo-950 dark:text-indigo-200",
-};
-
 export const GEM_TYPES = ["sapphire", "ruby", "emerald", "spinel", "garnet", "other"];
 export const TREATMENTS = ["heated", "unheated", "other"];
 
