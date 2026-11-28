@@ -49,13 +49,20 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, ch
       ? "border border-primary bg-background text-primary"
       : "border border-border bg-background text-foreground"
     
+    // Map Button sizes to GlassButton sizes
+    const glassSize = size === "icon" ? "sm" : size === "sm" ? "sm" : size === "lg" ? "lg" : "md"
+    
+    // For default variant, use clear glass with no tint as in the example
+    const glassProps = effectiveVariant === "default" ? { tint: 0 } : {}
+    
     return (
       <GlassButton
         ref={ref}
         material={glassVariant}
-        size={size === "icon" ? "md" : size === "sm" ? "sm" : size === "lg" ? "lg" : "md"}
+        size={glassSize}
         className={cn(className, glassClassName)}
         disabled={disabled}
+        {...glassProps}
         {...props}
       >
         {children}
